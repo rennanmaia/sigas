@@ -2,23 +2,23 @@ import { Shield, UserCheck, Users, CreditCard } from "lucide-react";
 
 export const roles = [
   {
-    label: "Superadmin",
-    value: "superadmin",
+    label: "General Admin",
+    value: "generaladmin",
     icon: Shield,
   },
   {
-    label: "Admin",
-    value: "admin",
+    label: "Project Admin",
+    value: "projectadmin",
     icon: UserCheck,
   },
   {
-    label: "Manager",
-    value: "manager",
+    label: "Form Admin",
+    value: "formadmin",
     icon: Users,
   },
   {
-    label: "Cashier",
-    value: "cashier",
+    label: "Colector",
+    value: "colector",
     icon: CreditCard,
   },
 ] as const;

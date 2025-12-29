@@ -58,12 +58,12 @@ export const profilesColumns: ColumnDef<Profile>[] = [
         cell: ({ row }) => <LongText className='max-w-xl'>{row.getValue('description')}</LongText>,
     },
     {
-        accessorKey: 'usersCount',
+        accessorKey: 'permissions',
         header: ({ column }) => (
-        <DataTableColumnHeader column={column} title='Users' />
+        <DataTableColumnHeader column={column} title='Permissions' />
         ),
         cell: ({ row }) => {
-        return <Badge variant='outline'>{row.getValue('usersCount')}</Badge>
+        return <Badge variant='outline'>{row.getValue('permissions')}</Badge>
         },
         enableSorting: false,
     },

@@ -14,5 +14,5 @@ export const profiles: Profile[] = roles.map((r, idx) => ({
     `${r.label} can manage users and view reports.`,
     `General role for ${r.label.toLowerCase()}s.`,
   ]),
-  usersCount: faker.number.int({ min: 0, max: 50 }),
+  permissions: faker.number.int({ min: 0, max: 50 }),
 }))

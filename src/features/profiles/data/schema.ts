@@ -5,7 +5,7 @@ const profileSchema = z.object({
   label: z.string(),
   value: z.string(),
   description: z.string().optional(),
-  usersCount: z.number().optional().catch(0),
+  permissions: z.number().optional().catch(0),
 })
 export type Profile = z.infer<typeof profileSchema>
 export const profileListSchema = z.array(profileSchema)
