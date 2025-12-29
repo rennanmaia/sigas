@@ -24,6 +24,7 @@ import {
   BriefcaseBusiness,
   ClipboardList,
   Banknote,
+  Shield
 } from "lucide-react";
 import { type SidebarData } from "../types";
 
@@ -95,6 +96,11 @@ export const sidebarData: SidebarData = {
           title: "Usuários",
           url: "/users",
           icon: Users,
+        },
+        {
+          title: "Perfis",
+          url: "/profiles",
+          icon: Shield,
         },
         // {
         //   title: "Secured by Clerk",
