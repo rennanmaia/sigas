@@ -1,6 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { ArrowLeft, Trash2, UserPen } from 'lucide-react'
-import { toast } from 'sonner'
+import { ArrowLeft, UserPen } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Main } from '@/components/layout/main'
