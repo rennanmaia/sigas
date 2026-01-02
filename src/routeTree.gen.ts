@@ -36,6 +36,7 @@ import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_a
 import { Route as AuthenticatedSettingsAccountRouteImport } from './routes/_authenticated/settings/account'
 import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
 import { Route as AuthenticatedProfilesCreateIndexRouteImport } from './routes/_authenticated/profiles/create/index'
+import { Route as AuthenticatedProfilesProfileIdIndexRouteImport } from './routes/_authenticated/profiles/$profileId/index'
 import { Route as AuthenticatedProfilesEditIdIndexRouteImport } from './routes/_authenticated/profiles/edit/$id/index'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -184,6 +185,12 @@ const AuthenticatedProfilesCreateIndexRoute =
     path: '/profiles/create/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedProfilesProfileIdIndexRoute =
+  AuthenticatedProfilesProfileIdIndexRouteImport.update({
+    id: '/profiles/$profileId/',
+    path: '/profiles/$profileId/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedProfilesEditIdIndexRoute =
   AuthenticatedProfilesEditIdIndexRouteImport.update({
     id: '/profiles/edit/$id/',
@@ -217,6 +224,7 @@ export interface FileRoutesByFullPath {
   '/projects': typeof AuthenticatedProjectsIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
+  '/profiles/$profileId': typeof AuthenticatedProfilesProfileIdIndexRoute
   '/profiles/create': typeof AuthenticatedProfilesCreateIndexRoute
   '/profiles/edit/$id': typeof AuthenticatedProfilesEditIdIndexRoute
 }
@@ -245,6 +253,7 @@ export interface FileRoutesByTo {
   '/projects': typeof AuthenticatedProjectsIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
+  '/profiles/$profileId': typeof AuthenticatedProfilesProfileIdIndexRoute
   '/profiles/create': typeof AuthenticatedProfilesCreateIndexRoute
   '/profiles/edit/$id': typeof AuthenticatedProfilesEditIdIndexRoute
 }
@@ -276,6 +285,7 @@ export interface FileRoutesById {
   '/_authenticated/projects/': typeof AuthenticatedProjectsIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
+  '/_authenticated/profiles/$profileId/': typeof AuthenticatedProfilesProfileIdIndexRoute
   '/_authenticated/profiles/create/': typeof AuthenticatedProfilesCreateIndexRoute
   '/_authenticated/profiles/edit/$id/': typeof AuthenticatedProfilesEditIdIndexRoute
 }
@@ -307,6 +317,7 @@ export interface FileRouteTypes {
     | '/projects'
     | '/settings/'
     | '/users'
+    | '/profiles/$profileId'
     | '/profiles/create'
     | '/profiles/edit/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -335,6 +346,7 @@ export interface FileRouteTypes {
     | '/projects'
     | '/settings'
     | '/users'
+    | '/profiles/$profileId'
     | '/profiles/create'
     | '/profiles/edit/$id'
   id:
@@ -365,6 +377,7 @@ export interface FileRouteTypes {
     | '/_authenticated/projects/'
     | '/_authenticated/settings/'
     | '/_authenticated/users/'
+    | '/_authenticated/profiles/$profileId/'
     | '/_authenticated/profiles/create/'
     | '/_authenticated/profiles/edit/$id/'
   fileRoutesById: FileRoutesById
@@ -574,6 +587,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfilesCreateIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/profiles/$profileId/': {
+      id: '/_authenticated/profiles/$profileId/'
+      path: '/profiles/$profileId'
+      fullPath: '/profiles/$profileId'
+      preLoaderRoute: typeof AuthenticatedProfilesProfileIdIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/profiles/edit/$id/': {
       id: '/_authenticated/profiles/edit/$id/'
       path: '/profiles/edit/$id'
@@ -618,6 +638,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProfilesIndexRoute: typeof AuthenticatedProfilesIndexRoute
   AuthenticatedProjectsIndexRoute: typeof AuthenticatedProjectsIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
+  AuthenticatedProfilesProfileIdIndexRoute: typeof AuthenticatedProfilesProfileIdIndexRoute
   AuthenticatedProfilesCreateIndexRoute: typeof AuthenticatedProfilesCreateIndexRoute
   AuthenticatedProfilesEditIdIndexRoute: typeof AuthenticatedProfilesEditIdIndexRoute
 }
@@ -633,6 +654,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProfilesIndexRoute: AuthenticatedProfilesIndexRoute,
   AuthenticatedProjectsIndexRoute: AuthenticatedProjectsIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
+  AuthenticatedProfilesProfileIdIndexRoute:
+    AuthenticatedProfilesProfileIdIndexRoute,
   AuthenticatedProfilesCreateIndexRoute: AuthenticatedProfilesCreateIndexRoute,
   AuthenticatedProfilesEditIdIndexRoute: AuthenticatedProfilesEditIdIndexRoute,
 }
