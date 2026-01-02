@@ -63,7 +63,8 @@ export const profilesColumns: ColumnDef<Profile>[] = [
         <DataTableColumnHeader column={column} title='Permissions' />
         ),
         cell: ({ row }) => {
-        return <Badge variant='outline'>{row.getValue('permissions')}</Badge>
+        const perms = (row.getValue('permissions') || []) as string[]
+        return <Badge variant='outline'>{perms.length}</Badge>
         },
         enableSorting: false,
     },
