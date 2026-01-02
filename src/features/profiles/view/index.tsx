@@ -20,14 +20,6 @@ export default function ViewProfile({ profileId }: { profileId?: string }) {
     )
   }
 
-  const handleDelete = () => {
-    if (!confirm(`Delete profile ${profile.label}? This cannot be undone.`)) return
-    const idx = profiles.findIndex((p) => p.id === profile.id)
-    if (idx !== -1) profiles.splice(idx, 1)
-    toast.success('Profile deleted')
-    window.location.href = '/profiles'
-  }
-
   const permsByGroup = featureGroups.map((g) => ({
     group: g,
     perms: g.children.filter((c) => profile.permissions.includes(c.id)),
@@ -49,8 +41,8 @@ export default function ViewProfile({ profileId }: { profileId?: string }) {
       </Header>
 
       <Main>
-        <div className='grid grid-cols-1 gap-6 lg:grid-cols-3'>
-          <div className='lg:col-span-2'>
+        <div className=''>
+          <div className=''>
             <Card>
               <CardHeader>
                 <CardTitle>{profile.label}</CardTitle>
@@ -65,7 +57,6 @@ export default function ViewProfile({ profileId }: { profileId?: string }) {
                       <div className='grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm'>
                         {perms.map((p) => (
                           <div key={p.id} className='inline-flex items-center gap-2 rounded-md border px-3 py-1'>
-                            <span className='font-mono text-xs'>{p.id}</span>
                             <span className='text-sm text-muted-foreground'>{p.label}</span>
                           </div>
                         ))}
@@ -78,7 +69,6 @@ export default function ViewProfile({ profileId }: { profileId?: string }) {
                   <Link to={`/profiles/edit/$id`} params={{ id: profile.id }}>
                     <Button variant='secondary'><UserPen size={16} className='me-2' /> Edit</Button>
                   </Link>
-                  <Button variant='destructive' onClick={handleDelete}><Trash2 size={16} className='me-2' /> Delete</Button>
                 </div>
               </CardContent>
             </Card>
