@@ -67,7 +67,7 @@ export default function ViewProfile({ profileId }: { profileId?: string }) {
 
                 <div className='mt-6 flex gap-2'>
                   <Link to={`/profiles/edit/$id`} params={{ id: profile.id }}>
-                    <Button variant='secondary'><UserPen size={16} className='me-2' /> Edit</Button>
+                    <Button variant='secondary'><UserPen size={16} className='me-2' />Edit</Button>
                   </Link>
                 </div>
               </CardContent>
