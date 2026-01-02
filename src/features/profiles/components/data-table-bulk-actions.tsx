@@ -8,6 +8,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { DataTableBulkActions as BulkActionsToolbar } from '@/components/data-table'
+import { ProfilesMultiDeleteDialog } from './profiles-multi-delete-dialog'
 
 type DataTableBulkActionsProps<TData> = {
   table: Table<TData>
@@ -16,7 +17,7 @@ type DataTableBulkActionsProps<TData> = {
 export function DataTableBulkActions<TData>({
   table,
 }: DataTableBulkActionsProps<TData>) {
-  const [_, setShowDeleteConfirm] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
   return (
     <>
@@ -41,7 +42,11 @@ export function DataTableBulkActions<TData>({
         </Tooltip>
       </BulkActionsToolbar>
 
-      {/* Multidelete dialog */}
+      <ProfilesMultiDeleteDialog 
+        table={table}
+        open={showDeleteConfirm}
+        onOpenChange={setShowDeleteConfirm}
+      />
     </>
   )
 }
