@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { type Profile } from '../data/schema'
 import { useProfiles } from './profiles-provider'
+import { Link } from '@tanstack/react-router'
 
 type DataTableRowActionsProps = {
   row: Row<Profile>
@@ -32,16 +33,12 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end' className='w-[160px]'>
-          <DropdownMenuItem
-            onClick={() => {
-              setCurrentRow(row.original)
-              setOpen('edit')
-            }}
-          >
-            Edit
-            <DropdownMenuShortcut>
-              <UserPen size={16} />
-            </DropdownMenuShortcut>
+          <DropdownMenuItem asChild>
+            <Link to={`/profiles/edit/$id`} params={{
+              id: row.original.id
+            }}>
+              Edit
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
