@@ -22,10 +22,10 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-// roles import intentionally omitted for profiles table
 import type { Profile } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { profilesColumns as columns } from './profiles-columns'
+import { getRouteApi } from '@tanstack/react-router'
 
 type DataTableProps = {
   data: Profile[]
@@ -33,10 +33,13 @@ type DataTableProps = {
   navigate: NavigateFn
 }
 
+const route = getRouteApi('/_authenticated/profiles/$profileId/')
+
 export function ProfilesTable({ data, search, navigate }: DataTableProps) {
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [sorting, setSorting] = useState<SortingState>([])
+  const navigateToView = route.useNavigate()
 
   const {
     columnFilters,
@@ -130,6 +133,13 @@ export function ProfilesTable({ data, search, navigate }: DataTableProps) {
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
                   className='group/row'
+                  onClick={() => {
+                    navigateToView({
+                      params: {
+                        profileId: row.original.id
+                      }
+                    })
+                  }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
