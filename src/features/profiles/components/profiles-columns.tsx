@@ -29,6 +29,8 @@ export const profilesColumns: ColumnDef<Profile>[] = [
             onCheckedChange={(value: any) => row.toggleSelected(!!value)}
             aria-label='Select row'
             className='translate-y-[2px]'
+            onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
         />
         ),
         enableSorting: false,
