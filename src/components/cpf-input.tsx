@@ -1,12 +1,10 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-// Keep only digits
 function onlyDigits(value: string) {
   return value.replace(/\D/g, "");
 }
 
-// Format digits as CPF: 000.000.000-00 (max 11 digits)
 function formatCpf(digits: string) {
   const d = digits.slice(0, 11);
   const p1 = d.slice(0, 3);
@@ -28,13 +26,11 @@ function CpfInput({
   onChange,
   ...props
 }: React.ComponentProps<"input">) {
-  // internal state used only when the component is uncontrolled
   const [internalValue, setInternalValue] = React.useState(() => {
     if (value === undefined || value === null) return "";
     return formatCpf(String(value));
   });
 
-  // when used as a controlled component, keep display in sync
   React.useEffect(() => {
     if (value !== undefined && value !== null) {
       setInternalValue(formatCpf(String(value)));
@@ -45,17 +41,13 @@ function CpfInput({
     const rawDigits = onlyDigits(e.target.value).slice(0, 11);
     const masked = formatCpf(rawDigits);
 
-    // If uncontrolled, update internal state (display)
     if (value === undefined) {
       setInternalValue(masked);
     }
 
-    // If parent provided an onChange, call it with raw digits in target.value
     if (onChange) {
-      // For compatibility with react-hook-form, prefer calling onChange with the raw
-      // digits string. Many libraries accept either an event or the new value.
       try {
-        (onChange as any)(rawDigits);
+        onChange(rawDigits as any);
       } catch {
         onChange(e as any);
       }
@@ -72,7 +64,6 @@ function CpfInput({
         "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
         className
       )}
-      // show masked value for display; if controlled, format the provided value
       value={
         value === undefined || value === null
           ? internalValue
@@ -80,7 +71,7 @@ function CpfInput({
       }
       onChange={handleChange}
       inputMode="numeric"
-      pattern="[0-9]*"
+      // pattern="[0-9]*"
       {...props}
     />
   );

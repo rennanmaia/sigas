@@ -9,6 +9,27 @@ export function sleep(ms: number = 1000) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+export function isValidCpf(value: string) {
+  const v = String(value).replace(/\D/g, "");
+  if (v.length !== 11) return false;
+  if (/^(\d)\1{10}$/.test(v)) return false;
+
+  const digits = v.split("").map((d) => Number(d));
+
+  const calc = (slice: number) => {
+    let sum = 0;
+    for (let i = 0; i < slice; i++) {
+      sum += digits[i] * (slice + 1 - i);
+    }
+    const res = (sum * 10) % 11;
+    return res === 10 ? 0 : res;
+  };
+
+  const v1 = calc(9);
+  const v2 = calc(10);
+  return v1 === digits[9] && v2 === digits[10];
+}
+
 /**
  * Generates page numbers for pagination with ellipsis
  * @param currentPage - Current page number (1-based)
