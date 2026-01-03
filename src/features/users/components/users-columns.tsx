@@ -55,6 +55,11 @@ export const usersColumns: ColumnDef<User>[] = [
     enableHiding: false,
   },
   {
+    accessorKey: "cpf",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="CPF" />,
+    cell: ({ row }) => <div className="text-sm">{row.getValue('cpf')}</div>,
+  },
+  {
     id: "fullName",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Name" />
@@ -74,14 +79,6 @@ export const usersColumns: ColumnDef<User>[] = [
     cell: ({ row }) => (
       <div className="w-fit ps-2 text-nowrap">{row.getValue("email")}</div>
     ),
-  },
-  {
-    accessorKey: "phoneNumber",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Phone Number" />
-    ),
-    cell: ({ row }) => <div>{row.getValue("phoneNumber")}</div>,
-    enableSorting: false,
   },
   {
     accessorKey: "status",
@@ -108,7 +105,7 @@ export const usersColumns: ColumnDef<User>[] = [
   {
     accessorKey: "role",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Role" />
+      <DataTableColumnHeader column={column} title="Profile" />
     ),
     cell: ({ row }) => {
       const { role } = row.original;
