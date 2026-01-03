@@ -1,6 +1,11 @@
 import { type ChangeEvent, useState } from "react";
 import { getRouteApi } from "@tanstack/react-router";
-import { SlidersHorizontal, ArrowUpAZ, ArrowDownAZ } from "lucide-react";
+import {
+  SlidersHorizontal,
+  ArrowUpAZ,
+  ArrowDownAZ,
+  Folder,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -94,15 +99,22 @@ export function Projects() {
       </Header>
 
       {/* ===== Content ===== */}
-      <Main fixed>
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Projetos</h1>
-          <p className="text-muted-foreground">Lista de todos os projetoss</p>
+      <Main className="flex flex-1 flex-col gap-4 sm:gap-1">
+        <div className="flex flex-wrap items-end justify-between gap-2">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Projetos</h1>
+            <p className="text-muted-foreground">Lista de todos os projetos</p>
+          </div>
+          <div className="flex gap-2">
+            <Button className="space-x-1" onClick={() => {}}>
+              <span>Criar projeto</span> <Folder size={18} />
+            </Button>
+          </div>
         </div>
         <div className="my-4 flex items-end justify-between sm:my-0 sm:items-center">
           <div className="flex flex-col gap-4 sm:my-4 sm:flex-row">
             <Input
-              placeholder="Filtrar projetos..."
+              placeholder="Procurar projetos..."
               className="h-9 w-40 lg:w-[250px]"
               value={searchTerm}
               onChange={handleSearch}
