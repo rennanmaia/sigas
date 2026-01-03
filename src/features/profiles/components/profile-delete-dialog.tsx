@@ -24,7 +24,7 @@ export function ProfilesDeleteDialog({
   const [value, setValue] = useState("");
 
   const handleDelete = () => {
-    if (value.trim() !== currentRow.id) return;
+    if (value.trim() !== currentRow.label.trim()) return;
 
     onOpenChange(false);
     showSubmittedData(currentRow, "The following profile has been deleted:");
@@ -35,35 +35,35 @@ export function ProfilesDeleteDialog({
       open={open}
       onOpenChange={onOpenChange}
       handleConfirm={handleDelete}
-      disabled={value.trim() !== currentRow.id}
+      disabled={value.trim() !== currentRow.label.trim()}
       title={
         <span className="text-destructive">
           <AlertTriangle
             className="stroke-destructive me-1 inline-block"
             size={18}
           />{" "}
-          Delete User
+          Delete Profile
         </span>
       }
       desc={
         <div className="space-y-4">
           <p className="mb-2">
             Are you sure you want to delete{" "}
-            <span className="font-bold">{currentRow.id}</span>?
+            <span className="font-bold">{currentRow.label}</span>?
             <br />
-            This action will permanently remove the user with the role of{" "}
+            This action will permanently remove the profile. Type the{" "}
             <span className="font-bold">
-              {currentRow.label.toUpperCase()}
+              {currentRow.label}
             </span>{" "}
-            from the system. This cannot be undone.
+            to confirm deletion. This cannot be undone.
           </p>
 
           <Label className="my-2">
-            Username:
+            Confirm word:
             <Input
               value={value}
               onChange={(e) => setValue(e.target.value)}
-              placeholder="Enter username to confirm deletion."
+              placeholder="Enter Confirm word to confirm deletion."
             />
           </Label>
 
