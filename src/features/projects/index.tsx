@@ -1,5 +1,5 @@
 import { type ChangeEvent, useState } from "react";
-import { getRouteApi } from "@tanstack/react-router";
+import { getRouteApi, Link } from "@tanstack/react-router";
 import {
   SlidersHorizontal,
   ArrowUpAZ,
@@ -23,6 +23,7 @@ import { ProfileDropdown } from "@/components/profile-dropdown";
 import { Search } from "@/components/search";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { projects as projectsData } from "./data/projects";
+
 const route = getRouteApi("/_authenticated/projects/");
 type ProjectType = "all" | "concluido" | "emAndamento";
 
@@ -103,11 +104,13 @@ export function Projects() {
         <div className="flex flex-wrap items-end justify-between gap-2">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Projetos</h1>
-            <p className="text-muted-foreground">Lista de todos os projetos</p>
+            <p className="text-muted-foreground">Gerencie seus projetos</p>
           </div>
           <div className="flex gap-2">
-            <Button className="space-x-1" onClick={() => {}}>
-              <span>Criar projeto</span> <Folder size={18} />
+            <Button className="space-x-1" asChild>
+              <Link to="/projects/create">
+                <span>Criar projeto</span> <Folder size={18} />
+              </Link>
             </Button>
           </div>
         </div>
@@ -160,34 +163,42 @@ export function Projects() {
           </Select>
         </div>
         <Separator className="shadow-sm" />
+
         <ul className="faded-bottom no-scrollbar grid gap-4 overflow-auto pt-4 pb-16 md:grid-cols-2 lg:grid-cols-3">
           {filteredProjects.map((project) => (
-            <li
-              key={project.title}
-              className="rounded-lg border p-4 hover:shadow-md"
-            >
-              <div className="mb-8 flex items-center justify-between">
-                <div
-                  className={`flex size-10 items-center justify-center rounded-lg bg-muted p-2`}
-                >
-                  {project.logo}
+            <li key={project.id}>
+              <Link
+                to="/projects/$projectId"
+                params={{ projectId: project.id }}
+                className="group block h-full rounded-lg border p-4 transition-all hover:border-primary/50 hover:shadow-md"
+              >
+                <div className="mb-8 flex items-center justify-between">
+                  <div className="flex size-10 items-center justify-center rounded-lg bg-muted p-2 transition-colors group-hover:bg-primary/10">
+                    {project.logo}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className={`${
+                      project.status === "concluido"
+                        ? "border-blue-300 bg-blue-50 hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-950 dark:hover:bg-blue-900"
+                        : ""
+                    }`}
+                  >
+                    {project.status === "concluido"
+                      ? "Concluído"
+                      : "Em andamento"}
+                  </Button>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className={`${project.status === "concluido" ? "border border-blue-300 bg-blue-50 hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-950 dark:hover:bg-blue-900" : ""}`}
-                >
-                  {project.status === "concluido"
-                    ? "Concluído"
-                    : "Em andamento"}
-                </Button>
-              </div>
-              <div>
-                <h2 className="mb-1 font-semibold">{project.title}</h2>
-                <p className="line-clamp-2 text-gray-500">
-                  {project.description}
-                </p>
-              </div>
+                <div>
+                  <h2 className="mb-1 font-semibold transition-colors group-hover:text-primary">
+                    {project.title}
+                  </h2>
+                  <p className="line-clamp-2 text-sm text-muted-foreground">
+                    {project.description}
+                  </p>
+                </div>
+              </Link>
             </li>
           ))}
         </ul>
