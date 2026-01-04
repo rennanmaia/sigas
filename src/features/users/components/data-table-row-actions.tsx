@@ -35,6 +35,14 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           <DropdownMenuItem
             onClick={() => {
               setCurrentRow(row.original)
+              setOpen('view')
+            }}
+          >
+            View
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              setCurrentRow(row.original)
               setOpen('edit')
             }}
           >
@@ -43,6 +51,16 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
               <UserPen size={16} />
             </DropdownMenuShortcut>
           </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={() => {
+              setCurrentRow(row.original)
+              setOpen('toggleStatus')
+            }}
+          >
+            {row.original.status === 'active' ? 'Deactivate' : 'Activate'}
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={() => {

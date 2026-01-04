@@ -23,7 +23,7 @@ export async function authenticate(cpf: string, password: string): Promise<Authe
     user: {
         cpf,
         email: 'user@sigas.com',
-        role: ['user'],
+        role: ['general_administrator'],
     }
   }
 }

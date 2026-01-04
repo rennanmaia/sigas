@@ -24,16 +24,12 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { roles } from '../data/data'
 import { type User } from '../data/schema'
+import { useUsers } from './users-provider'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { usersColumns as columns } from './users-columns'
 
-type DataTableProps = {
-  data: User[]
-  search: Record<string, unknown>
-  navigate: NavigateFn
-}
-
-export function UsersTable({ data, search, navigate }: DataTableProps) {
+export function UsersTable({ search, navigate }: { search: Record<string, unknown>; navigate: NavigateFn }) {
+  const { users: data } = useUsers()
   // Local UI-only states
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -101,23 +97,27 @@ export function UsersTable({ data, search, navigate }: DataTableProps) {
     >
       <DataTableToolbar
         table={table}
-        searchPlaceholder='Filter users...'
+        searchPlaceholder='Filter by name...'
         searchKey='username'
         filters={[
+          {
+            columnId: 'username',
+            title: 'Name',
+            // text filter is represented by searchKey; keeping here for discoverability
+            options: [],
+          },
+          {
+            columnId: 'role',
+            title: 'Profile',
+            options: roles.map((role) => ({ label: role.label, value: role.value })),
+          },
           {
             columnId: 'status',
             title: 'Status',
             options: [
               { label: 'Active', value: 'active' },
               { label: 'Inactive', value: 'inactive' },
-              { label: 'Invited', value: 'invited' },
-              { label: 'Suspended', value: 'suspended' },
             ],
-          },
-          {
-            columnId: 'role',
-            title: 'Role',
-            options: roles.map((role) => ({ ...role })),
           },
         ]}
       />
@@ -133,8 +133,6 @@ export function UsersTable({ data, search, navigate }: DataTableProps) {
                       colSpan={header.colSpan}
                       className={cn(
                         'bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted',
-                        header.column.columnDef.meta?.className,
-                        header.column.columnDef.meta?.thClassName
                       )}
                     >
                       {header.isPlaceholder
@@ -161,9 +159,7 @@ export function UsersTable({ data, search, navigate }: DataTableProps) {
                     <TableCell
                       key={cell.id}
                       className={cn(
-                        'bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted',
-                        cell.column.columnDef.meta?.className,
-                        cell.column.columnDef.meta?.tdClassName
+                        'bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted'
                       )}
                     >
                       {flexRender(

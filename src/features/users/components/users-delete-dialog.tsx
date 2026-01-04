@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { AlertTriangle } from "lucide-react";
-import { showSubmittedData } from "@/lib/show-submitted-data";
+import { useUsers } from './users-provider'
+import { toast } from 'sonner'
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,12 +22,15 @@ export function UsersDeleteDialog({
   currentRow,
 }: UserDeleteDialogProps) {
   const [value, setValue] = useState("");
+  const { setUsers } = useUsers()
 
   const handleDelete = () => {
     if (value.trim() !== currentRow.username) return;
 
+    // remove user from provider state
+    setUsers((prev) => prev.filter((u) => u.id !== currentRow.id))
     onOpenChange(false);
-    showSubmittedData(currentRow, "The following user has been deleted:");
+    toast.success('User deleted')
   };
 
   return (
