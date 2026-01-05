@@ -1,6 +1,11 @@
 import { type ChangeEvent, useState } from "react";
-import { getRouteApi } from "@tanstack/react-router";
-import { SlidersHorizontal, ArrowUpAZ, ArrowDownAZ } from "lucide-react";
+import { getRouteApi, Link } from "@tanstack/react-router";
+import {
+  SlidersHorizontal,
+  ArrowUpAZ,
+  ArrowDownAZ,
+  Folder,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -17,7 +22,8 @@ import { Main } from "@/components/layout/main";
 import { ProfileDropdown } from "@/components/profile-dropdown";
 import { Search } from "@/components/search";
 import { ThemeSwitch } from "@/components/theme-switch";
-import { projects as projectsData } from "./data/projects";
+import { ProjectsProvider, useProjects } from "./components/projects-provider";
+
 const route = getRouteApi("/_authenticated/projects/");
 type ProjectType = "all" | "concluido" | "emAndamento";
 
@@ -27,7 +33,8 @@ const projectText = new Map<ProjectType, string>([
   ["emAndamento", "Em andamento"],
 ]);
 
-export function Projects() {
+function ProjectsList() {
+  const { projects: projectsData } = useProjects();
   const {
     filter = "",
     type = "all",
@@ -59,10 +66,7 @@ export function Projects() {
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
     navigate({
-      search: (prev) => ({
-        ...prev,
-        filter: e.target.value || undefined,
-      }),
+      search: (prev) => ({ ...prev, filter: e.target.value || undefined }),
     });
   };
 
@@ -75,15 +79,14 @@ export function Projects() {
       }),
     });
   };
-
-  const handleSortChange = (sort: "asc" | "desc") => {
-    setSort(sort);
-    navigate({ search: (prev) => ({ ...prev, sort }) });
+  const handleSortChange = (value: "asc" | "desc") => {
+    setSort(value);
+    navigate({
+      search: (prev) => ({ ...prev, sort: value }),
+    });
   };
-
   return (
     <>
-      {/* ===== Top Heading ===== */}
       <Header>
         <Search />
         <div className="ms-auto flex items-center gap-4">
@@ -93,16 +96,25 @@ export function Projects() {
         </div>
       </Header>
 
-      {/* ===== Content ===== */}
-      <Main fixed>
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Projetos</h1>
-          <p className="text-muted-foreground">Lista de todos os projetoss</p>
+      <Main className="flex flex-1 flex-col gap-4 sm:gap-1">
+        <div className="flex flex-wrap items-end justify-between gap-2">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Projetos</h1>
+            <p className="text-muted-foreground">Gerencie seus projetos</p>
+          </div>
+          <div className="flex gap-2">
+            <Button className="space-x-1" asChild>
+              <Link to="/projects/create">
+                <span>Criar projeto</span> <Folder size={18} />
+              </Link>
+            </Button>
+          </div>
         </div>
+
         <div className="my-4 flex items-end justify-between sm:my-0 sm:items-center">
           <div className="flex flex-col gap-4 sm:my-4 sm:flex-row">
             <Input
-              placeholder="Filtrar projetos..."
+              placeholder="Procurar projetos..."
               className="h-9 w-40 lg:w-[250px]"
               value={searchTerm}
               onChange={handleSearch}
@@ -148,38 +160,54 @@ export function Projects() {
           </Select>
         </div>
         <Separator className="shadow-sm" />
+
         <ul className="faded-bottom no-scrollbar grid gap-4 overflow-auto pt-4 pb-16 md:grid-cols-2 lg:grid-cols-3">
           {filteredProjects.map((project) => (
-            <li
-              key={project.title}
-              className="rounded-lg border p-4 hover:shadow-md"
-            >
-              <div className="mb-8 flex items-center justify-between">
-                <div
-                  className={`flex size-10 items-center justify-center rounded-lg bg-muted p-2`}
-                >
-                  {project.logo}
+            <li key={project.id}>
+              <Link
+                to="/projects/$projectId"
+                params={{ projectId: project.id }}
+                className="group block h-full rounded-lg border p-4 transition-all hover:border-primary/50 hover:shadow-md"
+              >
+                <div className="mb-8 flex items-center justify-between">
+                  <div className="flex size-10 items-center justify-center rounded-lg bg-muted p-2 transition-colors group-hover:bg-primary/10">
+                    {project.logo}
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className={
+                      project.status === "concluido"
+                        ? "border-blue-300 bg-blue-50"
+                        : ""
+                    }
+                  >
+                    {project.status === "concluido"
+                      ? "Concluído"
+                      : "Em andamento"}
+                  </Button>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className={`${project.status === "concluido" ? "border border-blue-300 bg-blue-50 hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-950 dark:hover:bg-blue-900" : ""}`}
-                >
-                  {project.status === "concluido"
-                    ? "Concluído"
-                    : "Em andamento"}
-                </Button>
-              </div>
-              <div>
-                <h2 className="mb-1 font-semibold">{project.title}</h2>
-                <p className="line-clamp-2 text-gray-500">
-                  {project.description}
-                </p>
-              </div>
+                <div>
+                  <h2 className="mb-1 font-semibold group-hover:text-primary">
+                    {project.title}
+                  </h2>
+                  <p className="line-clamp-2 text-sm text-muted-foreground">
+                    {project.description}
+                  </p>
+                </div>
+              </Link>
             </li>
           ))}
         </ul>
       </Main>
     </>
+  );
+}
+
+export function Projects() {
+  return (
+    <ProjectsProvider>
+      <ProjectsList />
+    </ProjectsProvider>
   );
 }
