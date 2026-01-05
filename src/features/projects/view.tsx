@@ -32,7 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { projects as projectsData } from "./data/projects";
+import { projects as projectsData } from "./data/projects-mock";
 
 const projectForms = [
   {

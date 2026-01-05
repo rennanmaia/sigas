@@ -22,7 +22,7 @@ import { Main } from "@/components/layout/main";
 import { ProfileDropdown } from "@/components/profile-dropdown";
 import { Search } from "@/components/search";
 import { ThemeSwitch } from "@/components/theme-switch";
-import { projects as projectsData } from "./data/projects";
+import { ProjectsProvider, useProjects } from "./components/projects-provider";
 
 const route = getRouteApi("/_authenticated/projects/");
 type ProjectType = "all" | "concluido" | "emAndamento";
@@ -33,7 +33,8 @@ const projectText = new Map<ProjectType, string>([
   ["emAndamento", "Em andamento"],
 ]);
 
-export function Projects() {
+function ProjectsList() {
+  const { projects: projectsData } = useProjects();
   const {
     filter = "",
     type = "all",
@@ -65,10 +66,7 @@ export function Projects() {
   const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
     navigate({
-      search: (prev) => ({
-        ...prev,
-        filter: e.target.value || undefined,
-      }),
+      search: (prev) => ({ ...prev, filter: e.target.value || undefined }),
     });
   };
 
@@ -81,15 +79,14 @@ export function Projects() {
       }),
     });
   };
-
-  const handleSortChange = (sort: "asc" | "desc") => {
-    setSort(sort);
-    navigate({ search: (prev) => ({ ...prev, sort }) });
+  const handleSortChange = (value: "asc" | "desc") => {
+    setSort(value);
+    navigate({
+      search: (prev) => ({ ...prev, sort: value }),
+    });
   };
-
   return (
     <>
-      {/* ===== Top Heading ===== */}
       <Header>
         <Search />
         <div className="ms-auto flex items-center gap-4">
@@ -99,7 +96,6 @@ export function Projects() {
         </div>
       </Header>
 
-      {/* ===== Content ===== */}
       <Main className="flex flex-1 flex-col gap-4 sm:gap-1">
         <div className="flex flex-wrap items-end justify-between gap-2">
           <div>
@@ -114,6 +110,7 @@ export function Projects() {
             </Button>
           </div>
         </div>
+
         <div className="my-4 flex items-end justify-between sm:my-0 sm:items-center">
           <div className="flex flex-col gap-4 sm:my-4 sm:flex-row">
             <Input
@@ -179,11 +176,11 @@ export function Projects() {
                   <Button
                     variant="outline"
                     size="sm"
-                    className={`${
+                    className={
                       project.status === "concluido"
-                        ? "border-blue-300 bg-blue-50 hover:bg-blue-100 dark:border-blue-700 dark:bg-blue-950 dark:hover:bg-blue-900"
+                        ? "border-blue-300 bg-blue-50"
                         : ""
-                    }`}
+                    }
                   >
                     {project.status === "concluido"
                       ? "Concluído"
@@ -191,7 +188,7 @@ export function Projects() {
                   </Button>
                 </div>
                 <div>
-                  <h2 className="mb-1 font-semibold transition-colors group-hover:text-primary">
+                  <h2 className="mb-1 font-semibold group-hover:text-primary">
                     {project.title}
                   </h2>
                   <p className="line-clamp-2 text-sm text-muted-foreground">
@@ -204,5 +201,13 @@ export function Projects() {
         </ul>
       </Main>
     </>
+  );
+}
+
+export function Projects() {
+  return (
+    <ProjectsProvider>
+      <ProjectsList />
+    </ProjectsProvider>
   );
 }
