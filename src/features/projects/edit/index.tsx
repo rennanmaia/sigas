@@ -60,7 +60,8 @@ export default function EditProject() {
       <Header fixed>
         <div className="flex items-center gap-2">
           <Link
-            to="/projects"
+            to="/projects/$projectId"
+            params={{ projectId: projectId }}
             className="inline-flex items-center gap-2 text-sm font-medium"
           >
             <ArrowLeft size={18} /> Voltar
