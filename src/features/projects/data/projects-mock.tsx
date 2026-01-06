@@ -12,12 +12,37 @@ import {
 
 export type ProjectStatus = "em andamento" | "concluido";
 export type ProjectCategory = "Ambiental" | "Social";
+export const projectForms = [
+  {
+    id: "frm-1",
+    title: "Checklist de Campo - Fauna",
+    responses: 840,
+    status: "Ativo",
+  },
+  {
+    id: "frm-2",
+    title: "Registro de Avistamento Especial",
+    responses: 400,
+    status: "Ativo",
+  },
+  {
+    id: "frm-3",
+    title: "Relatório de Incidentes Ambientais",
+    responses: 0,
+    status: "Rascunho",
+  },
+];
 
+export const projectTeam = [
+  { id: "u-1", name: "Ana Silva", role: "Gerente de Projeto", initial: "AS" },
+  { id: "u-2", name: "Lucas Martins", role: "Coletor Pleno", initial: "LM" },
+  { id: "u-3", name: "Patrícia Rocha", role: "Coletor Júnior", initial: "PR" },
+];
 export type ProjectStats = {
-  formsCount: number;       
-  responsesCount: number;    
-  collectorsCount: number;  
-  managersCount: number;      
+  formsCount: number;
+  responsesCount: number;
+  collectorsCount: number;
+  managersCount: number;
 };
 
 export type Project = {
@@ -40,143 +65,151 @@ export const projects: Project[] = [
     title: "Monitoramento de Fauna (BR-101)",
     logo: <Bird className="text-emerald-600" size={20} />,
     status: "em andamento",
-    description: "Coleta de dados sobre atropelamento e avistamento de animais silvestres no trecho sul.",
+    description:
+      "Coleta de dados sobre atropelamento e avistamento de animais silvestres no trecho sul.",
     category: "Ambiental",
- startDate: "01/01/2026",
+    startDate: "01/01/2026",
     endDate: "25/06/2026",
-    budget: 150000.00,
+    budget: 150000.0,
     responsible: "Ana Silva",
     stats: {
       formsCount: 3,
       responsesCount: 1240,
       collectorsCount: 8,
-      managersCount: 2
-    }
+      managersCount: 2,
+    },
   },
   {
     id: "proj-002",
     title: "Censo Socioeconômico - Vila Nova",
     logo: <Users className="text-blue-600" size={20} />,
     status: "concluido",
-    description: "Levantamento demográfico e perfil de renda das famílias afetadas pela obra da barragem.",
+    description:
+      "Levantamento demográfico e perfil de renda das famílias afetadas pela obra da barragem.",
     category: "Social",
- startDate: "01/01/2026",
+    startDate: "01/01/2026",
     endDate: "25/06/2026",
-    budget: 85000.00,
+    budget: 85000.0,
     responsible: "Carlos Mendes",
     stats: {
       formsCount: 1,
       responsesCount: 450,
       collectorsCount: 15,
-      managersCount: 3
-    }
+      managersCount: 3,
+    },
   },
   {
     id: "proj-003",
     title: "Qualidade da Água (Bacia Hidrográfica)",
     logo: <Droplets className="text-cyan-600" size={20} />,
     status: "em andamento",
-    description: "Análise físico-química periódica de pontos de coleta nos rios da região mineradora.",
+    description:
+      "Análise físico-química periódica de pontos de coleta nos rios da região mineradora.",
     category: "Ambiental",
- startDate: "01/01/2026",
+    startDate: "01/01/2026",
     endDate: "25/06/2026",
-    budget: 220000.00,
+    budget: 220000.0,
     responsible: "Mariana Costa",
     stats: {
       formsCount: 5,
       responsesCount: 89,
       collectorsCount: 4,
-      managersCount: 1
-    }
+      managersCount: 1,
+    },
   },
   {
     id: "proj-004",
     title: "Gestão de Reclamações (Ouvidoria)",
     logo: <MessageSquare className="text-orange-600" size={20} />,
     status: "concluido",
-    description: "Registro e tratamento de impactos relatados pela comunidade local durante a fase de instalação.",
+    description:
+      "Registro e tratamento de impactos relatados pela comunidade local durante a fase de instalação.",
     category: "Social",
- startDate: "01/01/2026",
+    startDate: "01/01/2026",
     endDate: "25/06/2026",
-    budget: 45000.00,
+    budget: 45000.0,
     responsible: "Roberto Lima",
     stats: {
       formsCount: 2,
       responsesCount: 156,
       collectorsCount: 2,
-      managersCount: 2
-    }
+      managersCount: 2,
+    },
   },
   {
     id: "proj-005",
     title: "Supressão de Vegetação - Área B",
     logo: <TreeDeciduous className="text-green-700" size={20} />,
     status: "em andamento",
-    description: "Inventário florestal e controle de compensação ambiental para expansão da planta industrial.",
+    description:
+      "Inventário florestal e controle de compensação ambiental para expansão da planta industrial.",
     category: "Ambiental",
- startDate: "01/01/2026",
+    startDate: "01/01/2026",
     endDate: "25/06/2026",
-    budget: 310000.00,
+    budget: 310000.0,
     responsible: "Juliana Ferreira",
     stats: {
       formsCount: 4,
       responsesCount: 312,
       collectorsCount: 6,
-      managersCount: 2
-    }
+      managersCount: 2,
+    },
   },
   {
     id: "proj-006",
     title: "Auditoria de Licenciamento (IBAMA)",
     logo: <ClipboardCheck className="text-slate-600" size={20} />,
     status: "concluido",
-    description: "Checklist de conformidade para renovação da Licença de Operação (LO).",
+    description:
+      "Checklist de conformidade para renovação da Licença de Operação (LO).",
     category: "Ambiental",
     startDate: "01/01/2026",
     endDate: "25/06/2026",
-    budget: 12000.00,
+    budget: 12000.0,
     responsible: "Fernando Souza",
     stats: {
       formsCount: 1,
       responsesCount: 1,
       collectorsCount: 1,
-      managersCount: 3
-    }
+      managersCount: 3,
+    },
   },
   {
     id: "proj-007",
     title: "Programa de Educação Ambiental",
     logo: <MapPin className="text-rose-600" size={20} />,
     status: "em andamento",
-    description: "Aplicação de formulários de avaliação após oficinas em escolas da rede pública.",
+    description:
+      "Aplicação de formulários de avaliação após oficinas em escolas da rede pública.",
     category: "Social",
     startDate: "01/01/2026",
     endDate: "25/06/2026",
-    budget: 60000.00,
+    budget: 60000.0,
     responsible: "Patrícia Rocha",
     stats: {
       formsCount: 2,
       responsesCount: 840,
       collectorsCount: 12,
-      managersCount: 2
-    }
+      managersCount: 2,
+    },
   },
   {
     id: "proj-008",
     title: "Inspeção de EPIs em Campo",
     logo: <ShieldCheck className="text-amber-600" size={20} />,
     status: "concluido",
-    description: "Verificação de segurança do trabalho para as equipes de topografia e sondagem.",
+    description:
+      "Verificação de segurança do trabalho para as equipes de topografia e sondagem.",
     category: "Ambiental",
     startDate: "01/01/2026",
     endDate: "25/06/2026",
-    budget: 5000.00,
+    budget: 5000.0,
     responsible: "Lucas Martins",
     stats: {
       formsCount: 10,
       responsesCount: 45,
       collectorsCount: 3,
-      managersCount: 1
-    }
+      managersCount: 1,
+    },
   },
 ];

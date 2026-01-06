@@ -63,7 +63,7 @@ const projectTeam = [
 
 export function ProjectDetails() {
   const { projectId } = useParams({
-    from: "/_authenticated/projects/$projectId",
+    from: "/_authenticated/projects/$projectId/",
   });
   const project = projectsData.find((p) => p.id === projectId);
 

@@ -17,11 +17,13 @@ import { projectFormSchema, type ProjectForm } from "../data/schema";
 interface ProjectFormProps {
   onSubmit: (values: ProjectForm) => void;
   submitLabel: string;
+  initialData?: any;
 }
 
 export default function ProjectForm({
   onSubmit,
   submitLabel,
+  initialData,
 }: ProjectFormProps) {
   const form = useForm<ProjectForm>({
     resolver: zodResolver(projectFormSchema) as any,
@@ -36,13 +38,25 @@ export default function ProjectForm({
       forms: [],
       members: [],
     },
+    values: initialData
+      ? {
+          title: initialData.title,
+          description: initialData.description,
+          category: initialData.category,
+          startDate: initialData.startDate,
+          endDate: initialData.endDate,
+          responsible: initialData.responsible,
+          budget: initialData.budget,
+          forms: initialData.forms || [],
+          members: initialData.members || [],
+        }
+      : undefined,
   });
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-4">
-          {/* Título */}
           <FormField
             control={form.control}
             name="title"
@@ -157,7 +171,7 @@ export default function ProjectForm({
                   <SelectDropdown
                     placeholder="Selecione os formulários base"
                     onValueChange={(val) =>
-                      field.onChange([...field.value, val])
+                      field.onChange([...(field.value || []), val])
                     }
                     items={[
                       { label: "Checklist de Fauna", value: "frm-1" },
@@ -171,7 +185,6 @@ export default function ProjectForm({
             )}
           />
 
-          {/* Alocação de Membros */}
           <FormField
             control={form.control}
             name="members"
@@ -184,7 +197,7 @@ export default function ProjectForm({
                   <SelectDropdown
                     placeholder="Escolha os membros da equipe"
                     onValueChange={(val) =>
-                      field.onChange([...field.value, val])
+                      field.onChange([...(field.value || []), val])
                     }
                     items={[
                       { label: "Ana Silva (Gerente)", value: "u-1" },
