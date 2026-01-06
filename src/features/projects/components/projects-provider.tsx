@@ -7,6 +7,7 @@ import {
 interface ProjectsContextType {
   projects: Project[];
   setProjects: React.Dispatch<React.SetStateAction<Project[]>>;
+  deleteProject: (id: string) => void;
 }
 
 const ProjectsContext = createContext<ProjectsContextType | undefined>(
@@ -15,9 +16,12 @@ const ProjectsContext = createContext<ProjectsContextType | undefined>(
 
 export function ProjectsProvider({ children }: { children: ReactNode }) {
   const [projects, setProjects] = useState<Project[]>(initialProjects);
+  const deleteProject = (id: string) => {
+    setProjects((prev) => prev.filter((p) => p.id !== id));
+  };
 
   return (
-    <ProjectsContext.Provider value={{ projects, setProjects }}>
+    <ProjectsContext.Provider value={{ projects, setProjects, deleteProject }}>
       {children}
     </ProjectsContext.Provider>
   );

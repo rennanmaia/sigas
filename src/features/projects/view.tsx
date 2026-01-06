@@ -10,6 +10,7 @@ import {
   ExternalLink,
   Clock,
   List,
+  Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -32,7 +33,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { projects as projectsData } from "./data/projects-mock";
 
 const projectForms = [
   {
@@ -60,8 +60,12 @@ const projectTeam = [
   { id: "u-2", name: "Lucas Martins", role: "Coletor Pleno", initial: "LM" },
   { id: "u-3", name: "Patrícia Rocha", role: "Coletor Júnior", initial: "PR" },
 ];
-
+import { ProjectsDeleteDialog } from "./components/project-delete-dialog";
+import { useProjects } from "./components/projects-provider";
+import { useState } from "react";
 export function ProjectDetails() {
+  const { projects: projectsData } = useProjects();
+  const [openDelete, setOpenDelete] = useState(false);
   const { projectId } = useParams({
     from: "/_authenticated/projects/$projectId/",
   });
@@ -134,6 +138,15 @@ export function ProjectDetails() {
                 </SelectItem>
               </SelectContent>
             </Select>
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-destructive border-destructive/20 hover:bg-destructive/10 gap-2"
+              onClick={() => setOpenDelete(true)}
+            >
+              <Trash2 size={16} />
+              Excluir
+            </Button>
             <Button size="sm" className="gap-2" asChild>
               <Link
                 to="/projects/$projectId/edit"
@@ -282,6 +295,11 @@ export function ProjectDetails() {
           </Card>
         </div>
       </Main>
+      <ProjectsDeleteDialog
+        open={openDelete}
+        onOpenChange={setOpenDelete}
+        currentRow={{ id: project.id, title: project.title }}
+      />
     </>
   );
 }
