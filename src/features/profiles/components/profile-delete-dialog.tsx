@@ -2,35 +2,32 @@
 
 import { useState } from "react";
 import { AlertTriangle } from "lucide-react";
-import { useUsers } from './users-provider'
-import { toast } from 'sonner'
+import { showSubmittedData } from "@/lib/show-submitted-data";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ConfirmDialog } from "@/components/confirm-dialog";
-import { type User } from "../data/schema";
+import type { Profile } from "../data/schema";
 
-type UserDeleteDialogProps = {
+
+type ProfileDeleteDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  currentRow: User;
+  currentRow: Profile;
 };
 
-export function UsersDeleteDialog({
+export function ProfilesDeleteDialog({
   open,
   onOpenChange,
   currentRow,
-}: UserDeleteDialogProps) {
+}: ProfileDeleteDialogProps) {
   const [value, setValue] = useState("");
-  const { setUsers } = useUsers()
 
   const handleDelete = () => {
-    if (value.trim() !== currentRow.username) return;
+    if (value.trim() !== currentRow.label.trim()) return;
 
-    // remove user from provider state
-    setUsers((prev) => prev.filter((u) => u.id !== currentRow.id))
     onOpenChange(false);
-    toast.success('User deleted')
+    showSubmittedData(currentRow, "The following profile has been deleted:");
   };
 
   return (
@@ -38,35 +35,35 @@ export function UsersDeleteDialog({
       open={open}
       onOpenChange={onOpenChange}
       handleConfirm={handleDelete}
-      disabled={value.trim() !== currentRow.username}
+      disabled={value.trim() !== currentRow.label.trim()}
       title={
         <span className="text-destructive">
           <AlertTriangle
             className="stroke-destructive me-1 inline-block"
             size={18}
           />{" "}
-          Delete User
+          Delete Profile
         </span>
       }
       desc={
         <div className="space-y-4">
           <p className="mb-2">
             Are you sure you want to delete{" "}
-            <span className="font-bold">{currentRow.username}</span>?
+            <span className="font-bold">{currentRow.label}</span>?
             <br />
-            This action will permanently remove the user with the role of{" "}
+            This action will permanently remove the profile. Type the{" "}
             <span className="font-bold">
-              {currentRow.role.toUpperCase()}
+              {currentRow.label}
             </span>{" "}
-            from the system. This cannot be undone.
+            to confirm deletion. This cannot be undone.
           </p>
 
           <Label className="my-2">
-            Username:
+            Confirm word:
             <Input
               value={value}
               onChange={(e) => setValue(e.target.value)}
-              placeholder="Enter username to confirm deletion."
+              placeholder="Enter Confirm word to confirm deletion."
             />
           </Label>
 

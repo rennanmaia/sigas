@@ -22,24 +22,25 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { roles } from '../data/data'
-import { type User } from '../data/schema'
-import { useUsers } from './users-provider'
+import type { Profile } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
-import { usersColumns as columns } from './users-columns'
+import { profilesColumns as columns } from './profiles-columns'
+import { getRouteApi } from '@tanstack/react-router'
 
-export function UsersTable({ search, navigate }: { search: Record<string, unknown>; navigate: NavigateFn }) {
-  const { users: data } = useUsers()
-  // Local UI-only states
+type DataTableProps = {
+  data: Profile[]
+  search: Record<string, unknown>
+  navigate: NavigateFn
+}
+
+const route = getRouteApi('/_authenticated/profiles/$profileId/')
+
+export function ProfilesTable({ data, search, navigate }: DataTableProps) {
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [sorting, setSorting] = useState<SortingState>([])
+  const navigateToView = route.useNavigate()
 
-  // Local state management for table (uncomment to use local-only state, not synced with URL)
-  // const [columnFilters, onColumnFiltersChange] = useState<ColumnFiltersState>([])
-  // const [pagination, onPaginationChange] = useState<PaginationState>({ pageIndex: 0, pageSize: 10 })
-
-  // Synced with URL states (keys/defaults mirror users route search schema)
   const {
     columnFilters,
     onColumnFiltersChange,
@@ -52,10 +53,8 @@ export function UsersTable({ search, navigate }: { search: Record<string, unknow
     pagination: { defaultPage: 1, defaultPageSize: 10 },
     globalFilter: { enabled: false },
     columnFilters: [
-      // username per-column text filter
-      { columnId: 'username', searchKey: 'username', type: 'string' },
-      { columnId: 'status', searchKey: 'status', type: 'array' },
-      { columnId: 'role', searchKey: 'role', type: 'array' },
+      { columnId: 'label', searchKey: 'label', type: 'string' },
+      { columnId: 'value', searchKey: 'value', type: 'array' },
     ],
   })
 
@@ -91,35 +90,15 @@ export function UsersTable({ search, navigate }: { search: Record<string, unknow
   return (
     <div
       className={cn(
-        'max-sm:has-[div[role="toolbar"]]:mb-16', // Add margin bottom to the table on mobile when the toolbar is visible
+        'max-sm:has-[div[role="toolbar"]]:mb-16',
         'flex flex-1 flex-col gap-4'
       )}
     >
       <DataTableToolbar
         table={table}
-        searchPlaceholder='Filter by name...'
-        searchKey='username'
-        filters={[
-          {
-            columnId: 'username',
-            title: 'Name',
-            // text filter is represented by searchKey; keeping here for discoverability
-            options: [],
-          },
-          {
-            columnId: 'role',
-            title: 'Profile',
-            options: roles.map((role) => ({ label: role.label, value: role.value })),
-          },
-          {
-            columnId: 'status',
-            title: 'Status',
-            options: [
-              { label: 'Active', value: 'active' },
-              { label: 'Inactive', value: 'inactive' },
-            ],
-          },
-        ]}
+        searchPlaceholder='Filter profiles...'
+        searchKey='label'
+        filters={[]}
       />
       <div className='overflow-hidden rounded-md border'>
         <Table>
@@ -132,8 +111,8 @@ export function UsersTable({ search, navigate }: { search: Record<string, unknow
                       key={header.id}
                       colSpan={header.colSpan}
                       className={cn(
-                        'bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted',
-                      )}
+                          'bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted'
+                        )}
                     >
                       {header.isPlaceholder
                         ? null
@@ -154,6 +133,13 @@ export function UsersTable({ search, navigate }: { search: Record<string, unknow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
                   className='group/row'
+                  onClick={() => {
+                    navigateToView({
+                      params: {
+                        profileId: row.original.id
+                      }
+                    })
+                  }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
