@@ -6,10 +6,12 @@ import { Main } from "@/components/layout/main";
 import { Header } from "@/components/layout/header";
 import ProjectForm from "../components/project-form";
 import type { ProjectForm as ProjectFormValues } from "../data/schema";
-import { projects, type Project } from "../data/projects-mock";
+import { projects as mockProjects, type Project } from "../data/projects-mock";
+import { useProjects } from "../components/projects-provider";
 
 export default function CreateProject() {
   const navigate = useNavigate();
+  const { setProjects } = useProjects();
 
   const onCreate = (values: ProjectFormValues) => {
     const newProject: Project = {
@@ -29,14 +31,18 @@ export default function CreateProject() {
           <Users className="text-blue-600" size={20} />
         ),
       stats: {
-        formsCount: 0,
+        formsCount: values.forms?.length || 0,
         responsesCount: 0,
-        collectorsCount: 0,
+        collectorsCount: values.members?.length || 0,
         managersCount: 1,
       },
+      forms: values.forms || [],
+      members: values.members || [],
     };
 
-    projects.unshift(newProject);
+    mockProjects.unshift(newProject);
+
+    setProjects([...mockProjects]);
 
     toast.success("Projeto criado com sucesso");
     navigate({ to: "/projects" });
