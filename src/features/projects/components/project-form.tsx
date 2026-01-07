@@ -13,7 +13,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { SelectDropdown } from "@/components/select-dropdown";
 import { projectFormSchema, type ProjectForm } from "../data/schema";
-
+import { projectTeam } from "../data/projects-mock";
+import { useNavigate } from "@tanstack/react-router";
 interface ProjectFormProps {
   onSubmit: (values: ProjectForm) => void;
   submitLabel: string;
@@ -25,6 +26,14 @@ export default function ProjectForm({
   submitLabel,
   initialData,
 }: ProjectFormProps) {
+  const navigate = useNavigate();
+  const managerOptions = projectTeam
+    .filter((m) => m.role.toLowerCase().includes("gerente"))
+    .map((m) => ({
+      label: m.name,
+      value: m.name,
+    }));
+
   const form = useForm<ProjectForm>({
     resolver: zodResolver(projectFormSchema) as any,
     defaultValues: {
@@ -38,15 +47,16 @@ export default function ProjectForm({
       forms: [],
       members: [],
     },
+
     values: initialData
       ? {
-          title: initialData.title,
-          description: initialData.description,
-          category: initialData.category,
-          startDate: initialData.startDate,
-          endDate: initialData.endDate,
-          responsible: initialData.responsible,
-          budget: initialData.budget,
+          title: initialData.title || "",
+          description: initialData.description || "",
+          category: initialData.category || "Ambiental",
+          startDate: initialData.startDate || "",
+          endDate: initialData.endDate || "",
+          responsible: initialData.responsible || "",
+          budget: initialData.budget || 0,
           forms: initialData.forms || [],
           members: initialData.members || [],
         }
@@ -104,9 +114,15 @@ export default function ProjectForm({
                 <FormLabel className="col-span-2 text-end font-medium">
                   Responsável Técnico
                 </FormLabel>
-                <FormControl className="col-span-4">
-                  <Input placeholder="Nome do coordenador" {...field} />
-                </FormControl>
+                <div className="col-span-4">
+                  <SelectDropdown
+                    key={field.value}
+                    placeholder="Selecione o(a) Responsável"
+                    defaultValue={field.value}
+                    onValueChange={field.onChange}
+                    items={managerOptions}
+                  />
+                </div>
                 <FormMessage className="col-span-4 col-start-3" />
               </FormItem>
             )}
@@ -153,60 +169,15 @@ export default function ProjectForm({
                   Orçamento (R$)
                 </FormLabel>
                 <FormControl className="col-span-4">
-                  <Input type="number" step="0.01" min="0" {...field} />
+                  <Input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    {...field}
+                    onChange={(e) => field.onChange(Number(e.target.value))}
+                  />
                 </FormControl>
                 <FormMessage className="col-span-4 col-start-3" />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="forms"
-            render={({ field }) => (
-              <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4">
-                <FormLabel className="col-span-2 text-end font-medium">
-                  Vincular Formulários
-                </FormLabel>
-                <div className="col-span-4">
-                  <SelectDropdown
-                    placeholder="Selecione os formulários base"
-                    onValueChange={(val) =>
-                      field.onChange([...(field.value || []), val])
-                    }
-                    items={[
-                      { label: "Checklist de Fauna", value: "frm-1" },
-                      { label: "Registro de Avistamento", value: "frm-2" },
-                      { label: "Ouvidoria Social", value: "frm-3" },
-                    ]}
-                    defaultValue={undefined}
-                  />
-                </div>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="members"
-            render={({ field }) => (
-              <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4">
-                <FormLabel className="col-span-2 text-end font-medium">
-                  Alocar Equipe
-                </FormLabel>
-                <div className="col-span-4">
-                  <SelectDropdown
-                    placeholder="Escolha os membros da equipe"
-                    onValueChange={(val) =>
-                      field.onChange([...(field.value || []), val])
-                    }
-                    items={[
-                      { label: "Ana Silva (Gerente)", value: "u-1" },
-                      { label: "Lucas Martins (Coletor)", value: "u-2" },
-                      { label: "Patrícia Rocha (Coletor)", value: "u-3" },
-                    ]}
-                    defaultValue={undefined}
-                  />
-                </div>
               </FormItem>
             )}
           />
@@ -233,6 +204,14 @@ export default function ProjectForm({
         </div>
 
         <div className="flex justify-end gap-3 border-t pt-6">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => navigate({ to: ".." })}
+            className="px-6"
+          >
+            Cancelar
+          </Button>
           <Button type="submit" className="px-10">
             {submitLabel}
           </Button>

@@ -15,13 +15,24 @@ const ProjectsContext = createContext<ProjectsContextType | undefined>(
 );
 
 export function ProjectsProvider({ children }: { children: ReactNode }) {
-  const [projects, setProjects] = useState<Project[]>(initialProjects);
+  const [projectsState, setProjectsState] = useState(initialProjects);
+
   const deleteProject = (id: string) => {
-    setProjects((prev) => prev.filter((p) => p.id !== id));
+    const newList = projectsState.filter((p) => p.id !== id);
+    setProjectsState(newList);
+
+    initialProjects.length = 0;
+    initialProjects.push(...newList);
   };
 
   return (
-    <ProjectsContext.Provider value={{ projects, setProjects, deleteProject }}>
+    <ProjectsContext.Provider
+      value={{
+        projects: projectsState,
+        setProjects: setProjectsState,
+        deleteProject,
+      }}
+    >
       {children}
     </ProjectsContext.Provider>
   );

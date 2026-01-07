@@ -34,41 +34,27 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const projectForms = [
-  {
-    id: "frm-1",
-    title: "Checklist de Campo - Fauna",
-    responses: 840,
-    status: "Ativo",
-  },
-  {
-    id: "frm-2",
-    title: "Registro de Avistamento Especial",
-    responses: 400,
-    status: "Ativo",
-  },
-  {
-    id: "frm-3",
-    title: "Relatório de Incidentes Ambientais",
-    responses: 0,
-    status: "Rascunho",
-  },
-];
+import {
+  projects as mockProjects,
+  projectForms as allForms,
+  projectTeam as allMembers,
+  type Project,
+} from "./data/projects-mock";
 
-const projectTeam = [
-  { id: "u-1", name: "Ana Silva", role: "Gerente de Projeto", initial: "AS" },
-  { id: "u-2", name: "Lucas Martins", role: "Coletor Pleno", initial: "LM" },
-  { id: "u-3", name: "Patrícia Rocha", role: "Coletor Júnior", initial: "PR" },
-];
 import { ProjectsDeleteDialog } from "./components/project-delete-dialog";
-import { useProjects } from "./components/projects-provider";
+import { ProjectsProvider, useProjects } from "./components/projects-provider";
 import { useState } from "react";
-export function ProjectDetails() {
-  const { projects: projectsData } = useProjects();
+import { ProjectAllocateDialog } from "./components/project-allocate-dialog";
+
+function ProjectDetailsContent() {
+  const { projects: projectsData, setProjects } = useProjects();
   const [openDelete, setOpenDelete] = useState(false);
+  const [openFormDialog, setOpenFormDialog] = useState(false);
+  const [openMemberDialog, setOpenMemberDialog] = useState(false);
   const { projectId } = useParams({
     from: "/_authenticated/projects/$projectId/",
   });
+
   const project = projectsData.find((p) => p.id === projectId);
 
   if (!project)
@@ -82,9 +68,49 @@ export function ProjectDetails() {
         </div>
       </Main>
     );
+  const updateProjectData = (newData: Partial<Project>) => {
+    setProjects((prev) => {
+      const newList = prev.map((p) =>
+        p.id === projectId ? { ...p, ...newData } : p
+      );
+
+      mockProjects.length = 0;
+      mockProjects.push(...newList);
+
+      return newList;
+    });
+  };
+  const handleConfirmForms = (selectedIds: string[]) => {
+    const updatedForms = [...(project.forms || []), ...selectedIds];
+    updateProjectData({
+      forms: updatedForms,
+      stats: { ...project.stats, formsCount: updatedForms.length },
+    });
+  };
+
+  const handleConfirmMembers = (selectedIds: string[]) => {
+    const updatedMembers = [...(project.members || []), ...selectedIds];
+    updateProjectData({
+      members: updatedMembers,
+      stats: { ...project.stats, collectorsCount: updatedMembers.length },
+    });
+  };
+  const currentProjectForms = allForms.filter((f) =>
+    project.forms?.includes(f.id)
+  );
 
   const timeProgress = 65;
+  const responsibleMember = allMembers.find(
+    (m) => m.name === project.responsible
+  );
 
+  const otherMembers = allMembers.filter(
+    (m) => project.members?.includes(m.id) && m.name !== project.responsible
+  );
+
+  const currentProjectTeam = responsibleMember
+    ? [responsibleMember, ...otherMembers]
+    : otherMembers;
   return (
     <>
       <Header>
@@ -200,7 +226,6 @@ export function ProjectDetails() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {" "}
                 {new Intl.NumberFormat("pt-BR", {
                   style: "currency",
                   currency: "BRL",
@@ -220,34 +245,46 @@ export function ProjectDetails() {
                   Gerencie os questionários vinculados.
                 </CardDescription>
               </div>
-              <Badge variant="outline">{project.stats.formsCount} Total</Badge>
+              <Badge variant="outline">
+                {currentProjectForms.length} Total
+              </Badge>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {projectForms.map((form) => (
-                  <div
-                    key={form.id}
-                    className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors group"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="bg-primary/10 p-2 rounded">
-                        <FileText size={18} className="text-primary" />
+                {currentProjectForms.length > 0 ? (
+                  currentProjectForms.map((form) => (
+                    <div
+                      key={form.id}
+                      className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors group"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="bg-primary/10 p-2 rounded">
+                          <FileText size={18} className="text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium group-hover:text-primary transition-colors">
+                            {form.title}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {form.responses} respostas
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-sm font-medium group-hover:text-primary transition-colors">
-                          {form.title}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {form.responses} respostas
-                        </p>
-                      </div>
+                      <Button variant="ghost" size="icon" className="h-8 w-8">
+                        <ExternalLink size={14} />
+                      </Button>
                     </div>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <ExternalLink size={14} />
-                    </Button>
-                  </div>
-                ))}
-                <Button variant="outline" className="w-full border-dashed">
+                  ))
+                ) : (
+                  <p className="text-sm text-muted-foreground italic">
+                    Nenhum formulário vinculado.
+                  </p>
+                )}
+                <Button
+                  variant="outline"
+                  className="w-full border-dashed"
+                  onClick={() => setOpenFormDialog(true)}
+                >
                   + Vincular Novo Formulário
                 </Button>
               </div>
@@ -260,46 +297,95 @@ export function ProjectDetails() {
                 <CardTitle>Equipe</CardTitle>
                 <CardDescription>Usuários ativos no campo.</CardDescription>
               </div>
-
-              <Button variant="outline" className="gap-2">
+              <Button
+                variant="outline"
+                className="gap-2"
+                onClick={() => setOpenMemberDialog(true)}
+              >
                 <UserPlus size={16} /> Alocar Membro
               </Button>
             </CardHeader>
             <CardContent>
               <div className="space-y-5">
-                {projectTeam.map((member) => (
-                  <div
-                    key={member.id}
-                    className="flex items-center justify-between"
-                  >
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-9 w-9">
-                        <AvatarFallback>{member.initial}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="text-sm font-medium leading-none">
-                          {member.name}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {member.role}
-                        </p>
+                {currentProjectTeam.length > 0 ? (
+                  currentProjectTeam.map((member) => (
+                    <div
+                      key={member.id}
+                      className="flex items-center justify-between"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-9 w-9">
+                          <AvatarFallback>{member.initial}</AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="text-sm font-medium leading-none">
+                            {member.name}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {member.role}
+                          </p>
+                        </div>
                       </div>
+                      <Badge
+                        variant="secondary"
+                        className="text-[10px] cursor-pointer"
+                      >
+                        Ver Perfil
+                      </Badge>
                     </div>
-                    <Badge variant="secondary" className="text-[10px]">
-                      Ver Perfil
-                    </Badge>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p className="text-sm text-muted-foreground italic">
+                    Nenhum membro alocado.
+                  </p>
+                )}
               </div>
             </CardContent>
           </Card>
         </div>
       </Main>
+      <ProjectAllocateDialog
+        open={openFormDialog}
+        onOpenChange={setOpenFormDialog}
+        title="Vincular Formulários"
+        description="Selecione os formulários que deseja adicionar a este projeto."
+        items={allForms.map((f) => ({
+          id: f.id,
+          label: f.title,
+          sublabel: f.status,
+        }))}
+        alreadySelected={project.forms || []}
+        onConfirm={handleConfirmForms}
+      />
+
+      <ProjectAllocateDialog
+        open={openMemberDialog}
+        onOpenChange={setOpenMemberDialog}
+        title="Alocar Equipe"
+        description="Selecione os profissionais para atuar neste projeto."
+        items={allMembers
+          .filter((m) => !m.role.toLowerCase().includes("gerente"))
+          .map((m) => ({
+            id: m.id,
+            label: m.name,
+            sublabel: m.role,
+          }))}
+        alreadySelected={project.members || []}
+        onConfirm={handleConfirmMembers}
+      />
       <ProjectsDeleteDialog
         open={openDelete}
         onOpenChange={setOpenDelete}
         currentRow={{ id: project.id, title: project.title }}
       />
     </>
+  );
+}
+
+export function ProjectDetails() {
+  return (
+    <ProjectsProvider>
+      <ProjectDetailsContent />
+    </ProjectsProvider>
   );
 }
