@@ -10,6 +10,17 @@ export type QuestionType =
   | "file"
   | "audio";
 
+export interface Option {
+  id: string;
+  label: string;
+}
+
+export interface LogicRule {
+  dependsOnQuestionId: string;
+  condition: "is" | "is_not";
+  value: string;
+}
+
 export interface Question {
   id: string;
   type: QuestionType;
@@ -17,13 +28,4 @@ export interface Question {
   required: boolean;
   options?: Option[];
   logic?: LogicRule;
-}
-export interface LogicRule {
-  dependsOnQuestionId: string;
-  condition: "is" | "is_not";
-  value: string;
-}
-export interface Option {
-  id: string;
-  label: string;
 }
