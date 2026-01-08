@@ -16,16 +16,20 @@ import { TeamSwitcher } from "./team-switcher";
 export function AppSidebar() {
   const { collapsible, variant } = useLayout();
   const { auth } = useAuthStore()
-  const role = auth.user?.role ?? []
+  const roles = auth.user?.role ?? []
 
   // filter nav items based on role - only general_administrator can see /users
   const filteredNavGroups = sidebarData.navGroups.map((group) => ({
     ...group,
     items: group.items.filter((item) => {
-      if (item.url === '/users') return role.includes('general_administrator')
+      if (item.allowedRoles && item.allowedRoles.length > 0) {
+        return item.allowedRoles.some(role => roles.includes(role))
+      }
       return true
     }),
-  }))
+  }));
+
+
   return (
     <Sidebar collapsible={collapsible} variant={variant}>
       <SidebarHeader>
