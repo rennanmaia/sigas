@@ -15,5 +15,15 @@ export interface Question {
   type: QuestionType;
   label: string;
   required: boolean;
-  options?: string[];
+  options?: Option[];
+  logic?: LogicRule;
+}
+export interface LogicRule {
+  dependsOnQuestionId: string;
+  condition: "is" | "is_not";
+  value: string;
+}
+export interface Option {
+  id: string;
+  label: string;
 }
