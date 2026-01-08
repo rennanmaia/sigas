@@ -60,6 +60,7 @@ export const sidebarData: SidebarData = {
           title: "Dashboard",
           url: "/",
           icon: LayoutDashboard,
+
         },
         {
           title: "Projetos",
@@ -96,11 +97,13 @@ export const sidebarData: SidebarData = {
           title: "Usuários",
           url: "/users",
           icon: Users,
+          allowedRoles: ['general_administrator']
         },
         {
           title: "Perfis",
           url: "/profiles",
           icon: Shield,
+          allowedRoles: ['general_administrator']
         },
         // {
         //   title: "Secured by Clerk",
