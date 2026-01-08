@@ -1,4 +1,4 @@
-import { GripVertical, Trash2, PlusCircle } from "lucide-react";
+import { GripVertical, Trash2, PlusCircle, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -68,6 +68,17 @@ export function ActionsBar({
             Req
           </Label>
         </div>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 text-amber-500 hover:text-amber-600 hover:bg-amber-50"
+            >
+              <Zap size={20} />
+            </Button>
+          </TooltipTrigger>
+        </Tooltip>
 
         <Tooltip>
           <TooltipTrigger asChild>
