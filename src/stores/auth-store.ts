@@ -26,7 +26,12 @@ export const useAuthStore = create<AuthState>()((set) => {
   const initToken = cookieState ? JSON.parse(cookieState) : "";
   return {
     auth: {
-      user: null,
+      user: {
+        accountNo: "",
+        email: "sigas@gmail.com",
+        role: ['general_administrator'],
+        exp: 0,
+      },
       setUser: (user) =>
         set((state) => ({ ...state, auth: { ...state.auth, user } })),
       accessToken: initToken,
