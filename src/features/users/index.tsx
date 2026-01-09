@@ -9,7 +9,6 @@ import { UsersDialogs } from './components/users-dialogs'
 import { UsersPrimaryButtons } from './components/users-primary-buttons'
 import { UsersProvider } from './components/users-provider'
 import { UsersTable } from './components/users-table'
-// users import not needed; UsersTable consumes provider state
 
 const route = getRouteApi('/_authenticated/users/')
 
