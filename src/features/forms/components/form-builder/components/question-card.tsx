@@ -5,12 +5,17 @@ import { QuestionTypeSelect } from "./question-type-select";
 import { QuestionPreview } from "./question-preview";
 import type { Question, QuestionType } from "../types/question";
 import { ActionsBar } from "./actions-bar";
-import { useEffect, useRef } from "react";
+import { LogicEditor } from "./logic-editor";
+import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+
 interface QuestionCardProps {
   question: Question;
   index: number;
+  allQuestions: Question[];
   onUpdateLabel: (id: string, val: string) => void;
   onUpdateType: (id: string, type: QuestionType) => void;
+  onUpdateQuestion: (id: string, updates: Partial<Question>) => void;
   onRemove: (id: string) => void;
   onToggleRequired: (id: string) => void;
   onAddQuestion: (type: QuestionType) => void;
@@ -19,9 +24,16 @@ interface QuestionCardProps {
   onRemoveOption: (id: string, idx: number) => void;
 }
 
-export function QuestionCard({ question, index, ...props }: QuestionCardProps) {
+export function QuestionCard({
+  question,
+  index,
+  allQuestions,
+  ...props
+}: QuestionCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const hasScrolled = useRef(false);
+
+  const [showLogic, setShowLogic] = useState(!!question.logic);
 
   useEffect(() => {
     if (!hasScrolled.current) {
@@ -32,10 +44,10 @@ export function QuestionCard({ question, index, ...props }: QuestionCardProps) {
         });
         hasScrolled.current = true;
       }, 150);
-
       return () => clearTimeout(timer);
     }
   }, []);
+
   return (
     <Draggable draggableId={question.id} index={index}>
       {(provided, snapshot) => (
@@ -82,12 +94,37 @@ export function QuestionCard({ question, index, ...props }: QuestionCardProps) {
             </div>
 
             <QuestionPreview question={question} {...props} />
+
+            <AnimatePresence>
+              {showLogic && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="overflow-hidden"
+                >
+                  <LogicEditor
+                    currentQuestion={question}
+                    allQuestions={allQuestions}
+                    onUpdateLogic={(logic) =>
+                      props.onUpdateQuestion(question.id, { logic })
+                    }
+                    onRemoveLogic={() => {
+                      props.onUpdateQuestion(question.id, { logic: undefined });
+                      setShowLogic(false);
+                    }}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           <ActionsBar
             questionId={question.id}
             required={question.required}
+            hasLogic={!!question.logic}
             onToggleRequired={props.onToggleRequired}
+            onToggleLogic={() => setShowLogic(!showLogic)}
             onRemove={props.onRemove}
             onAdd={() => props.onAddQuestion("text")}
             dragHandleProps={provided.dragHandleProps}
