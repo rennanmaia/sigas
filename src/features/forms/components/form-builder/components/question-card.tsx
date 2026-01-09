@@ -8,6 +8,7 @@ import { ActionsBar } from "./actions-bar";
 import { LogicEditor } from "./logic-editor";
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { ValidationEditor } from "./validation-editor";
 
 interface QuestionCardProps {
   question: Question;
@@ -34,7 +35,8 @@ export function QuestionCard({
   const hasScrolled = useRef(false);
 
   const [showLogic, setShowLogic] = useState(!!question.logic);
-
+  const [showSettings, setShowSettings] = useState(false);
+  const hasValidationSupport = !["select", "map"].includes(question.type);
   useEffect(() => {
     if (!hasScrolled.current) {
       const timer = setTimeout(() => {
@@ -95,28 +97,57 @@ export function QuestionCard({
 
             <QuestionPreview question={question} {...props} />
 
-            <AnimatePresence>
-              {showLogic && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  className="overflow-hidden"
-                >
-                  <LogicEditor
-                    currentQuestion={question}
-                    allQuestions={allQuestions}
-                    onUpdateLogic={(logic) =>
-                      props.onUpdateQuestion(question.id, { logic })
-                    }
-                    onRemoveLogic={() => {
-                      props.onUpdateQuestion(question.id, { logic: undefined });
-                      setShowLogic(false);
-                    }}
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <div className="space-y-2">
+              <AnimatePresence>
+                {showLogic && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <LogicEditor
+                      currentQuestion={question}
+                      allQuestions={allQuestions}
+                      onUpdateLogic={(logic) =>
+                        props.onUpdateQuestion(question.id, { logic })
+                      }
+                      onRemoveLogic={() => {
+                        props.onUpdateQuestion(question.id, {
+                          logic: undefined,
+                        });
+                        setShowLogic(false);
+                      }}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              <AnimatePresence>
+                {showSettings && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden"
+                  >
+                    <ValidationEditor
+                      question={question}
+                      onUpdate={(vals) =>
+                        props.onUpdateQuestion(question.id, {
+                          validations: vals,
+                        })
+                      }
+                      onRemove={() => {
+                        props.onUpdateQuestion(question.id, {
+                          validations: undefined,
+                        });
+                        setShowSettings(false);
+                      }}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
 
           <ActionsBar
@@ -128,6 +159,9 @@ export function QuestionCard({
             onRemove={props.onRemove}
             onAdd={() => props.onAddQuestion("text")}
             dragHandleProps={provided.dragHandleProps}
+            showSettingsButton={hasValidationSupport}
+            hasSettings={!!question.validations}
+            onToggleSettings={() => setShowSettings(!showSettings)}
           />
         </Card>
       )}

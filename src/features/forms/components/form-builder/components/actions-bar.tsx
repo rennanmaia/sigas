@@ -1,4 +1,4 @@
-import { GripVertical, Trash2, PlusCircle, Zap } from "lucide-react";
+import { GripVertical, Trash2, PlusCircle, Zap, Settings2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -13,9 +13,12 @@ interface ActionsBarProps {
   questionId: string;
   required: boolean;
   hasLogic: boolean;
+  hasSettings: boolean;
   onToggleRequired: (id: string) => void;
   onToggleLogic: () => void;
+  onToggleSettings: () => void;
   onRemove: (id: string) => void;
+  showSettingsButton: boolean;
   onAdd: () => void;
   dragHandleProps?: any;
 }
@@ -24,11 +27,14 @@ export function ActionsBar({
   questionId,
   required,
   hasLogic,
+  hasSettings,
   onToggleRequired,
   onToggleLogic,
+  onToggleSettings,
   onRemove,
   onAdd,
   dragHandleProps,
+  showSettingsButton,
 }: ActionsBarProps) {
   return (
     <TooltipProvider>
@@ -109,6 +115,30 @@ export function ActionsBar({
           </TooltipTrigger>
           <TooltipContent side="right">Excluir pergunta</TooltipContent>
         </Tooltip>
+        {showSettingsButton && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={`h-10 w-10 transition-all order-4 ${
+                  hasSettings
+                    ? "text-blue-600 bg-blue-50 hover:bg-blue-100"
+                    : "text-muted-foreground hover:text-blue-600 hover:bg-blue-50"
+                }`}
+                onClick={onToggleSettings}
+              >
+                <Settings2
+                  size={20}
+                  className={hasSettings ? "stroke-[2.5px]" : ""}
+                />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              {hasSettings ? "Editar Validações" : "Configurar Validações"}
+            </TooltipContent>
+          </Tooltip>
+        )}
       </div>
     </TooltipProvider>
   );
