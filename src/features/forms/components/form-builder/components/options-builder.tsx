@@ -2,10 +2,10 @@ import { Droppable, Draggable } from "@hello-pangea/dnd";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, X, GripVertical } from "lucide-react";
-
+import type { Option } from "../types/question";
 interface OptionsBuilderProps {
   questionId: string;
-  options: string[];
+  options: Option[];
   type: "select" | "checkbox";
   onAddOption: (id: string) => void;
   onUpdateOption: (id: string, idx: number, val: string) => void;
@@ -27,11 +27,7 @@ export function OptionsBuilder({
           className="pl-8 space-y-1"
         >
           {options.map((option, idx) => (
-            <Draggable
-              key={`${questionId}-opt-${idx}`}
-              draggableId={`${questionId}-opt-${idx}`}
-              index={idx}
-            >
+            <Draggable key={option.id} draggableId={option.id} index={idx}>
               {(provided, snapshot) => (
                 <div
                   ref={provided.innerRef}
@@ -49,14 +45,14 @@ export function OptionsBuilder({
                     <GripVertical size={14} />
                   </div>
 
-                  {type === "select" ? (
-                    <div className="size-4 rounded-full border-2 border-primary/40 shrink-0 flex items-center justify-center"></div>
-                  ) : (
-                    <div className="size-4 border-2 border-primary/40 shrink-0 flex items-center justify-center"></div>
-                  )}
+                  <div
+                    className={`size-4 border-2 border-primary/40 shrink-0 ${
+                      type === "select" ? "rounded-full" : ""
+                    }`}
+                  />
 
                   <Input
-                    value={option}
+                    value={option.label}
                     onChange={(e) =>
                       props.onUpdateOption(questionId, idx, e.target.value)
                     }
