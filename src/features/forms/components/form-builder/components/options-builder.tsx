@@ -3,6 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, X, GripVertical } from "lucide-react";
 import type { Option } from "../types/question";
+import { useEffect, useRef } from "react";
+
 interface OptionsBuilderProps {
   questionId: string;
   options: Option[];
@@ -18,12 +20,28 @@ export function OptionsBuilder({
   type,
   ...props
 }: OptionsBuilderProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      const inputs = containerRef.current.querySelectorAll("input");
+      const lastInput = inputs[inputs.length - 1] as HTMLInputElement;
+
+      if (lastInput && lastInput.value === "") {
+        lastInput.focus();
+      }
+    }
+  }, [options.length]);
+
   return (
     <Droppable droppableId={`options-${questionId}`} type="OPTION">
       {(provided) => (
         <div
           {...provided.droppableProps}
-          ref={provided.innerRef}
+          ref={(node) => {
+            provided.innerRef(node);
+            containerRef.current = node;
+          }}
           className="pl-8 space-y-1"
         >
           {options.map((option, idx) => (
@@ -56,7 +74,16 @@ export function OptionsBuilder({
                     onChange={(e) =>
                       props.onUpdateOption(questionId, idx, e.target.value)
                     }
-                    className="h-8 text-sm bg-transparent border-none focus-visible:ring-1 p-1"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+
+                        if (option.label.trim() !== "") {
+                          props.onAddOption(questionId);
+                        }
+                      }
+                    }}
+                    className="h-8 text-sm bg-transparent border-none focus-visible:ring-1 p-1 placeholder:text-muted-foreground/50"
                     placeholder={`Opção ${idx + 1}`}
                   />
 
