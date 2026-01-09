@@ -7,7 +7,7 @@ export function useFormBuilder() {
 
   const createInitialOption = () => ({
     id: crypto.randomUUID(),
-    label: "Opção 1",
+    label: "",
   });
 
   const addQuestion = (type: QuestionType, atIndex?: number) => {
@@ -88,7 +88,7 @@ export function useFormBuilder() {
         if (q.id === questionId) {
           const newOption = {
             id: crypto.randomUUID(),
-            label: `Opção ${(q.options?.length || 0) + 1}`,
+            label: "",
           };
           return { ...q, options: [...(q.options || []), newOption] };
         }
