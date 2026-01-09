@@ -31,6 +31,24 @@ export function useFormBuilder() {
     });
   };
 
+  const duplicateQuestion = (id: string) => {
+    setQuestions((prev) => {
+      const index = prev.findIndex((q) => q.id === id);
+      if (index === -1) return prev;
+
+      const original = prev[index];
+
+      const copy: Question = {
+        ...JSON.parse(JSON.stringify(original)),
+        id: crypto.randomUUID(),
+      };
+
+      const newQuestions = [...prev];
+      newQuestions.splice(index + 1, 0, copy);
+      return newQuestions;
+    });
+  };
+
   const removeQuestion = (id: string) =>
     setQuestions((q) => q.filter((item) => item.id !== id));
 
@@ -107,6 +125,7 @@ export function useFormBuilder() {
     questions,
     setQuestions,
     addQuestion,
+    duplicateQuestion,
     removeQuestion,
     updateQuestion,
     updateQuestionLabel,
