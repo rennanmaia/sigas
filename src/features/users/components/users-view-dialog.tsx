@@ -23,7 +23,7 @@ export function UsersViewDialog({ open, onOpenChange, currentRow }:{ open:boolea
               <div><strong>Username:</strong> {currentRow.username}</div>
               <div><strong>CPF:</strong> {currentRow.cpf}</div>
               <div><strong>Email:</strong> {currentRow.email}</div>
-              <div><strong>Profile:</strong> {currentRow.role}</div>
+              <div><strong>Profile:</strong> {Array.isArray(currentRow.roles) ? currentRow.roles.join(', ') : currentRow.roles}</div>
               <div><strong>Status:</strong> {currentRow.status}</div>
             </div>
           </CardContent>
