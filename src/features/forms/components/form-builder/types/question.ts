@@ -20,7 +20,11 @@ export interface LogicRule {
   condition: "is" | "is_not";
   value: string;
 }
-
+export interface QuestionValidations {
+  min?: number;
+  max?: number;
+  placeholder?: string;
+}
 export interface Question {
   id: string;
   type: QuestionType;
@@ -28,4 +32,5 @@ export interface Question {
   required: boolean;
   options?: Option[];
   logic?: LogicRule;
+  validations?: QuestionValidations;
 }
