@@ -5,6 +5,11 @@ export function useFormBuilder() {
   const [title, setTitle] = useState("");
   const [questions, setQuestions] = useState<Question[]>([]);
 
+  const createInitialOption = () => ({
+    id: crypto.randomUUID(),
+    label: "Opção 1",
+  });
+
   const addQuestion = (type: QuestionType, atIndex?: number) => {
     const newQuestion: Question = {
       id: crypto.randomUUID(),
@@ -12,7 +17,9 @@ export function useFormBuilder() {
       label: "",
       required: false,
       options:
-        type === "select" || type === "checkbox" ? ["Opção 1"] : undefined,
+        type === "select" || type === "checkbox"
+          ? [createInitialOption()]
+          : undefined,
     };
 
     setQuestions((prev) => {
@@ -27,8 +34,14 @@ export function useFormBuilder() {
   const removeQuestion = (id: string) =>
     setQuestions((q) => q.filter((item) => item.id !== id));
 
+  const updateQuestion = (id: string, updates: Partial<Question>) => {
+    setQuestions((qs) =>
+      qs.map((q) => (q.id === id ? { ...q, ...updates } : q))
+    );
+  };
+
   const updateQuestionLabel = (id: string, label: string) =>
-    setQuestions((qs) => qs.map((q) => (q.id === id ? { ...q, label } : q)));
+    updateQuestion(id, { label });
 
   const updateQuestionType = (id: string, type: QuestionType) =>
     setQuestions((qs) =>
@@ -39,7 +52,7 @@ export function useFormBuilder() {
               type,
               options:
                 type === "select" || type === "checkbox"
-                  ? q.options || ["Opção 1"]
+                  ? q.options || [createInitialOption()]
                   : undefined,
             }
           : q
@@ -51,32 +64,33 @@ export function useFormBuilder() {
       qs.map((q) => (q.id === id ? { ...q, required: !q.required } : q))
     );
 
-  const addOption = (qId: string) =>
-    setQuestions((qs) =>
-      qs.map((q) =>
-        q.id === qId
-          ? {
-              ...q,
-              options: [
-                ...(q.options || []),
-                `Opção ${(q.options?.length || 0) + 1}`,
-              ],
-            }
-          : q
-      )
+  const addOption = (questionId: string) => {
+    setQuestions((prev) =>
+      prev.map((q) => {
+        if (q.id === questionId) {
+          const newOption = {
+            id: crypto.randomUUID(),
+            label: `Opção ${(q.options?.length || 0) + 1}`,
+          };
+          return { ...q, options: [...(q.options || []), newOption] };
+        }
+        return q;
+      })
     );
+  };
 
-  const updateOption = (qId: string, idx: number, val: string) =>
-    setQuestions((qs) =>
-      qs.map((q) => {
-        if (q.id === qId && q.options) {
+  const updateOption = (questionId: string, idx: number, val: string) => {
+    setQuestions((prev) =>
+      prev.map((q) => {
+        if (q.id === questionId && q.options) {
           const newOpts = [...q.options];
-          newOpts[idx] = val;
+          newOpts[idx] = { ...newOpts[idx], label: val };
           return { ...q, options: newOpts };
         }
         return q;
       })
     );
+  };
 
   const removeOption = (qId: string, idx: number) =>
     setQuestions((qs) =>
@@ -94,6 +108,7 @@ export function useFormBuilder() {
     setQuestions,
     addQuestion,
     removeQuestion,
+    updateQuestion,
     updateQuestionLabel,
     updateQuestionType,
     toggleRequired,
