@@ -2,11 +2,11 @@
 
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { toast } from 'sonner'
-import { useUsers } from './users-provider'
+import { useUsersStore } from '@/stores/users-store';
 
 export function UsersToggleStatusDialog({ open, onOpenChange, currentRow }:{ open:boolean; onOpenChange:(b:boolean)=>void; currentRow:any }){
   if(!currentRow) return null
-  const { users, setUsers } = useUsers()
+  const { users, setUsers } = useUsersStore()
 
   const handle = () => {
     const next = currentRow.status === 'active' ? 'inactive' : 'active'

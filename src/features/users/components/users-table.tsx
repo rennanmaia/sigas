@@ -23,16 +23,15 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { roles } from '../data/data'
-import { type User } from '../data/schema'
-import { useUsers } from './users-provider'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { usersColumns as columns } from './users-columns'
 import { getRouteApi } from '@tanstack/react-router'
+import { useUsersStore } from '@/stores/users-store'
 
 const viewUserRoute = getRouteApi('/_authenticated/users/$id/');
 
 export function UsersTable({ search, navigate }: { search: Record<string, unknown>; navigate: NavigateFn }) {
-  const { users: data } = useUsers()
+  const { users: data } = useUsersStore()
   // Local UI-only states
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})

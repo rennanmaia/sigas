@@ -1,12 +1,12 @@
 import { type ColumnDef } from "@tanstack/react-table";
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DataTableColumnHeader } from "@/components/data-table";
 import { LongText } from "@/components/long-text";
-import { callTypes, roles } from "../data/data";
 import { type User } from "../data/schema";
 import { DataTableRowActions } from "./data-table-row-actions";
+import UserRolesBadge from "./user-roles-badge";
+import UserStatusBadge from "./user-status-badge";
 
 export const usersColumns: ColumnDef<User>[] = [
   {
@@ -89,14 +89,7 @@ export const usersColumns: ColumnDef<User>[] = [
     ),
     cell: ({ row }) => {
       const { status } = row.original;
-      const badgeColor = callTypes.get(status);
-      return (
-        <div className="flex space-x-2">
-          <Badge variant="outline" className={cn("capitalize", badgeColor)}>
-            {row.getValue("status")}
-          </Badge>
-        </div>
-      );
+      return <UserStatusBadge status={status} />;
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
@@ -111,25 +104,7 @@ export const usersColumns: ColumnDef<User>[] = [
     ),
     cell: ({ row }) => {
       const userRoles = (row.original.roles || []) as string[];
-      if (userRoles.length === 0) return null;
-
-      const [primary, ...rest] = userRoles;
-      const userType = roles.find(({ value }) => value === primary);
-
-      return (
-        <div className="flex items-center gap-x-2">
-          <span className="text-sm capitalize inline-flex items-center gap-2">
-            {userType?.icon && <userType.icon size={14} className="text-muted-foreground" />}
-            {userType?.label ?? primary}
-          </span>
-
-          {rest.length > 0 && (
-            <span className="ml-2 inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
-              +{rest.length}
-            </span>
-          )}
-        </div>
-      );
+      return <UserRolesBadge userRoles={userRoles}/>
     },
     filterFn: (row, _id, value: string[]) => {
       const userRoles = (row.original.roles || []) as string[];
