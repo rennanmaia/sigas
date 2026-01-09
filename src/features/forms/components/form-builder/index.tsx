@@ -112,6 +112,7 @@ export function FormBuilder({ onSave }: { onSave: (data: any) => void }) {
                                 onAddOption={methods.addOption}
                                 onUpdateOption={methods.updateOption}
                                 onRemoveOption={methods.removeOption}
+                                onDuplicate={methods.duplicateQuestion}
                               />
                             </motion.div>
                           )}

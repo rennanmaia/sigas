@@ -17,6 +17,7 @@ interface QuestionCardProps {
   onUpdateLabel: (id: string, val: string) => void;
   onUpdateType: (id: string, type: QuestionType) => void;
   onUpdateQuestion: (id: string, updates: Partial<Question>) => void;
+  onDuplicate: (id: string) => void;
   onRemove: (id: string) => void;
   onToggleRequired: (id: string) => void;
   onAddQuestion: (type: QuestionType) => void;
@@ -162,6 +163,7 @@ export function QuestionCard({
             showSettingsButton={hasValidationSupport}
             hasSettings={!!question.validations}
             onToggleSettings={() => setShowSettings(!showSettings)}
+            onDuplicate={props.onDuplicate}
           />
         </Card>
       )}
