@@ -24,6 +24,7 @@ export interface QuestionValidations {
   min?: number;
   max?: number;
   placeholder?: string;
+  mask?: string;
 }
 export interface Question {
   id: string;

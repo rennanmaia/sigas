@@ -13,6 +13,17 @@ interface QuestionPreviewProps {
 }
 
 export function QuestionPreview({ question, ...props }: QuestionPreviewProps) {
+  const maskPreviews: Record<string, string> = {
+    cpf: "000.000.000-00",
+    cnpj: "00.000.000/0000-00",
+    phone: "(00) 00000-0000",
+    cep: "00000-000",
+    plate: "ABC-1234 ou ABC1D23",
+  };
+  const dynamicPlaceholder = question.validations?.mask
+    ? maskPreviews[question.validations.mask]
+    : "Resposta curta...";
+
   if (question.type === "select" || question.type === "checkbox") {
     return (
       <OptionsBuilder
@@ -28,7 +39,7 @@ export function QuestionPreview({ question, ...props }: QuestionPreviewProps) {
     text: (
       <Input
         disabled
-        placeholder="Resposta curta..."
+        placeholder={dynamicPlaceholder}
         className="bg-slate-50 border-dashed border-slate-200"
       />
     ),
