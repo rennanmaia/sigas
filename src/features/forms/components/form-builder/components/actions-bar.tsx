@@ -4,6 +4,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import {
   Tooltip,
+  TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
@@ -11,7 +12,9 @@ import {
 interface ActionsBarProps {
   questionId: string;
   required: boolean;
+  hasLogic: boolean;
   onToggleRequired: (id: string) => void;
+  onToggleLogic: () => void;
   onRemove: (id: string) => void;
   onAdd: () => void;
   dragHandleProps?: any;
@@ -20,7 +23,9 @@ interface ActionsBarProps {
 export function ActionsBar({
   questionId,
   required,
+  hasLogic,
   onToggleRequired,
+  onToggleLogic,
   onRemove,
   onAdd,
   dragHandleProps,
@@ -39,6 +44,7 @@ export function ActionsBar({
               <PlusCircle size={20} />
             </Button>
           </TooltipTrigger>
+          <TooltipContent side="right">Adicionar questão abaixo</TooltipContent>
         </Tooltip>
 
         <Tooltip>
@@ -50,6 +56,7 @@ export function ActionsBar({
               <GripVertical size={22} />
             </div>
           </TooltipTrigger>
+          <TooltipContent side="right">Arrastar para reordenar</TooltipContent>
         </Tooltip>
 
         <div className="flex flex-col items-center gap-1 order-3">
@@ -68,16 +75,25 @@ export function ActionsBar({
             Req
           </Label>
         </div>
+
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
               variant="ghost"
               size="icon"
-              className="h-10 w-10 text-amber-500 hover:text-amber-600 hover:bg-amber-50"
+              className={`h-10 w-10 transition-all order-4 ${
+                hasLogic
+                  ? "text-amber-500 bg-amber-50 hover:bg-amber-100"
+                  : "text-muted-foreground hover:text-amber-500 hover:bg-amber-50"
+              }`}
+              onClick={onToggleLogic}
             >
-              <Zap size={20} />
+              <Zap size={20} className={hasLogic ? "fill-current" : ""} />
             </Button>
           </TooltipTrigger>
+          <TooltipContent side="right">
+            {hasLogic ? "Editar Lógica" : "Adicionar Lógica"}
+          </TooltipContent>
         </Tooltip>
 
         <Tooltip>
@@ -85,12 +101,13 @@ export function ActionsBar({
             <Button
               variant="ghost"
               size="icon"
-              className="h-10 w-10 text-destructive/60 hover:text-destructive hover:bg-destructive/10 transition-all order-4"
+              className="h-10 w-10 text-destructive/60 hover:text-destructive hover:bg-destructive/10 transition-all order-5"
               onClick={() => onRemove(questionId)}
             >
               <Trash2 size={20} />
             </Button>
           </TooltipTrigger>
+          <TooltipContent side="right">Excluir pergunta</TooltipContent>
         </Tooltip>
       </div>
     </TooltipProvider>
