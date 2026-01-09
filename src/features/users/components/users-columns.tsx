@@ -12,17 +12,17 @@ export const usersColumns: ColumnDef<User>[] = [
   {
     id: "select",
     header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value: any) =>
-          table.toggleAllPageRowsSelected(!!value)
-        }
-        aria-label="Select all"
-        className="translate-y-[2px]"
-      />
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value: any) =>
+            table.toggleAllPageRowsSelected(!!value)
+          }
+          aria-label="Select all"
+          className="translate-y-0.5"
+        />
     ),
     meta: {
       className: cn("max-md:sticky start-0 z-10 rounded-tl-[inherit]"),
@@ -32,7 +32,9 @@ export const usersColumns: ColumnDef<User>[] = [
         checked={row.getIsSelected()}
         onCheckedChange={(value: any) => row.toggleSelected(!!value)}
         aria-label="Select row"
-        className="translate-y-[2px]"
+        className="translate-y-0.5"
+        onClick={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
       />
     ),
     enableSorting: false,
@@ -103,29 +105,35 @@ export const usersColumns: ColumnDef<User>[] = [
     enableSorting: false,
   },
   {
-    accessorKey: "role",
+    accessorKey: "roles",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Profile" />
     ),
     cell: ({ row }) => {
-      const { role } = row.original;
-      const userType = roles.find(({ value }) => value === role);
+      const userRoles = (row.original.roles || []) as string[];
+      if (userRoles.length === 0) return null;
 
-      if (!userType) {
-        return null;
-      }
+      const [primary, ...rest] = userRoles;
+      const userType = roles.find(({ value }) => value === primary);
 
       return (
         <div className="flex items-center gap-x-2">
-          {userType.icon && (
-            <userType.icon size={16} className="text-muted-foreground" />
+          <span className="text-sm capitalize inline-flex items-center gap-2">
+            {userType?.icon && <userType.icon size={14} className="text-muted-foreground" />}
+            {userType?.label ?? primary}
+          </span>
+
+          {rest.length > 0 && (
+            <span className="ml-2 inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+              +{rest.length}
+            </span>
           )}
-          <span className="text-sm capitalize">{row.getValue("role")}</span>
         </div>
       );
     },
-    filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
+    filterFn: (row, _id, value: string[]) => {
+      const userRoles = (row.original.roles || []) as string[];
+      return value.some((v: string) => userRoles.includes(v));
     },
     enableSorting: false,
     enableHiding: false,
