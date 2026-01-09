@@ -44,19 +44,6 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           >
             View
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={(e) => {
-              e.stopPropagation();
-              setCurrentRow(row.original)
-              setOpen('edit')
-            }}
-            onMouseDown={(e) => e.stopPropagation()}
-          >
-            Edit
-            <DropdownMenuShortcut>
-              <UserPen size={16} />
-            </DropdownMenuShortcut>
-          </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={(e) => {
