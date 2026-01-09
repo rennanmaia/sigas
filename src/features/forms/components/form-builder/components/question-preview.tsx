@@ -9,6 +9,7 @@ interface QuestionPreviewProps {
   onAddOption: (id: string) => void;
   onUpdateOption: (id: string, idx: number, val: string) => void;
   onRemoveOption: (id: string, idx: number) => void;
+  allQuestions?: Question[];
 }
 
 export function QuestionPreview({ question, ...props }: QuestionPreviewProps) {
