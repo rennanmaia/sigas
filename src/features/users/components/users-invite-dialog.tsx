@@ -45,6 +45,7 @@ import { Textarea } from "@/components/ui/textarea";
 // SelectDropdown not used here; using Popover + Command for scalable multi-select
 import { roles } from "../data/data";
 import { type User } from '../data/schema'
+import { useUsersStore } from "@/stores/users-store";
 
 const formSchema = z.object({
   cpf: z.string().min(1, 'Please enter CPF').refine((v) => isValidCpf(v), { message: 'Invalid CPF' }),
@@ -65,7 +66,7 @@ export function UsersInviteDialog({
   open,
   onOpenChange,
 }: UserInviteDialogProps) {
-  const { users, setUsers } = useUsers()
+  const { users, setUsers } = useUsersStore();
 
   const form = useForm<UserInviteForm>({
     resolver: zodResolver(formSchema),
