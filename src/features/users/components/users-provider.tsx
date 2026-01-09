@@ -3,7 +3,7 @@ import useDialogState from '@/hooks/use-dialog-state'
 import { type User } from '../data/schema'
 import { users as initialUsers } from '../data/users'
 
-type UsersDialogType = 'invite' | 'add' | 'edit' | 'delete' | 'view' | 'toggleStatus'
+type UsersDialogType = 'invite' | 'edit' | 'delete' | 'view' | 'toggleStatus'
 
 type UsersContextType = {
   open: UsersDialogType | null
