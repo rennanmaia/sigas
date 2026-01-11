@@ -2,10 +2,13 @@ import { flexRender, getCoreRowModel, getFacetedRowModel, getFacetedUniqueValues
 import { columns } from "../components/passive-columns";
 import { useEffect, useState } from "react"
 import { useTableUrlState, type NavigateFn } from "@/hooks/use-table-url-state";
-import { passivosMock } from "../data/passives";
-import { DataTableToolbar } from "@/components/data-table";
+import { passivosMock, RISCOS, STATUS_PLANO } from "../data/passives";
+import { DataTableBulkActions, DataTablePagination, DataTableToolbar } from "@/components/data-table";
 import { cn } from "@/lib/utils";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
+import { Trash2 } from "lucide-react";
 
 type DataTableProps = {
   search: Record<string, unknown>
@@ -15,7 +18,9 @@ type DataTableProps = {
 export function PassivesTable({ search, navigate }: DataTableProps) {
     const [rowSelection, setRowSelection] = useState({})
     const [sorting, setSorting] = useState<SortingState>([])
-    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+    const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+      diasAbertoCategoria: false,
+    })
 
     const {
         columnFilters,
@@ -28,7 +33,8 @@ export function PassivesTable({ search, navigate }: DataTableProps) {
         navigate,
         pagination: { defaultPage: 1, defaultPageSize: 10 },
         globalFilter: { enabled: false },
-        columnFilters: [],
+        columnFilters: [
+        ],
     })
 
     const table = useReactTable({
@@ -70,7 +76,20 @@ export function PassivesTable({ search, navigate }: DataTableProps) {
                 table={table}
                 searchPlaceholder='Filter passives...'
                 searchKey='label'
-                filters={[]}
+                filters={[
+                    {columnId: 'risco', options: RISCOS.map(risco => ({ label: risco, value: risco })), title: 'Risco'},
+                    {columnId: 'statusPlano', options: STATUS_PLANO.map(status => ({ label: status, value: status })), title: 'Status do Plano'},
+                    {
+                        columnId: 'diasAbertoCategoria',
+                        title: 'Dias em Aberto',
+                        options: [
+                            { label: 'Até 30 dias', value: '0' },
+                            { label: '31-90 dias', value: '1' },
+                            { label: '91-180 dias', value: '2' },
+                            { label: '+180 dias', value: '3' },
+                        ],
+                    },
+                ]}
               />
               <div className='overflow-hidden rounded-md border'>
                  <Table>
@@ -141,8 +160,27 @@ export function PassivesTable({ search, navigate }: DataTableProps) {
                     </TableBody>
                 </Table>
             </div>
-            {/* <DataTablePagination table={table} className='mt-auto' />
-            <DataTableBulkActions table={table} /> */}
+            <DataTablePagination table={table} className='mt-auto' />
+            <DataTableBulkActions table={table} entityName="passives" >
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                    <Button
+                        variant='destructive'
+                        size='icon'
+                        // onClick={() => setShowDeleteConfirm(true)}
+                        className='size-8'
+                        aria-label='Delete selected'
+                        title='Delete selected'
+                    >
+                        <Trash2 />
+                        <span className='sr-only'>Delete selected</span>
+                    </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                    <p>Delete selected</p>
+                    </TooltipContent>
+                </Tooltip>
+            </DataTableBulkActions>
         </div>
     )
 }
