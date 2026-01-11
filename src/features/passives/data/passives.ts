@@ -6,21 +6,22 @@ import type {
   ImpactoNivel, 
   StatusPlano 
 } from './schema';
+import { users } from '@/features/users/data/users';
 
 // Configurações de domínio ESG para maior verossimilhança
-const CATEGORIAS_AMBIENTAIS = [
+export const CATEGORIAS_AMBIENTAIS = [
   'Recursos Hídricos', 'Biodiversidade', 'Emissões Atmosféricas', 
   'Resíduos Perigosos', 'Contaminação de Solo', 'Licenciamento'
 ];
 
-const CATEGORIAS_SOCIAIS = [
+export const CATEGORIAS_SOCIAIS = [
   'Direitos Humanos', 'Comunidades Tradicionais', 'Saúde e Segurança', 
   'Mão de Obra Terceirizada', 'Impacto de Vizinhança', 'Patrimônio Cultural'
 ];
 
-const RISCOS: RiscoNivel[] = ['Baixo', 'Médio', 'Alto', 'Crítico'];
-const IMPACTOS: ImpactoNivel[] = ['Leve', 'Moderado', 'Significativo', 'Severo'];
-const STATUS_PLANO: StatusPlano[] = ['Não Definido', 'Em Planejamento', 'Em Execução', 'Atrasado', 'Concluído'];
+export const RISCOS: RiscoNivel[] = ['Baixo', 'Médio', 'Alto', 'Crítico'];
+export const IMPACTOS: ImpactoNivel[] = ['Leve', 'Moderado', 'Significativo', 'Severo'];
+export const STATUS_PLANO: StatusPlano[] = ['Não Definido', 'Em Planejamento', 'Em Execução', 'Atrasado', 'Concluído'];
 
 export function generateRandomPassivo(): Passivo {
   const tipo = faker.helpers.arrayElement<PassivoTipo>(['Ambiental', 'Social']);
@@ -44,10 +45,10 @@ export function generateRandomPassivo(): Passivo {
     impactoSocial: faker.helpers.arrayElement(IMPACTOS),
     statusPlano: faker.helpers.arrayElement(STATUS_PLANO),
     dataIdentificacao: faker.date.past({ years: 2 }).toISOString(),
-    responsavel: faker.person.fullName(),
+    responsavel: faker.helpers.arrayElement(users.map(u => u.firstName)),
     proximaAcao: faker.lorem.sentence(),
     recorrente: faker.datatype.boolean(0.15), // 15% de chance de ser recorrente
-    auditado: faker.datatype.boolean(),
+    auditado: faker.datatype.boolean(0.80),
     naoConformidade,
     documentosAnexadas: faker.number.int({ min: 0, max: 10 }),
     tendencia: faker.helpers.arrayElement(['subindo', 'descendo', 'estavel']),
