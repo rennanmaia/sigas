@@ -75,7 +75,7 @@ export function PassivesTable({ search, navigate }: DataTableProps) {
               <DataTableToolbar
                 table={table}
                 searchPlaceholder='Filter passives...'
-                searchKey='label'
+                searchKey='nome'
                 filters={[
                     {columnId: 'risco', options: RISCOS.map(risco => ({ label: risco, value: risco })), title: 'Risco'},
                     {columnId: 'statusPlano', options: STATUS_PLANO.map(status => ({ label: status, value: status })), title: 'Status do Plano'},
