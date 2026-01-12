@@ -77,4 +77,10 @@ export type PassiveStats = {
   social: number;
   comResponsavel: number;
   comEvidencias: number;
+  distribuicao: {
+    critico: number;
+    alto: number;
+    medio: number;
+    baixo: number;
+  }
 }

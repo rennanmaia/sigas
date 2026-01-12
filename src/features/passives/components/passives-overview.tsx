@@ -29,6 +29,15 @@ export function PassivesOverview() {
     const comResponsavel = passivosMock.filter(p => p.responsavel && p.responsavel.trim() !== '').length;
     const comEvidencias = passivosMock.filter(p => p.documentosAnexadas && p.documentosAnexadas > 0).length;
 
+    const altos = passivosMock.filter(p => p.risco === 'Alto').length;
+    const medios = passivosMock.filter(p => p.risco === 'Médio').length;
+    const baixos = passivosMock.filter(p => p.risco === 'Baixo').length;
+
+    const pctCritico = (criticos / total) * 100;
+    const pctAlto = (altos / total) * 100;
+    const pctMedio = (medios / total) * 100;
+    const pctBaixo = (baixos / total) * 100;
+
     return { 
       total, 
       criticos, 
@@ -38,7 +47,13 @@ export function PassivesOverview() {
       social: total - ambiental, 
       comPlano,
       comEvidencias,
-      comResponsavel
+      comResponsavel,
+      distribuicao: {
+        critico: pctCritico,
+        alto: pctAlto,
+        medio: pctMedio,
+        baixo: pctBaixo
+      }
     };
   }, []);
 
@@ -79,34 +94,59 @@ export function PassivesOverview() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2">
+        
+        <Card className="lg:col-span-2 shadow-sm border-slate-200">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium flex items-center gap-2">
-              Distribuição de Exposição por Risco
-              <TooltipProvider>
-                <Tooltip>
-                    <TooltipTrigger>
-                        <Info className="h-3 w-3 text-slate-400"/>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                        Percentual de passivos em cada faixa de risco
-                    </TooltipContent>
-                </Tooltip>
-            </TooltipProvider>
+            <CardTitle className="text-sm font-bold flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                Distribuição de Exposição por Risco
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger><Info className="h-3 w-3 text-slate-400"/></TooltipTrigger>
+                    <TooltipContent>Representação proporcional do nível de criticidade da carteira atual.</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              <span className="text-[10px] text-slate-400 font-normal">TOTAL: {stats.total} ITENS</span>
             </CardTitle>
           </CardHeader>
-          <CardContent className="flex items-center gap-4 h-12">
-            <div className="flex h-4 w-full rounded-full overflow-hidden bg-slate-100">
-              <div className="bg-red-500 w-[20%]" />
-              <div className="bg-orange-400 w-[30%]" />
-              <div className="bg-amber-300 w-[25%]" />
-              <div className="bg-emerald-400 w-[25%]" />
+          
+          <CardContent>
+            {/* Barra Empilhada Dinâmica */}
+            <div className="flex h-6 w-full rounded-md overflow-hidden bg-slate-100 shadow-inner border border-slate-200">
+              <TooltipProvider>
+                {/* Segmento Crítico */}
+                <Tooltip>
+                  <TooltipTrigger style={{ width: `${stats.distribuicao.critico}%` }} className="bg-red-500 h-full transition-all hover:brightness-110" />
+                  <TooltipContent>Crítico: {stats.distribuicao.critico.toFixed(1)}%</TooltipContent>
+                </Tooltip>
+
+                {/* Segmento Alto */}
+                <Tooltip>
+                  <TooltipTrigger style={{ width: `${stats.distribuicao.alto}%` }} className="bg-orange-400 h-full transition-all hover:brightness-110" />
+                  <TooltipContent>Alto: {stats.distribuicao.alto.toFixed(1)}%</TooltipContent>
+                </Tooltip>
+
+                {/* Segmento Médio */}
+                <Tooltip>
+                  <TooltipTrigger style={{ width: `${stats.distribuicao.medio}%` }} className="bg-amber-300 h-full transition-all hover:brightness-110" />
+                  <TooltipContent>Médio: {stats.distribuicao.medio.toFixed(1)}%</TooltipContent>
+                </Tooltip>
+
+                {/* Segmento Baixo */}
+                <Tooltip>
+                  <TooltipTrigger style={{ width: `${stats.distribuicao.baixo}%` }} className="bg-emerald-400 h-full transition-all hover:brightness-110" />
+                  <TooltipContent>Baixo: {stats.distribuicao.baixo.toFixed(1)}%</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
-            <div className="flex gap-3 text-[10px] font-bold uppercase text-slate-500 whitespace-nowrap">
-              <span className="flex items-center gap-1">
-                <div className="h-2 w-2 bg-red-500 rounded-full"/> Crítico</span>
-              <span className="flex items-center gap-1">
-                <div className="h-2 w-2 bg-orange-400 rounded-full"/> Alto</span>
+
+            {/* Legenda com Valores Reais */}
+            <div className="flex flex-wrap gap-x-6 gap-y-2 mt-4">
+              <LegendItem color="bg-red-500" label="Crítico" pct={stats.distribuicao.critico} />
+              <LegendItem color="bg-orange-400" label="Alto" pct={stats.distribuicao.alto} />
+              <LegendItem color="bg-amber-300" label="Médio" pct={stats.distribuicao.medio} />
+              <LegendItem color="bg-emerald-400" label="Baixo" pct={stats.distribuicao.baixo} />
             </div>
           </CardContent>
         </Card>
@@ -123,4 +163,16 @@ export function PassivesOverview() {
       </div>
     </div>
   )
+}
+
+function LegendItem({ color, label, pct }: { color: string, label: string, pct: number }) {
+  if (pct === 0) return null; // Não mostra se não houver itens desse risco
+  return (
+    <div className="flex items-center gap-2">
+      <div className={`h-2 w-2 rounded-full ${color}`} />
+      <span className="text-[10px] font-bold text-slate-600 uppercase whitespace-nowrap">
+        {label} <span className="text-slate-400 font-normal ml-1">{pct.toFixed(0)}%</span>
+      </span>
+    </div>
+  );
 }
