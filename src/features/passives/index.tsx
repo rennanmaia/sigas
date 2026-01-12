@@ -9,12 +9,27 @@ import { ConfigDrawer } from '@/components/config-drawer';
 import { Main } from '@/components/layout/main';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PassivesOverview } from './components/passives-overview';
+import { CriticalRisksManagement } from "./components/critical-risk-management";
+import { useEffect } from "react";
+import { ResolvePassiveAction } from "./components/resolve-passive-action";
+import { PassiveView, type PassivesSearch } from "@/routes/_authenticated/passives";
 
 const route = getRouteApi('/_authenticated/passives/')
 
 export function Passives() {
   const search = route.useSearch()
   const navigate = route.useNavigate()
+
+  const { view, selectedId, tabs } = route.useSearch()
+
+  const goBack = () => navigate({ search: (prev) => ({ ...prev, view: PassiveView.OVERVIEW, selectedId: undefined }) })
+  const setTab = (tab: PassivesSearch['tabs']) => navigate({ search: (prev) => ({ ...prev, tabs: tab }) })
+    
+  useEffect(() => {
+    if (!view) {
+      goBack()
+    }
+  }, [view])
 
   return (
     <>
@@ -42,23 +57,27 @@ export function Passives() {
 
         <Tabs
           orientation="vertical"
-          defaultValue="overview"
+          defaultValue={tabs}
+          value={tabs}
           className="space-y-4"
+          onValueChange={(e) => {
+            setTab(e as PassivesSearch['tabs'])
+          }}
+          
         >
           <div className="w-full overflow-x-auto pb-2">
             <TabsList>
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="list">List</TabsTrigger>
+              <TabsTrigger value={PassiveView.OVERVIEW}>Overview</TabsTrigger>
+              <TabsTrigger value={PassiveView.LIST}>List</TabsTrigger>
             </TabsList>
           </div>
-          <TabsContent value="overview" className="space-y-4">
-            <PassivesOverview />
+          <TabsContent value={PassiveView.OVERVIEW} className="space-y-4">
+            {view === PassiveView.OVERVIEW && <PassivesOverview />}
+            {view === PassiveView.CRITICAL && <CriticalRisksManagement onBack={goBack} />}
           </TabsContent>
-          <TabsContent value="list" className="space-y-4">
-            <div className="">
-              <PassivesTable navigate={navigate} search={search}/> 
-            </div>
-            </TabsContent>
+          <TabsContent value={PassiveView.LIST} className="space-y-4">
+            <PassivesTable navigate={navigate as any} search={search}/> 
+          </TabsContent>
         </Tabs>
       </Main>
     </>
