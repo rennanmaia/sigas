@@ -94,7 +94,7 @@ export function PassivesOverview() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
+
         <Card className="lg:col-span-2 shadow-sm border-slate-200">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-bold flex items-center justify-between">
@@ -154,7 +154,7 @@ export function PassivesOverview() {
         {stats.semPlano > 0 && (
           <Alert variant="destructive" className="bg-white border-red-200">
             <ShieldAlert className="h-4 w-4" />
-            <AlertTitle>Atenção Gestor</AlertTitle>
+            <AlertTitle>Atenção</AlertTitle>
             <AlertDescription className="text-xs">
               Existem {stats.semPlano} passivos sem plano de ação definido. Isso aumenta a vulnerabilidade em auditorias.
             </AlertDescription>
