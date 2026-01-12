@@ -11,7 +11,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PassivesOverview } from './components/passives-overview';
 import { CriticalRisksManagement } from "./components/critical-risk-management";
 import { useEffect } from "react";
-import { ResolvePassiveAction } from "./components/resolve-passive-action";
 import { PassiveView, type PassivesSearch } from "@/routes/_authenticated/passives";
 
 const route = getRouteApi('/_authenticated/passives/')
