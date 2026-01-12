@@ -1,7 +1,5 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { AlertTriangle, Clock, User, CheckCircle2 } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { passivosMock } from "../data/passives";
 import { useCallback } from "react";
 import { getRouteApi } from "@tanstack/react-router";
@@ -16,7 +14,7 @@ const route = getRouteApi('/_authenticated/passives/')
 
 export function CriticalRisksManagement({ onBack }: CriticalRisksViewProps) {
   const navigate = route.useNavigate()
-  const goToResolve = useCallback((id: string) => navigate({ search: (prev) => ({ ...prev, view: PassiveView.RESOLVE, selectedId: id }) }), []);
+  const goToResolve = useCallback((id: string) => navigate({ search: (prev) => ({ ...prev, /*view: PassiveView.RESOLVE,*/ selectedId: id }) }), []);
   const criticalItems = passivosMock.filter(i => i.risco === 'Crítico');
 
   return (
