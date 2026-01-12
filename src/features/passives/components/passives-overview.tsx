@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import type { PassiveStats } from "../data/schema";
 import { passivosMock } from "../data/passives";
 import { SummaryCard } from "./passives-summary-card";
@@ -10,9 +10,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { getRouteApi } from "@tanstack/react-router";
+import { PassiveView } from "@/routes/_authenticated/passives";
 
+const route = getRouteApi('/_authenticated/passives/');
 export function PassivesOverview() {
-  
+  const navigate = route.useNavigate();
+
+  const goToCritical = useCallback(() => navigate({ search: (prev) => ({ ...prev, view: PassiveView.CRITICAL }) }), [])
   // Cálculos de Resumo
   const stats: PassiveStats = useMemo(() => {
     const total = passivosMock.length;
@@ -54,6 +59,9 @@ export function PassivesOverview() {
           sub={`${((stats.criticos/stats.total)*100).toFixed(0)}% do total`} 
           icon={<ShieldAlert className="h-4 w-4 text-red-500" />}
           alert
+          onReview={() => {
+            goToCritical()
+          }}
         />
         <SummaryCard title="Sem Plano de Ação" value={stats.semPlano} sub="Requer atenção imediata" icon={<AlertTriangle className="h-4 w-4 text-orange-500" />} />
         <SummaryCard title="Planos em Atraso" value={stats.atrasados} sub="Gargalo operacional" icon={<Calendar className="h-4 w-4 text-red-500" />} />
@@ -63,9 +71,13 @@ export function PassivesOverview() {
       <ImmediateAttentionPanel data={passivosMock} />
 
       <div className="col-span-12 lg:col-span-3 space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+
         <ManagementMaturityCard stats={stats} />
         <RecentEventsTimeline />
+        </div>
       </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-2">
           <CardHeader className="pb-2">
@@ -104,7 +116,7 @@ export function PassivesOverview() {
             <ShieldAlert className="h-4 w-4" />
             <AlertTitle>Atenção Gestor</AlertTitle>
             <AlertDescription className="text-xs">
-              Existem {stats.semPlano} passivos críticos sem plano de ação definido. Isso aumenta a vulnerabilidade em auditorias.
+              Existem {stats.semPlano} passivos sem plano de ação definido. Isso aumenta a vulnerabilidade em auditorias.
             </AlertDescription>
           </Alert>
         )}
