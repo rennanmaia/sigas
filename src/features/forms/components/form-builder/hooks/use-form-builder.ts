@@ -3,6 +3,7 @@ import type { Question, QuestionType } from "../types/question";
 
 export function useFormBuilder() {
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [questions, setQuestions] = useState<Question[]>([]);
 
   const createInitialOption = () => ({
@@ -24,7 +25,6 @@ export function useFormBuilder() {
 
     setQuestions((prev) => {
       if (atIndex === undefined) return [...prev, newQuestion];
-
       const newQuestions = [...prev];
       newQuestions.splice(atIndex + 1, 0, newQuestion);
       return newQuestions;
@@ -35,14 +35,11 @@ export function useFormBuilder() {
     setQuestions((prev) => {
       const index = prev.findIndex((q) => q.id === id);
       if (index === -1) return prev;
-
       const original = prev[index];
-
       const copy: Question = {
         ...JSON.parse(JSON.stringify(original)),
         id: crypto.randomUUID(),
       };
-
       const newQuestions = [...prev];
       newQuestions.splice(index + 1, 0, copy);
       return newQuestions;
@@ -122,6 +119,8 @@ export function useFormBuilder() {
   return {
     title,
     setTitle,
+    description,
+    setDescription,
     questions,
     setQuestions,
     addQuestion,
