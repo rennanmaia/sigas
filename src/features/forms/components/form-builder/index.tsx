@@ -12,11 +12,36 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Plus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-
+import { createFormSchema } from "../../data/schema";
 export function FormBuilder({ onSave }: { onSave: (data: any) => void }) {
-  const { title, setTitle, questions, setQuestions, ...methods } =
-    useFormBuilder();
+  const {
+    title,
+    setTitle,
+    description,
+    setDescription,
+    questions,
+    setQuestions,
+    ...methods
+  } = useFormBuilder();
+  const handleInternalSave = () => {
+    const formData = {
+      title,
+      description: "Formulário sem descrição",
+      status: "Rascunho",
+      owner: "Carlos Silva",
+      questions,
+    };
 
+    const validation = createFormSchema.safeParse(formData);
+    // itll enhance validation errors on inputs, for now displaying with alerts to view error logs
+    if (!validation.success) {
+      const errorMsg = validation.error.message;
+      alert(`Erro: ${errorMsg}`);
+      return;
+    }
+
+    onSave(validation.data);
+  };
   const handleDragEnd = (result: DropResult) => {
     const { destination, source, type } = result;
     if (!destination) return;
@@ -58,8 +83,10 @@ export function FormBuilder({ onSave }: { onSave: (data: any) => void }) {
                   onChange={(e) => setTitle(e.target.value)}
                 />
                 <Input
-                  className="text-sm text-muted-foreground border-none shadow-none focus-visible:ring-0 p-0 h-auto bg-transparent"
+                  className="..."
                   placeholder="Descrição ou instruções..."
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
                 />
               </Card>
 
@@ -143,9 +170,7 @@ export function FormBuilder({ onSave }: { onSave: (data: any) => void }) {
       <button
         id="submit-builder"
         className="hidden"
-        onClick={() =>
-          onSave({ title, questionsCount: questions.length, questions })
-        }
+        onClick={handleInternalSave}
       />
     </DragDropContext>
   );
