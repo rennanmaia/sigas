@@ -14,6 +14,7 @@ interface QuestionCardProps {
   question: Question;
   index: number;
   allQuestions: Question[];
+  error?: string;
   onUpdateLabel: (id: string, val: string) => void;
   onUpdateType: (id: string, type: QuestionType) => void;
   onUpdateQuestion: (id: string, updates: Partial<Question>) => void;
@@ -30,6 +31,7 @@ export function QuestionCard({
   question,
   index,
   allQuestions,
+  error,
   ...props
 }: QuestionCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -38,6 +40,7 @@ export function QuestionCard({
   const [showLogic, setShowLogic] = useState(!!question.logic);
   const [showSettings, setShowSettings] = useState(false);
   const hasValidationSupport = !["select", "map"].includes(question.type);
+
   useEffect(() => {
     if (!hasScrolled.current) {
       const timer = setTimeout(() => {
@@ -63,30 +66,56 @@ export function QuestionCard({
           className={`relative flex flex-col md:flex-row gap-4 p-5 border-l-4 transition-all mb-4 ${
             snapshot.isDragging
               ? "shadow-2xl border-l-primary z-50 scale-[1.01] bg-white"
-              : "hover:shadow-md border-l-transparent bg-card"
+              : error
+                ? "border-l-destructive shadow-sm bg-destructive/5"
+                : "hover:shadow-md border-l-transparent bg-card"
           }`}
         >
           <div className="flex-1 space-y-4 min-w-0">
             <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
               <div className="flex items-center gap-2 flex-1">
-                <span className="flex items-center justify-center size-6 rounded-full bg-muted text-[11px] font-bold text-muted-foreground shrink-0">
+                <span
+                  className={`flex items-center justify-center size-6 rounded-full text-[11px] font-bold shrink-0 ${
+                    error
+                      ? "bg-destructive text-white"
+                      : "bg-muted text-muted-foreground"
+                  }`}
+                >
                   {index + 1}
                 </span>
-                <div className="flex-1 flex items-center gap-1 relative">
-                  <Input
-                    autoFocus={question.label === ""}
-                    placeholder="Título da pergunta..."
-                    className="font-semibold border-none bg-transparent focus-visible:ring-0 h-9 text-base md:text-lg p-2"
-                    value={question.label}
-                    onChange={(e) =>
-                      props.onUpdateLabel(question.id, e.target.value)
-                    }
-                  />
-                  {question.required && (
-                    <span className="text-destructive font-bold text-lg">
-                      *
-                    </span>
-                  )}
+                <div className="flex-1 flex flex-col relative">
+                  <div className="flex items-center gap-1">
+                    <Input
+                      autoFocus={question.label === ""}
+                      placeholder="Título da pergunta..."
+                      className={`font-semibold border-none bg-transparent focus-visible:ring-0 h-9 text-base md:text-lg p-2 ${
+                        error
+                          ? "text-destructive placeholder:text-destructive/60"
+                          : ""
+                      }`}
+                      value={question.label}
+                      onChange={(e) =>
+                        props.onUpdateLabel(question.id, e.target.value)
+                      }
+                    />
+                    {question.required && (
+                      <span className="text-destructive font-bold text-lg">
+                        *
+                      </span>
+                    )}
+                  </div>
+
+                  <AnimatePresence>
+                    {error && (
+                      <motion.span
+                        initial={{ opacity: 0, y: -5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-[10px] text-destructive font-bold uppercase tracking-wider pl-2"
+                      >
+                        {error}
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
                 </div>
               </div>
 
