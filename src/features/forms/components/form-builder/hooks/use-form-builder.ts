@@ -1,10 +1,32 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import type { Question, QuestionType } from "../types/question";
 
 export function useFormBuilder() {
-  const [title, setTitle] = useState("");
+  const defaultTitle = "Formulário sem título";
+  const defaultQuestions: Question[] = [
+    {
+      id: crypto.randomUUID(),
+      type: "text",
+      label: "Pergunta sem título",
+      required: false,
+    },
+  ];
+
+  const [title, setTitle] = useState(defaultTitle);
   const [description, setDescription] = useState("");
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [questions, setQuestions] = useState<Question[]>(defaultQuestions);
+
+  const loadForm = useCallback((data: any) => {
+    setTitle(data.title || defaultTitle);
+    setDescription(data.description || "");
+    setQuestions(data.questions?.length ? data.questions : defaultQuestions);
+  }, []);
+
+  const resetForm = useCallback(() => {
+    setTitle(defaultTitle);
+    setDescription("");
+    setQuestions(defaultQuestions);
+  }, []);
 
   const createInitialOption = () => ({
     id: crypto.randomUUID(),
@@ -15,7 +37,7 @@ export function useFormBuilder() {
     const newQuestion: Question = {
       id: crypto.randomUUID(),
       type,
-      label: "",
+      label: "Pergunta sem título",
       required: false,
       options:
         type === "select" || type === "checkbox"
@@ -83,10 +105,7 @@ export function useFormBuilder() {
     setQuestions((prev) =>
       prev.map((q) => {
         if (q.id === questionId) {
-          const newOption = {
-            id: crypto.randomUUID(),
-            label: "",
-          };
+          const newOption = { id: crypto.randomUUID(), label: "" };
           return { ...q, options: [...(q.options || []), newOption] };
         }
         return q;
@@ -123,6 +142,8 @@ export function useFormBuilder() {
     setDescription,
     questions,
     setQuestions,
+    loadForm,
+    resetForm,
     addQuestion,
     duplicateQuestion,
     removeQuestion,
