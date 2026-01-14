@@ -5,7 +5,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { forms as initialForms, type FormItem } from "../data/forms-mock";
+import { forms as initialMockForms, type FormItem } from "../data/forms-mock";
 
 interface FormsContextType {
   forms: FormItem[];
@@ -17,14 +17,15 @@ interface FormsContextType {
 const FormsContext = createContext<FormsContextType | undefined>(undefined);
 
 export function FormsProvider({ children }: { children: ReactNode }) {
-  const [forms, setForms] = useState<FormItem[]>(initialForms);
+  const [forms, setForms] = useState<FormItem[]>([]);
 
   useEffect(() => {
     const saved = localStorage.getItem("local-forms");
     if (saved) {
       setForms(JSON.parse(saved));
     } else {
-      setForms(initialForms);
+      setForms(initialMockForms);
+      localStorage.setItem("local-forms", JSON.stringify(initialMockForms));
     }
   }, []);
 
@@ -41,17 +42,32 @@ export function FormsProvider({ children }: { children: ReactNode }) {
     const updated = [formToAdd, ...forms];
     setForms(updated);
     localStorage.setItem("local-forms", JSON.stringify(updated));
-    alert("Formulário criado com sucesso!");
   };
 
   const updateForm = (id: string, updatedData: Partial<FormItem>) => {
-    setForms((prev) =>
-      prev.map((f) => (f.id === id ? { ...f, ...updatedData } : f))
-    );
+    setForms((prev) => {
+      const updated = prev.map((f) =>
+        f.id === id
+          ? {
+              ...f,
+              ...updatedData,
+              questionsCount: updatedData.questions?.length ?? f.questionsCount,
+              lastUpdated: new Date().toISOString().split("T")[0],
+            }
+          : f
+      );
+
+      localStorage.setItem("local-forms", JSON.stringify(updated));
+      return updated;
+    });
   };
 
   const deleteForms = (ids: string[]) => {
-    setForms((prev) => prev.filter((f) => !ids.includes(f.id)));
+    setForms((prev) => {
+      const updated = prev.filter((f) => !ids.includes(f.id));
+      localStorage.setItem("local-forms", JSON.stringify(updated));
+      return updated;
+    });
   };
 
   return (

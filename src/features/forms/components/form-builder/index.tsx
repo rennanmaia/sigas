@@ -13,7 +13,15 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Plus } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createFormSchema } from "../../data/schema";
-export function FormBuilder({ onSave }: { onSave: (data: any) => void }) {
+import { useEffect, useState } from "react";
+import { useForms } from "../forms-provider";
+export function FormBuilder({
+  onSave,
+  initialId,
+}: {
+  onSave: (data: any) => void;
+  initialId?: string;
+}) {
   const {
     title,
     setTitle,
@@ -21,8 +29,23 @@ export function FormBuilder({ onSave }: { onSave: (data: any) => void }) {
     setDescription,
     questions,
     setQuestions,
+    loadForm,
     ...methods
   } = useFormBuilder();
+  const { forms } = useForms();
+  const [isLoaded, setIsLoaded] = useState(!initialId);
+  useEffect(() => {
+    if (initialId && forms.length > 0) {
+      const existingForm = forms.find((f) => f.id === initialId);
+      if (existingForm) {
+        loadForm(existingForm);
+        setIsLoaded(true);
+      }
+    }
+  }, [initialId, forms, loadForm]);
+
+  if (!isLoaded) return null;
+
   const handleInternalSave = () => {
     const formData = {
       title,
