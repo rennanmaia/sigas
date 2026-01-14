@@ -7,15 +7,22 @@ import { ArrowLeft, Eye, Save, X } from "lucide-react";
 import { FormsProvider, useForms } from "../components/forms-provider";
 import { FormBuilder } from "../components/form-builder";
 
-function CreateFormContent() {
+interface FormCreateProps {
+  initialId?: string;
+}
+
+function CreateFormContent({ initialId }: FormCreateProps) {
   const navigate = useNavigate();
-  const { addForm } = useForms();
+  const { addForm, updateForm } = useForms();
 
   const handleSave = (data: any) => {
-    addForm(data);
+    if (initialId) {
+      updateForm(initialId, data);
+    } else {
+      addForm(data);
+    }
     navigate({ to: "/forms" });
   };
-
   return (
     <div className="flex flex-col h-[100dvh] w-full overflow-hidden bg-background">
       <Header className="flex-col md:flex-row items-start md:items-center gap-0 h-auto py-3 md:h-16 shrink-0 border-b">
@@ -53,26 +60,25 @@ function CreateFormContent() {
 
           <Button
             size="sm"
-            className="h-9 bg-primary hover:secondary text-white"
             onClick={() => document.getElementById("submit-builder")?.click()}
           >
-            <Save size={18} className="mr-0 md:mr-2" />
-            <span className="hidden md:inline">Salvar Formulário</span>
+            <Save size={18} className="mr-2" />
+            <span>{initialId ? "Salvar Alterações" : "Salvar Formulário"}</span>
           </Button>
         </div>
       </Header>
 
       <Main className="p-0 flex-1 overflow-hidden flex flex-col">
-        <FormBuilder onSave={handleSave} />
+        <FormBuilder onSave={handleSave} initialId={initialId} />
       </Main>
     </div>
   );
 }
 
-export default function FormCreate() {
+export default function FormCreate({ initialId }: FormCreateProps) {
   return (
     <FormsProvider>
-      <CreateFormContent />
+      <CreateFormContent initialId={initialId} />
     </FormsProvider>
   );
 }
