@@ -21,7 +21,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DataTablePagination, DataTableToolbar } from "@/components/data-table";
-import { forms as data } from "../data/forms-mock";
+
+import { useForms } from "../components/forms-provider";
 import { formsColumns as columns } from "./forms-columns";
 
 export function FormsTable({
@@ -31,6 +32,8 @@ export function FormsTable({
   search: Record<string, unknown>;
   navigate: NavigateFn;
 }) {
+  const { forms } = useForms();
+
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -53,7 +56,7 @@ export function FormsTable({
   });
 
   const table = useReactTable({
-    data,
+    data: forms,
     columns,
     state: {
       sorting,

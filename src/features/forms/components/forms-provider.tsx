@@ -1,4 +1,10 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 import { forms as initialForms, type FormItem } from "../data/forms-mock";
 
 interface FormsContextType {
@@ -13,17 +19,29 @@ const FormsContext = createContext<FormsContextType | undefined>(undefined);
 export function FormsProvider({ children }: { children: ReactNode }) {
   const [forms, setForms] = useState<FormItem[]>(initialForms);
 
-  const addForm = (newForm: any) => {
-    const id = `frm-${Math.floor(Math.random() * 1000)}`;
+  useEffect(() => {
+    const saved = localStorage.getItem("local-forms");
+    if (saved) {
+      setForms(JSON.parse(saved));
+    } else {
+      setForms(initialForms);
+    }
+  }, []);
+
+  const addForm = (newFormData: any) => {
     const formToAdd: FormItem = {
-      ...newForm,
-      id,
+      ...newFormData,
+      id: `frm-${Math.floor(Math.random() * 10000)}`,
       responses: 0,
-      questionsCount: 0,
+      questionsCount: newFormData.questions.length,
       lastUpdated: new Date().toISOString().split("T")[0],
       createdAt: new Date().toISOString().split("T")[0],
     };
-    setForms((prev) => [...prev, formToAdd]);
+
+    const updated = [formToAdd, ...forms];
+    setForms(updated);
+    localStorage.setItem("local-forms", JSON.stringify(updated));
+    alert("Formulário criado com sucesso!");
   };
 
   const updateForm = (id: string, updatedData: Partial<FormItem>) => {
