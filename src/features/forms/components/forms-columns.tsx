@@ -53,7 +53,7 @@ export const formsColumns: ColumnDef<FormItem>[] = [
     cell: ({ row }) => (
       <div className="flex flex-col max-w-[300px]">
         <Link
-          to="/forms/$id/edit"
+          to="/forms/edit/$id"
           params={{ id: row.original.id }}
           className="font-medium truncate hover:underline"
         >
@@ -142,7 +142,7 @@ export const formsColumns: ColumnDef<FormItem>[] = [
           onMouseDown={(e) => e.stopPropagation()}
         >
           <DropdownMenuItem>
-            <Link to={`/forms/$id`} params={{ id: row.original.id }}>
+            <Link to={`/forms/edit/$id`} params={{ id: row.original.id }}>
               <span className="no-underline flex items-center">
                 <Eye className="mr-2 h-4 w-4" />
                 View
@@ -150,7 +150,7 @@ export const formsColumns: ColumnDef<FormItem>[] = [
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link to={"/forms/$id/edit"} params={{ id: row.original.id }}>
+            <Link to={"/forms/edit/$id"} params={{ id: row.original.id }}>
               <span className="no-underline flex items-center">
                 <Pen className="mr-2 h-4 w-4" />
                 Edit
