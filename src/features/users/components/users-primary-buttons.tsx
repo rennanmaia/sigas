@@ -2,8 +2,10 @@ import { UserPlus } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useUsers } from './users-provider'
 import { useAuthStore } from '@/stores/auth-store'
+import { useTranslation } from 'react-i18next'
 
 export function UsersPrimaryButtons() {
+  const { t } = useTranslation("users")
   const { setOpen } = useUsers()
   const { auth } = useAuthStore()
   const roles = auth.user?.role ?? []
@@ -14,7 +16,7 @@ export function UsersPrimaryButtons() {
           className='space-x-1'
           onClick={() => setOpen('invite')}
         >
-        <span>Add User</span> <UserPlus size={18} />
+        <span>{t("list.buttons.add")}</span> <UserPlus size={18} />
         </Button>
       )}
     </div>
