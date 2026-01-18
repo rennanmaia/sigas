@@ -21,6 +21,7 @@ import { useTranslation } from "react-i18next";
 
 export function Dashboard() {
   const { t } = useTranslation("common")
+  const { t: tDashboard } = useTranslation("dashboard")
   return (
     <>
       {/* ===== Top Heading ===== */}
@@ -37,9 +38,9 @@ export function Dashboard() {
       {/* ===== Main ===== */}
       <Main>
         <div className="mb-2 flex items-center justify-between space-y-2">
-          <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{tDashboard("title")}</h1>
           <div className="flex items-center space-x-2">
-            <Button>{t("buttons.DOWNLOAD")}</Button>
+            <Button>{t("buttons.download")}</Button>
           </div>
         </div>
         <Tabs
@@ -49,13 +50,13 @@ export function Dashboard() {
         >
           <div className="w-full overflow-x-auto pb-2">
             <TabsList>
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="analytics">Analytics</TabsTrigger>
+              <TabsTrigger value="overview">{tDashboard("tabs.overview")}</TabsTrigger>
+              <TabsTrigger value="analytics">{tDashboard("tabs.analytics")}</TabsTrigger>
               <TabsTrigger value="reports" disabled>
-                Reports
+                {tDashboard("tabs.reports")}
               </TabsTrigger>
               <TabsTrigger value="notifications" disabled>
-                Notifications
+                {tDashboard("tabs.notifications")}
               </TabsTrigger>
             </TabsList>
           </div>
