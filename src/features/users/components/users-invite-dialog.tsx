@@ -2,7 +2,6 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MailPlus, Send } from "lucide-react";
-import { useUsers } from "./users-provider";
 import { isValidCpf } from '@/lib/utils'
 import { toast } from 'sonner'
 import { Button } from "@/components/ui/button";
@@ -46,12 +45,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { roles } from "../data/data";
 import { type User } from '../data/schema'
 import { useUsersStore } from "@/stores/users-store";
+import { useTranslation } from "react-i18next";
+import { t as i18next } from "i18next";
 
 const formSchema = z.object({
-  cpf: z.string().min(1, 'Please enter CPF').refine((v) => isValidCpf(v), { message: 'Invalid CPF' }),
-  fullName: z.string().min(1, 'Full name is required'),
-  email: z.email({ error: (iss) => (iss.input === '' ? 'Please enter an email to invite.' : undefined) }),
-  roles: z.array(z.string()).min(1, 'At least one profile is required'),
+  cpf: z.string().min(1, i18next("users:create.form.cpf.validation.required")).refine((v) => isValidCpf(v), { message: i18next("users:create.form.cpf.validation.invalid") }),
+  fullName: z.string().min(1, i18next("users:create.form.fullname.validation.required")),
+  email: z.email({ error: (iss) => (iss.input === '' ? i18next("users:create.form.email.validation.invalid") : undefined) }),
+  roles: z.array(z.string()).min(1, i18next("users:create.form.roles.validation.required")),
   desc: z.string().optional(),
 })
 
@@ -66,6 +67,7 @@ export function UsersInviteDialog({
   open,
   onOpenChange,
 }: UserInviteDialogProps) {
+  const { t } = useTranslation("users")
   const { users, setUsers } = useUsersStore();
 
   const form = useForm<UserInviteForm>({
@@ -93,7 +95,7 @@ export function UsersInviteDialog({
     setUsers([newUser, ...users])
     form.reset()
     onOpenChange(false)
-    toast.success('Invitation sent. An email has been dispatched with next steps.')
+    toast.success(t("create.submit.message"))
   }
 
   return (
@@ -107,11 +109,10 @@ export function UsersInviteDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader className="text-start">
           <DialogTitle className="flex items-center gap-2">
-            <MailPlus /> Create New User
+            <MailPlus /> {t("create.title")}
           </DialogTitle>
           <DialogDescription>
-            Create a new user to join your team by sending them an email
-            invitation. Assign a role to define their access level.
+            {t("create.description")}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -122,9 +123,9 @@ export function UsersInviteDialog({
           >
             <FormField control={form.control} name="cpf" render={({ field }) => (
               <FormItem>
-                <FormLabel>CPF</FormLabel>
+                <FormLabel>{t("create.form.cpf.label")}</FormLabel>
                 <FormControl>
-                  <CpfInput placeholder="xxx.xxx.xxx-xx" {...field} />
+                  <CpfInput placeholder={t("create.form.cpf.placeholder")} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -132,9 +133,9 @@ export function UsersInviteDialog({
 
             <FormField control={form.control} name="fullName" render={({ field }) => (
               <FormItem>
-                <FormLabel>Full name</FormLabel>
+                <FormLabel>{t("create.form.fullname.label")}</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g., John Doe" {...field} />
+                  <Input placeholder={t("create.form.fullname.placeholder")} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -142,9 +143,9 @@ export function UsersInviteDialog({
 
             <FormField control={form.control} name="email" render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>{t("create.form.email.label")}</FormLabel>
                 <FormControl>
-                  <Input type="email" placeholder="eg: john.doe@gmail.com" {...field} />
+                  <Input type="email" placeholder={t("create.form.email.placeholder")} {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -155,7 +156,7 @@ export function UsersInviteDialog({
               name="roles"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Profiles</FormLabel>
+                  <FormLabel>{t("create.form.roles.label")}</FormLabel>
 
                   <Popover>
                     <PopoverTrigger asChild>
@@ -171,7 +172,7 @@ export function UsersInviteDialog({
                           <span className="block w-full text-left truncate">
                             {(() => {
                               const selected = roles.filter((r) => (field.value ?? []).includes(r.value)).map((r) => r.label)
-                              if (!selected.length) return 'Select profiles'
+                              if (!selected.length) return t("create.form.roles.selectionPlaceholder")
                               if (selected.length <= 2) return selected.join(', ')
                               return `${selected[0]} +${selected.length - 1}`
                             })()}
@@ -183,8 +184,8 @@ export function UsersInviteDialog({
 
                     <PopoverContent className="w-[300px] p-0">
                       <Command>
-                        <CommandInput placeholder="Search profiles..." />
-                        <CommandEmpty>No profile found</CommandEmpty>
+                        <CommandInput placeholder={t("create.form.roles.placeholder")} />
+                        <CommandEmpty>{t("create.form.roles.notFound")}</CommandEmpty>
                         <CommandGroup>
                           <CommandList>
                             {roles.map((r) => (
@@ -223,11 +224,11 @@ export function UsersInviteDialog({
               name="desc"
               render={({ field }) => (
                 <FormItem className="">
-                  <FormLabel>Description (optional)</FormLabel>
+                  <FormLabel>{t("create.form.description.label")}</FormLabel>
                   <FormControl>
                     <Textarea
                       className="resize-none"
-                      placeholder="Add a personal note to send for this user in your invitation (optional)"
+                      placeholder={t("create.form.description.placeholder")}
                       {...field}
                     />
                   </FormControl>
@@ -239,10 +240,10 @@ export function UsersInviteDialog({
         </Form>
         <DialogFooter className="gap-y-2">
           <DialogClose asChild>
-            <Button variant="outline">Cancel</Button>
+            <Button variant="outline">{t("create.actions.cancel")}</Button>
           </DialogClose>
           <Button type="submit" form="user-invite-form">
-            Create <Send />
+            {t("create.actions.create")} <Send />
           </Button>
         </DialogFooter>
       </DialogContent>
