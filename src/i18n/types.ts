@@ -122,4 +122,4 @@ type Leaves<T> = T extends object
   : never;
 
 type I18nKey = Leaves<I18nResource>;
-export const i18nRessourceMessage = <T extends I18nKey>(key: T) => key;
+export const i18nResourceMessage = <T extends I18nKey>(key: T) => key;
