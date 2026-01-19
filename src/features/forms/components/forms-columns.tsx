@@ -1,13 +1,12 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { MoreVertical, FileEdit, Trash2, Copy, Pen, Eye } from "lucide-react";
+import { Trash2, Pen, Eye } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
@@ -16,6 +15,7 @@ import type { FormItem } from "../data/forms-mock";
 import type { ColumnDef } from "@tanstack/react-table";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { DataTableColumnHeader } from "@/components/data-table";
+import { useForms } from "./forms-provider";
 
 const statusStyles: Record<string, string> = {
   Ativo: "border-blue-200 bg-blue-50 text-blue-700",
@@ -23,7 +23,55 @@ const statusStyles: Record<string, string> = {
   Rascunho: "border-amber-200 bg-amber-50 text-amber-700",
   Arquivado: "border-slate-200 bg-slate-50 text-slate-600",
 };
+const RowActions = ({ row }: { row: any }) => {
+  const { setOpen, setCurrentForm } = useForms();
 
+  return (
+    <DropdownMenu modal={false}>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          className="data-[state=open]:bg-muted flex h-8 w-8 p-0"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <DotsHorizontalIcon className="h-4 w-4" />
+          <span className="sr-only">Abrir menu</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-[160px]">
+        <DropdownMenuItem asChild>
+          <Link to="/forms/edit/$id" params={{ id: row.original.id }}>
+            <span className="flex items-center">
+              <Eye className="mr-2 h-4 w-4" />
+              Visualizar
+            </span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link to="/forms/edit/$id" params={{ id: row.original.id }}>
+            <span className="flex items-center">
+              <Pen className="mr-2 h-4 w-4" />
+              Editar
+            </span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={() => {
+            setCurrentForm(row.original);
+            setOpen("delete");
+          }}
+          className="text-red-500!"
+        >
+          Deletar
+          <DropdownMenuShortcut>
+            <Trash2 size={16} />
+          </DropdownMenuShortcut>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
 export const formsColumns: ColumnDef<FormItem>[] = [
   {
     id: "select",
@@ -122,56 +170,6 @@ export const formsColumns: ColumnDef<FormItem>[] = [
 
   {
     id: "actions",
-    cell: ({ row }) => (
-      <DropdownMenu modal={false}>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="data-[state=open]:bg-muted flex h-8 w-8 p-0"
-            onClick={(e) => e.stopPropagation()}
-            onMouseDown={(e) => e.stopPropagation()}
-          >
-            <DotsHorizontalIcon className="h-4 w-4" />
-            <span className="sr-only">Abrir menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          align="end"
-          className="w-[160px]"
-          onClick={(e) => e.stopPropagation()}
-          onMouseDown={(e) => e.stopPropagation()}
-        >
-          <DropdownMenuItem>
-            <Link to={`/forms/edit/$id`} params={{ id: row.original.id }}>
-              <span className="no-underline flex items-center">
-                <Eye className="mr-2 h-4 w-4" />
-                View
-              </span>
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link to={"/forms/edit/$id"} params={{ id: row.original.id }}>
-              <span className="no-underline flex items-center">
-                <Pen className="mr-2 h-4 w-4" />
-                Edit
-              </span>
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={() => {
-              // setCurrentRow(row.original);
-              // setOpen("delete");
-            }}
-            className="text-red-500!"
-          >
-            Delete
-            <DropdownMenuShortcut>
-              <Trash2 size={16} />
-            </DropdownMenuShortcut>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    ),
+    cell: ({ row }) => <RowActions row={row} />,
   },
 ];
