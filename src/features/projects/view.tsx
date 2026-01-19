@@ -33,7 +33,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
+import { Label } from "@/components/ui/label";
 import {
   projects as mockProjects,
   projectForms as allForms,
@@ -71,7 +71,7 @@ function ProjectDetailsContent() {
   const updateProjectData = (newData: Partial<Project>) => {
     setProjects((prev) => {
       const newList = prev.map((p) =>
-        p.id === projectId ? { ...p, ...newData } : p
+        p.id === projectId ? { ...p, ...newData } : p,
       );
 
       mockProjects.length = 0;
@@ -96,16 +96,16 @@ function ProjectDetailsContent() {
     });
   };
   const currentProjectForms = allForms.filter((f) =>
-    project.forms?.includes(f.id)
+    project.forms?.includes(f.id),
   );
 
   const timeProgress = 65;
   const responsibleMember = allMembers.find(
-    (m) => m.name === project.responsible
+    (m) => m.name === project.responsible,
   );
 
   const otherMembers = allMembers.filter(
-    (m) => project.members?.includes(m.id) && m.name !== project.responsible
+    (m) => project.members?.includes(m.id) && m.name !== project.responsible,
   );
 
   const currentProjectTeam = responsibleMember
@@ -183,6 +183,47 @@ function ProjectDetailsContent() {
             </Button>
           </div>
         </div>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base font-semibold flex items-center gap-2">
+              Empresa Responsável e Campos Extras
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="space-y-1">
+                <Label className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
+                  Empresa Responsável
+                </Label>
+                <p className="text-sm font-medium text-foreground">
+                  {project.company || "Não informada"}
+                </p>
+              </div>
+
+              {project.customFields && project.customFields.length > 0 ? (
+                project.customFields.map((field, idx) => (
+                  <div
+                    key={idx}
+                    className="space-y-1 border-l pl-4 sm:border-l-0 sm:pl-0 lg:border-l lg:pl-4"
+                  >
+                    <Label className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
+                      {field.label}
+                    </Label>
+                    <p className="text-sm font-medium text-foreground">
+                      {field.value}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <div className="sm:col-span-1 lg:col-span-3">
+                  <p className="text-xs text-muted-foreground italic mt-5">
+                    Nenhum campo personalizado adicionado.
+                  </p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card className="lg:col-span-2">
