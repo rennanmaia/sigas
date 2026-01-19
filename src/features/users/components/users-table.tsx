@@ -23,17 +23,21 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { roles } from '../data/data'
-import { type User } from '../data/schema'
-import { useUsers } from './users-provider'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { usersColumns as columns } from './users-columns'
+import { getRouteApi } from '@tanstack/react-router'
+import { useUsersStore } from '@/stores/users-store'
+
+const viewUserRoute = getRouteApi('/_authenticated/users/$id/');
 
 export function UsersTable({ search, navigate }: { search: Record<string, unknown>; navigate: NavigateFn }) {
-  const { users: data } = useUsers()
+  const { users: data } = useUsersStore()
   // Local UI-only states
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [sorting, setSorting] = useState<SortingState>([])
+  const [sorting, setSorting] = useState<SortingState>([]);
+
+  const navigateToView = viewUserRoute.useNavigate();
 
   // Local state management for table (uncomment to use local-only state, not synced with URL)
   // const [columnFilters, onColumnFiltersChange] = useState<ColumnFiltersState>([])
@@ -51,11 +55,11 @@ export function UsersTable({ search, navigate }: { search: Record<string, unknow
     navigate,
     pagination: { defaultPage: 1, defaultPageSize: 10 },
     globalFilter: { enabled: false },
-    columnFilters: [
+      columnFilters: [
       // username per-column text filter
       { columnId: 'username', searchKey: 'username', type: 'string' },
       { columnId: 'status', searchKey: 'status', type: 'array' },
-      { columnId: 'role', searchKey: 'role', type: 'array' },
+      { columnId: 'roles', searchKey: 'role', type: 'array' },
     ],
   })
 
@@ -107,7 +111,7 @@ export function UsersTable({ search, navigate }: { search: Record<string, unknow
             options: [],
           },
           {
-            columnId: 'role',
+            columnId: 'roles',
             title: 'Profile',
             options: roles.map((role) => ({ label: role.label, value: role.value })),
           },
@@ -154,6 +158,13 @@ export function UsersTable({ search, navigate }: { search: Record<string, unknow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
                   className='group/row'
+                  onClick={() => {
+                    navigateToView({
+                      params: {
+                        id: row.original.id
+                      }
+                    })
+                  }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell

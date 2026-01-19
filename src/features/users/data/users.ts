@@ -18,7 +18,9 @@ export const users = Array.from({ length: 500 }, () => {
     phoneNumber: faker.phone.number({ style: 'international' }),
     cpf: faker.string.numeric(11),
     status: faker.helpers.arrayElement(['active', 'inactive']),
-    role: faker.helpers.arrayElement(roles.map((r) => r.value)),
+    roles: [
+      faker.helpers.arrayElement(roles.map((r) => r.value)),
+    ],
     createdAt: faker.date.past(),
     updatedAt: faker.date.recent(),
   }
