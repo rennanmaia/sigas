@@ -10,6 +10,16 @@ export const projectFormSchema = z.object({
   budget: z.coerce.number().min(0, "O orçamento deve ser positivo"),
   forms: z.array(z.string()).default([]),
   members: z.array(z.string()).default([]),
+  company: z.string().min(1, "A empresa responsável é obrigatória"),
+  customFields: z
+    .array(
+      z.object({
+        label: z.string().min(1, "O título é obrigatório"),
+        value: z.string().min(1, "O valor é obrigatório"),
+      }),
+    )
+    .optional()
+    .default([]),
 });
 
 export type ProjectForm = z.infer<typeof projectFormSchema>;
