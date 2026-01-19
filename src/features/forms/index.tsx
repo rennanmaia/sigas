@@ -8,6 +8,7 @@ import { type NavigateFn } from "@/hooks/use-table-url-state";
 import { FormsTable } from "./components/forms-table";
 import { FormsPrimaryButtons } from "./components/forms-primary-button";
 import { FormsProvider } from "./components/forms-provider";
+import { FormsDialog } from "./components/forms-dialog";
 
 interface Props {
   search: Record<string, unknown>;
@@ -39,6 +40,7 @@ export default function FormList({ search, navigate }: Props) {
           </div>
           <FormsTable search={search} navigate={navigate} />
         </Main>
+        <FormsDialog />
       </FormsProvider>
     </>
   );

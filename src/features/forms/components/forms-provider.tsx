@@ -6,19 +6,25 @@ import {
   type ReactNode,
 } from "react";
 import { forms as initialMockForms, type FormItem } from "../data/forms-mock";
-
+import useDialogState from "@/hooks/use-dialog-state";
+type FormDialogType = "add" | "edit" | "delete";
 interface FormsContextType {
   forms: FormItem[];
   addForm: (form: any) => void;
   updateForm: (id: string, form: Partial<FormItem>) => void;
   deleteForms: (ids: string[]) => void;
+  open: FormDialogType | null;
+  setOpen: (state: FormDialogType | null) => void;
+  currentForm: FormItem | null;
+  setCurrentForm: React.Dispatch<React.SetStateAction<FormItem | null>>;
 }
 
 const FormsContext = createContext<FormsContextType | undefined>(undefined);
 
 export function FormsProvider({ children }: { children: ReactNode }) {
   const [forms, setForms] = useState<FormItem[]>([]);
-
+  const [open, setOpen] = useDialogState<FormDialogType>(null);
+  const [currentForm, setCurrentForm] = useState<FormItem | null>(null);
   useEffect(() => {
     const saved = localStorage.getItem("local-forms");
     if (saved) {
@@ -54,7 +60,7 @@ export function FormsProvider({ children }: { children: ReactNode }) {
               questionsCount: updatedData.questions?.length ?? f.questionsCount,
               lastUpdated: new Date().toISOString().split("T")[0],
             }
-          : f
+          : f,
       );
 
       localStorage.setItem("local-forms", JSON.stringify(updated));
@@ -71,7 +77,18 @@ export function FormsProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <FormsContext.Provider value={{ forms, addForm, updateForm, deleteForms }}>
+    <FormsContext.Provider
+      value={{
+        forms,
+        addForm,
+        updateForm,
+        deleteForms,
+        open,
+        setOpen,
+        currentForm,
+        setCurrentForm,
+      }}
+    >
       {children}
     </FormsContext.Provider>
   );

@@ -13,12 +13,14 @@ import {
 
 import { Link } from "@tanstack/react-router";
 import { Eye } from "lucide-react";
+import { useForms } from "./forms-provider";
 
 type DataTableRowActionsProps = {
   row: Row<any>;
 };
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
+  const { setOpen, setCurrentForm } = useForms();
   return (
     <div className="z-100">
       <DropdownMenu modal={false}>
@@ -40,7 +42,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           onMouseDown={(e) => e.stopPropagation()}
         >
           <DropdownMenuItem>
-            <Link to={`/forms/$id`} params={{ id: row.original.id }}>
+            <Link to={`/forms/edit/$id`} params={{ id: row.original.id }}>
               <span className="no-underline flex items-center">
                 <Eye className="mr-2 h-4 w-4" />
                 Visualizar
@@ -48,7 +50,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link to={"/forms/$id/edit"} params={{ id: row.original.id }}>
+            <Link to={"/forms/edit/$id"} params={{ id: row.original.id }}>
               <span className="no-underline flex items-center">
                 <Pen className="mr-2 h-4 w-4" />
                 Editar
@@ -56,7 +58,13 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => {}} className="text-red-500!">
+          <DropdownMenuItem
+            onClick={() => {
+              setCurrentForm(row.original);
+              setOpen("delete");
+            }}
+            className="text-red-500!"
+          >
             Deletar
             <DropdownMenuShortcut>
               <Trash2 size={16} />

@@ -21,7 +21,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DataTablePagination, DataTableToolbar } from "@/components/data-table";
-
+import { DataTableBulkActions } from "./data-table-bulk-actions";
 import { useForms } from "../components/forms-provider";
 import { formsColumns as columns } from "./forms-columns";
 
@@ -112,7 +112,7 @@ export function FormsTable({
                     {!header.isPlaceholder &&
                       flexRender(
                         header.column.columnDef.header,
-                        header.getContext()
+                        header.getContext(),
                       )}
                   </TableHead>
                 ))}
@@ -130,7 +130,7 @@ export function FormsTable({
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -150,6 +150,7 @@ export function FormsTable({
         </Table>
       </div>
       <DataTablePagination table={table} className="mt-auto" />
+      <DataTableBulkActions table={table} />
     </div>
   );
 }
