@@ -101,12 +101,15 @@ export type Project = {
   stats: ProjectStats;
   forms: string[];
   members: string[];
+  company: string;
+  customFields?: { label: string; value: string }[];
 };
 
 export let projects: Project[] = [
   {
     id: "proj-001",
     title: "Monitoramento de Fauna (BR-101)",
+    company: "Empresa Exemplo LTDA",
     logo: <Bird className="text-emerald-600" size={20} />,
     status: "em andamento",
     description:
@@ -128,6 +131,7 @@ export let projects: Project[] = [
   {
     id: "proj-002",
     title: "Censo Socioeconômico - Vila Nova",
+    company: "Empresa Exemplo LTDA",
     logo: <Users className="text-blue-600" size={20} />,
     status: "concluido",
     description:
