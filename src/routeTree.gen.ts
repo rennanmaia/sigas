@@ -40,6 +40,7 @@ import { Route as AuthenticatedUsersIdIndexRouteImport } from './routes/_authent
 import { Route as AuthenticatedProjectsProjectIdIndexRouteImport } from './routes/_authenticated/projects/$projectId/index'
 import { Route as AuthenticatedProfilesCreateIndexRouteImport } from './routes/_authenticated/profiles/create/index'
 import { Route as AuthenticatedProfilesProfileIdIndexRouteImport } from './routes/_authenticated/profiles/$profileId/index'
+import { Route as AuthenticatedFormsCreateIndexRouteImport } from './routes/_authenticated/forms/create/index'
 import { Route as AuthenticatedProjectsProjectIdEditRouteImport } from './routes/_authenticated/projects/$projectId/edit'
 import { Route as AuthenticatedProfilesEditIdIndexRouteImport } from './routes/_authenticated/profiles/edit/$id/index'
 
@@ -213,6 +214,12 @@ const AuthenticatedProfilesProfileIdIndexRoute =
     path: '/profiles/$profileId/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedFormsCreateIndexRoute =
+  AuthenticatedFormsCreateIndexRouteImport.update({
+    id: '/forms/create/',
+    path: '/forms/create/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedProjectsProjectIdEditRoute =
   AuthenticatedProjectsProjectIdEditRouteImport.update({
     id: '/projects/$projectId/edit',
@@ -254,6 +261,10 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
   '/projects/$projectId/edit': typeof AuthenticatedProjectsProjectIdEditRoute
+  '/forms/create': typeof AuthenticatedFormsCreateIndexRoute
+  '/profiles/$profileId': typeof AuthenticatedProfilesProfileIdIndexRoute
+  '/profiles/create': typeof AuthenticatedProfilesCreateIndexRoute
+  '/projects/$projectId': typeof AuthenticatedProjectsProjectIdIndexRoute
   '/profiles/$profileId': typeof AuthenticatedProfilesProfileIdIndexRoute
   '/profiles/create': typeof AuthenticatedProfilesCreateIndexRoute
   '/projects/$projectId': typeof AuthenticatedProjectsProjectIdIndexRoute
@@ -287,6 +298,10 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
   '/projects/$projectId/edit': typeof AuthenticatedProjectsProjectIdEditRoute
+  '/forms/create': typeof AuthenticatedFormsCreateIndexRoute
+  '/profiles/$profileId': typeof AuthenticatedProfilesProfileIdIndexRoute
+  '/profiles/create': typeof AuthenticatedProfilesCreateIndexRoute
+  '/projects/$projectId': typeof AuthenticatedProjectsProjectIdIndexRoute
   '/profiles/$profileId': typeof AuthenticatedProfilesProfileIdIndexRoute
   '/profiles/create': typeof AuthenticatedProfilesCreateIndexRoute
   '/projects/$projectId': typeof AuthenticatedProjectsProjectIdIndexRoute
@@ -323,6 +338,10 @@ export interface FileRoutesById {
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
   '/_authenticated/projects/$projectId/edit': typeof AuthenticatedProjectsProjectIdEditRoute
+  '/_authenticated/forms/create/': typeof AuthenticatedFormsCreateIndexRoute
+  '/_authenticated/profiles/$profileId/': typeof AuthenticatedProfilesProfileIdIndexRoute
+  '/_authenticated/profiles/create/': typeof AuthenticatedProfilesCreateIndexRoute
+  '/_authenticated/projects/$projectId/': typeof AuthenticatedProjectsProjectIdIndexRoute
   '/_authenticated/profiles/$profileId/': typeof AuthenticatedProfilesProfileIdIndexRoute
   '/_authenticated/profiles/create/': typeof AuthenticatedProfilesCreateIndexRoute
   '/_authenticated/projects/$projectId/': typeof AuthenticatedProjectsProjectIdIndexRoute
@@ -359,6 +378,10 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/users'
     | '/projects/$projectId/edit'
+    | '/forms/create'
+    | '/profiles/$profileId'
+    | '/profiles/create'
+    | '/projects/$projectId'
     | '/profiles/$profileId'
     | '/profiles/create'
     | '/projects/$projectId'
@@ -392,6 +415,10 @@ export interface FileRouteTypes {
     | '/settings'
     | '/users'
     | '/projects/$projectId/edit'
+    | '/forms/create'
+    | '/profiles/$profileId'
+    | '/profiles/create'
+    | '/projects/$projectId'
     | '/profiles/$profileId'
     | '/profiles/create'
     | '/projects/$projectId'
@@ -427,6 +454,10 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/'
     | '/_authenticated/users/'
     | '/_authenticated/projects/$projectId/edit'
+    | '/_authenticated/forms/create/'
+    | '/_authenticated/profiles/$profileId/'
+    | '/_authenticated/profiles/create/'
+    | '/_authenticated/projects/$projectId/'
     | '/_authenticated/profiles/$profileId/'
     | '/_authenticated/profiles/create/'
     | '/_authenticated/projects/$projectId/'
@@ -667,6 +698,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfilesProfileIdIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/forms/create/': {
+      id: '/_authenticated/forms/create/'
+      path: '/forms/create'
+      fullPath: '/forms/create'
+      preLoaderRoute: typeof AuthenticatedFormsCreateIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/projects/$projectId/edit': {
       id: '/_authenticated/projects/$projectId/edit'
       path: '/projects/$projectId/edit'
@@ -720,6 +758,10 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProjectsIndexRoute: typeof AuthenticatedProjectsIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
   AuthenticatedProjectsProjectIdEditRoute: typeof AuthenticatedProjectsProjectIdEditRoute
+  AuthenticatedFormsCreateIndexRoute: typeof AuthenticatedFormsCreateIndexRoute
+  AuthenticatedProfilesProfileIdIndexRoute: typeof AuthenticatedProfilesProfileIdIndexRoute
+  AuthenticatedProfilesCreateIndexRoute: typeof AuthenticatedProfilesCreateIndexRoute
+  AuthenticatedProjectsProjectIdIndexRoute: typeof AuthenticatedProjectsProjectIdIndexRoute
   AuthenticatedProfilesProfileIdIndexRoute: typeof AuthenticatedProfilesProfileIdIndexRoute
   AuthenticatedProfilesCreateIndexRoute: typeof AuthenticatedProfilesCreateIndexRoute
   AuthenticatedProjectsProjectIdIndexRoute: typeof AuthenticatedProjectsProjectIdIndexRoute
@@ -741,6 +783,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
   AuthenticatedProjectsProjectIdEditRoute:
     AuthenticatedProjectsProjectIdEditRoute,
+  AuthenticatedFormsCreateIndexRoute: AuthenticatedFormsCreateIndexRoute,
   AuthenticatedProfilesProfileIdIndexRoute:
     AuthenticatedProfilesProfileIdIndexRoute,
   AuthenticatedProfilesCreateIndexRoute: AuthenticatedProfilesCreateIndexRoute,

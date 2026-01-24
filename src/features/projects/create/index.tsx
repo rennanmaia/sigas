@@ -15,6 +15,7 @@ export default function CreateProject() {
 
   const onCreate = (values: ProjectFormValues) => {
     const newProject: Project = {
+      ...values,
       id: `proj-${Date.now()}`,
       title: values.title,
       description: values.description,
@@ -24,6 +25,8 @@ export default function CreateProject() {
       responsible: values.responsible,
       budget: values.budget,
       status: "em andamento",
+      company: values.company,
+      customFields: values.customFields || [],
       logo:
         values.category === "Ambiental" ? (
           <Bird className="text-emerald-600" size={20} />
