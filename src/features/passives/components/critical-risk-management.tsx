@@ -4,7 +4,6 @@ import { passivosMock } from "../data/passives";
 import { useCallback } from "react";
 import { getRouteApi } from "@tanstack/react-router";
 import { PassiveCard } from "./passives-card";
-import { PassiveView } from "@/routes/_authenticated/passives";
 
 interface CriticalRisksViewProps {
   onBack?: () => void;

@@ -16,6 +16,7 @@ export async function authenticate(cpf: string, password: string): Promise<Authe
 //   if (!found) return { status: 'error', reason: 'cpf_not_found' }
 
 //   if (found.password !== password) return { status: 'error', reason: 'invalid_password' }
+  if (!password) return { status: 'error', reason: 'invalid_password' }
 
 //   const { password: _p, ...rest } = found
   return { 

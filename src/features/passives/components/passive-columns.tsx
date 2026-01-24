@@ -1,14 +1,12 @@
 import { type ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Passivo, RiscoNivel } from "../data/schema";
-import { User, ArrowUpDown } from "lucide-react";
+import { User } from "lucide-react";
 import { differenceInDays, parseISO } from "date-fns";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { DataTableRowActions } from "./data-table-row-actions";
-import { RISCOS } from "../data/passives";
 
 const riscoMap: Record<RiscoNivel, string> = {
   Baixo: "bg-emerald-100 text-emerald-800 border-emerald-200",

@@ -1,6 +1,6 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { type Row } from '@tanstack/react-table'
-import { Trash2, UserPen } from 'lucide-react'
+import { Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -15,7 +15,7 @@ type DataTableRowActionsProps<T> = {
   row: Row<T>
 }
 
-export function DataTableRowActions<T>({ row }: DataTableRowActionsProps<T>) {
+export function DataTableRowActions<T>({ }: DataTableRowActionsProps<T>) {
 //   const { setOpen, setCurrentRow } = useUsers()
   return (
     <div className='z-100'>

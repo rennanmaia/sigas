@@ -19,7 +19,7 @@ export function Passives() {
   const search = route.useSearch()
   const navigate = route.useNavigate()
 
-  const { view, selectedId, tabs } = route.useSearch()
+  const { view, tabs } = route.useSearch()
 
   const goBack = () => navigate({ search: (prev) => ({ ...prev, view: PassiveView.OVERVIEW, selectedId: undefined }) })
   const setTab = (tab: PassivesSearch['tabs']) => navigate({ search: (prev) => ({ ...prev, tabs: tab }) })

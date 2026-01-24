@@ -1,4 +1,4 @@
-import { flexRender, getCoreRowModel, getFacetedRowModel, getFacetedUniqueValues, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, type ColumnFiltersState, type SortingState, type VisibilityState } from "@tanstack/react-table"
+import { flexRender, getCoreRowModel, getFacetedRowModel, getFacetedUniqueValues, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, type SortingState, type VisibilityState } from "@tanstack/react-table"
 import { columns } from "../components/passive-columns";
 import { useEffect, useState } from "react"
 import { useTableUrlState, type NavigateFn } from "@/hooks/use-table-url-state";

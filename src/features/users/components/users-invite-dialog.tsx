@@ -2,7 +2,6 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MailPlus, Send } from "lucide-react";
-import { useUsers } from "./users-provider";
 import { isValidCpf } from '@/lib/utils'
 import { toast } from 'sonner'
 import { Button } from "@/components/ui/button";
