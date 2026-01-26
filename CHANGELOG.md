@@ -1,3 +1,18 @@
+# [1.0.0-beta.3](https://github.com/rennanmaia/sigas/compare/v1.0.0-beta.2...v1.0.0-beta.3) (2026-01-26)
+
+
+### Features
+
+* add Eye icon to row actions and adjust dropdown menu width ([b0e58b9](https://github.com/rennanmaia/sigas/commit/b0e58b9082e2cbde4c93bdf688003077c07fc5f0))
+* add mock data for form responses ([71d0d92](https://github.com/rennanmaia/sigas/commit/71d0d925bee1653f8070125a74c3a1c5e3f54c3e))
+* add new form and mock responses for comprehensive data collection ([1bef663](https://github.com/rennanmaia/sigas/commit/1bef663dff7e12ec4aa80147b370f58fde2a1a7f))
+* add ResponsesView component for displaying form responses ([a76ef8d](https://github.com/rennanmaia/sigas/commit/a76ef8d7003a549936a2c53ee8bd14df64bb3d42))
+* enhance Sidebar component with response viewing functionality ([74490a4](https://github.com/rennanmaia/sigas/commit/74490a4c017ae2de9bfad0b14a33a9ac10f36e5f))
+* filter responses by form ID in ResponsesView and update mock data ([cf437af](https://github.com/rennanmaia/sigas/commit/cf437afea42a2bdbc8a4e4e6920285e82fa9667a))
+* implement CSV export functionality for form responses ([c5c24f3](https://github.com/rennanmaia/sigas/commit/c5c24f327a4d865c67cd3bb8100bb7909b753b46))
+* implement response deletion functionality in FormBuilder and ResponsesView ([fbc21f7](https://github.com/rennanmaia/sigas/commit/fbc21f7309f9fec615bde016ef4b353043c7a7ec))
+* simplify answer display in ResponsesView by removing limit on shown answers ([30e15b0](https://github.com/rennanmaia/sigas/commit/30e15b0598f8306358ebd4e2d4575e07d3053d38))
+
 # [1.0.0-beta.2](https://github.com/rennanmaia/sigas/compare/v1.0.0-beta.1...v1.0.0-beta.2) (2026-01-26)
 
 
