@@ -15,6 +15,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { createFormSchema } from "../../data/schema";
 import { useEffect, useState } from "react";
 import { useForms } from "../forms-provider";
+import { ResponsesView } from "../responses-view";
+import { formResponses } from "../../data/responses-mock";
+
 import type { Question } from "./types/question";
 export function FormBuilder({
   onSave,
@@ -41,6 +44,19 @@ export function FormBuilder({
   } = useFormBuilder();
   const { forms } = useForms();
   const [isLoaded, setIsLoaded] = useState(!initialId);
+  const [showingResponses, setShowingResponses] = useState(false);
+  const [filteredResponses, setFilteredResponses] = useState<
+    typeof formResponses
+  >([]);
+
+  const currentForm = forms.find((f) => f.id === initialId);
+  const responsesCount = currentForm?.responses || 0;
+
+  useEffect(() => {
+    if (initialId) {
+      setFilteredResponses(formResponses.filter((r) => r.formId === initialId));
+    }
+  }, [initialId]);
 
   useEffect(() => {
     if (onDataChange) {
@@ -57,6 +73,11 @@ export function FormBuilder({
       }
     }
   }, [initialId, forms, loadForm]);
+
+  const handleDeleteResponse = (responseId: string) => {
+    setFilteredResponses((prev) => prev.filter((r) => r.id !== responseId));
+    // TODO: make an API call to delete the response and update the forms list to decrement the response count
+  };
 
   if (!isLoaded) return null;
 
@@ -105,110 +126,136 @@ export function FormBuilder({
   };
 
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
-      <div className="flex flex-col md:flex-row h-full w-full overflow-hidden bg-background">
-        <Sidebar onAdd={methods.addQuestion} />
+    <>
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <div className="flex flex-col md:flex-row h-full w-full overflow-hidden bg-background">
+          <Sidebar
+            onAdd={methods.addQuestion}
+            onViewResponses={
+              initialId
+                ? () => setShowingResponses(!showingResponses)
+                : undefined
+            }
+            responsesCount={responsesCount}
+            formId={initialId}
+            showingResponses={showingResponses}
+          />
 
-        <main className="flex-1 h-full overflow-hidden flex flex-col bg-slate-50/50">
-          <ScrollArea className="flex-1 w-full h-full">
-            <div className="w-full max-w-4xl mx-auto p-4 md:p-8 space-y-6 pb-40">
-              <Card className="p-4 md:p-6 shadow-sm rounded-lg border-t-4 border-t-primary bg-card">
-                <Input
-                  className="text-xl md:text-3xl font-bold border-none shadow-none focus-visible:ring-0 p-0 h-auto bg-transparent mb-2"
-                  placeholder="Título do Formulário"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                />
-                <Input
-                  className="..."
-                  placeholder="Descrição ou instruções..."
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-              </Card>
+          {showingResponses && initialId ? (
+            <ResponsesView
+              formTitle={title}
+              questions={questions}
+              responses={filteredResponses}
+              onDeleteResponse={handleDeleteResponse}
+            />
+          ) : (
+            <main className="flex-1 h-full overflow-hidden flex flex-col bg-slate-50/50">
+              <ScrollArea className="flex-1 w-full h-full">
+                <div className="w-full max-w-4xl mx-auto p-4 md:p-8 space-y-6 pb-40">
+                  <Card className="p-4 md:p-6 shadow-sm rounded-lg border-t-4 border-t-primary bg-card">
+                    <Input
+                      className="text-xl md:text-3xl font-bold border-none shadow-none focus-visible:ring-0 p-0 h-auto bg-transparent mb-2"
+                      placeholder="Título do Formulário"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                    />
+                    <Input
+                      className="..."
+                      placeholder="Descrição ou instruções..."
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                    />
+                  </Card>
 
-              <Droppable droppableId="form-questions" type="QUESTION">
-                {(provided) => (
-                  <div
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                    className="space-y-4"
-                  >
-                    <AnimatePresence initial={false}>
-                      {questions.map((q, index) => (
-                        <Draggable key={q.id} draggableId={q.id} index={index}>
-                          {(provided, snapshot) => (
-                            <motion.div
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              initial={{ opacity: 0, y: -20, scale: 0.95 }}
-                              animate={{ opacity: 1, y: 0, scale: 1 }}
-                              exit={{
-                                opacity: 0,
-                                scale: 0.95,
-                                transition: { duration: 0.2 },
-                              }}
-                              transition={{
-                                type: "spring",
-                                stiffness: 300,
-                                damping: 25,
-                              }}
-                              style={{
-                                ...provided.draggableProps.style,
-                                transform: snapshot.isDragging
-                                  ? provided.draggableProps.style?.transform
-                                  : provided.draggableProps.style?.transform,
-                              }}
+                  <Droppable droppableId="form-questions" type="QUESTION">
+                    {(provided) => (
+                      <div
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                        className="space-y-4"
+                      >
+                        <AnimatePresence initial={false}>
+                          {questions.map((q, index) => (
+                            <Draggable
+                              key={q.id}
+                              draggableId={q.id}
+                              index={index}
                             >
-                              <QuestionCard
-                                key={q.id}
-                                question={q}
-                                index={index}
-                                allQuestions={questions}
-                                onUpdateQuestion={methods.updateQuestion}
-                                onUpdateLabel={methods.updateQuestionLabel}
-                                onUpdateType={methods.updateQuestionType}
-                                onRemove={methods.removeQuestion}
-                                onToggleRequired={methods.toggleRequired}
-                                onAddQuestion={(type) =>
-                                  methods.addQuestion(type, index)
-                                }
-                                onAddOption={methods.addOption}
-                                onUpdateOption={methods.updateOption}
-                                onRemoveOption={methods.removeOption}
-                                onDuplicate={methods.duplicateQuestion}
-                              />
-                            </motion.div>
-                          )}
-                        </Draggable>
-                      ))}
-                    </AnimatePresence>
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
+                              {(provided, snapshot) => (
+                                <motion.div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  initial={{ opacity: 0, y: -20, scale: 0.95 }}
+                                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                                  exit={{
+                                    opacity: 0,
+                                    scale: 0.95,
+                                    transition: { duration: 0.2 },
+                                  }}
+                                  transition={{
+                                    type: "spring",
+                                    stiffness: 300,
+                                    damping: 25,
+                                  }}
+                                  style={{
+                                    ...provided.draggableProps.style,
+                                    transform: snapshot.isDragging
+                                      ? provided.draggableProps.style?.transform
+                                      : provided.draggableProps.style
+                                          ?.transform,
+                                  }}
+                                >
+                                  <QuestionCard
+                                    key={q.id}
+                                    question={q}
+                                    index={index}
+                                    allQuestions={questions}
+                                    onUpdateQuestion={methods.updateQuestion}
+                                    onUpdateLabel={methods.updateQuestionLabel}
+                                    onUpdateType={methods.updateQuestionType}
+                                    onRemove={methods.removeQuestion}
+                                    onToggleRequired={methods.toggleRequired}
+                                    onAddQuestion={(type) =>
+                                      methods.addQuestion(type, index)
+                                    }
+                                    onAddOption={methods.addOption}
+                                    onUpdateOption={methods.updateOption}
+                                    onRemoveOption={methods.removeOption}
+                                    onDuplicate={methods.duplicateQuestion}
+                                  />
+                                </motion.div>
+                              )}
+                            </Draggable>
+                          ))}
+                        </AnimatePresence>
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
 
-              {questions.length === 0 && (
-                <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed rounded-xl text-muted-foreground bg-muted/5 px-6 text-center">
-                  <Plus className="mb-4 opacity-20" size={48} />
-                  <p className="text-base font-medium">
-                    Seu formulário está vazio.
-                  </p>
-                  <p className="text-sm">
-                    Selecione um tipo de questão para começar.
-                  </p>
+                  {questions.length === 0 && (
+                    <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed rounded-xl text-muted-foreground bg-muted/5 px-6 text-center">
+                      <Plus className="mb-4 opacity-20" size={48} />
+                      <p className="text-base font-medium">
+                        Seu formulário está vazio.
+                      </p>
+                      <p className="text-sm">
+                        Selecione um tipo de questão para começar.
+                      </p>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          </ScrollArea>
-        </main>
-      </div>
+              </ScrollArea>
+            </main>
+          )}
+        </div>
 
-      <button
-        id="submit-builder"
-        className="hidden"
-        onClick={handleInternalSave}
-      />
-    </DragDropContext>
+        <button
+          id="submit-builder"
+          className="hidden"
+          onClick={handleInternalSave}
+        />
+      </DragDropContext>
+    </>
   );
 }

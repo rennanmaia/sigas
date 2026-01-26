@@ -1,6 +1,6 @@
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { type Row } from "@tanstack/react-table";
-import { Pen, Trash2 } from "lucide-react";
+import { Pen, Trash2, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,9 +10,7 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
 import { Link } from "@tanstack/react-router";
-import { Eye } from "lucide-react";
 import { useForms } from "./forms-provider";
 
 type DataTableRowActionsProps = {
@@ -21,6 +19,7 @@ type DataTableRowActionsProps = {
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
   const { setOpen, setCurrentForm } = useForms();
+
   return (
     <div className="z-100">
       <DropdownMenu modal={false}>
@@ -37,7 +36,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"
-          className="w-[160px]"
+          className="w-40"
           onClick={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
         >
