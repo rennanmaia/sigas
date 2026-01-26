@@ -1,3 +1,11 @@
+# [1.0.0-beta.2](https://github.com/rennanmaia/sigas/compare/v1.0.0-beta.1...v1.0.0-beta.2) (2026-01-26)
+
+
+### Features
+
+* add mobile preview dialog component for form display ([32a67f1](https://github.com/rennanmaia/sigas/commit/32a67f1931771a8b25b54b424ac55358411c677a))
+* add onDataChange prop to FormBuilder and implement mobile preview dialog in CreateFormContent ([8cf141a](https://github.com/rennanmaia/sigas/commit/8cf141a9888a7fbcb962da3cb273027eb196ef30))
+
 # 1.0.0-beta.1 (2026-01-24)
 
 
