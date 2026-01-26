@@ -38,9 +38,19 @@ export function FormBuilder({
   const { forms } = useForms();
   const [isLoaded, setIsLoaded] = useState(!initialId);
   const [showingResponses, setShowingResponses] = useState(false);
+  const [filteredResponses, setFilteredResponses] = useState<
+    typeof formResponses
+  >([]);
 
   const currentForm = forms.find((f) => f.id === initialId);
   const responsesCount = currentForm?.responses || 0;
+
+  useEffect(() => {
+    if (initialId) {
+      setFilteredResponses(formResponses.filter((r) => r.formId === initialId));
+    }
+  }, [initialId]);
+
   useEffect(() => {
     if (initialId && forms.length > 0) {
       const existingForm = forms.find((f) => f.id === initialId);
@@ -50,6 +60,11 @@ export function FormBuilder({
       }
     }
   }, [initialId, forms, loadForm]);
+
+  const handleDeleteResponse = (responseId: string) => {
+    setFilteredResponses((prev) => prev.filter((r) => r.id !== responseId));
+    // TODO: make an API call to delete the response and update the forms list to decrement the response count
+  };
 
   if (!isLoaded) return null;
 
@@ -117,7 +132,8 @@ export function FormBuilder({
             <ResponsesView
               formTitle={title}
               questions={questions}
-              responses={formResponses.filter((r) => r.formId === initialId)}
+              responses={filteredResponses}
+              onDeleteResponse={handleDeleteResponse}
             />
           ) : (
             <main className="flex-1 h-full overflow-hidden flex flex-col bg-slate-50/50">

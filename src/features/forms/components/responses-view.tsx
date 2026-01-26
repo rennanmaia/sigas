@@ -16,22 +16,41 @@ import {
   Calendar,
   TrendingUp,
   User,
+  Trash2,
 } from "lucide-react";
 import type { Option, Question } from "./form-builder/types/question";
 import type { FormResponse } from "../data/responses-mock";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 
 interface ResponsesViewProps {
   formTitle: string;
   questions: Question[];
   responses: FormResponse[];
+  onDeleteResponse?: (responseId: string) => void;
 }
 
 export function ResponsesView({
   formTitle,
   questions,
   responses,
+  onDeleteResponse,
 }: ResponsesViewProps) {
   const [activeTab, setActiveTab] = useState("summary");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [responseToDelete, setResponseToDelete] = useState<string | null>(null);
+
+  const handleDeleteClick = (responseId: string) => {
+    setResponseToDelete(responseId);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (responseToDelete && onDeleteResponse) {
+      onDeleteResponse(responseToDelete);
+    }
+    setDeleteDialogOpen(false);
+    setResponseToDelete(null);
+  };
 
   const getQuestionStats = (questionId: string, question: Question) => {
     const answers = responses
@@ -387,6 +406,16 @@ export function ResponsesView({
                           )}
                         </CardDescription>
                       </div>
+                      {onDeleteResponse && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDeleteClick(response.id)}
+                          className="text-muted-foreground hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -433,6 +462,17 @@ export function ResponsesView({
           </ScrollArea>
         </TabsContent>
       </Tabs>
+
+      <ConfirmDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        handleConfirm={handleConfirmDelete}
+        title="Excluir resposta"
+        desc="Tem certeza que deseja excluir esta resposta? Esta ação não pode ser desfeita."
+        confirmText="Excluir"
+        cancelBtnText="Cancelar"
+        destructive
+      />
     </div>
   );
 }
