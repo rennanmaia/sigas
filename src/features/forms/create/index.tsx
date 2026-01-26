@@ -3,9 +3,12 @@ import { Header } from "@/components/layout/header";
 import { Main } from "@/components/layout/main";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Eye, Save, X } from "lucide-react";
+import { useState } from "react";
 
 import { FormsProvider, useForms } from "../components/forms-provider";
 import { FormBuilder } from "../components/form-builder";
+import { MobilePreviewDialog } from "../components/mobile-preview-dialog";
+import type { Question } from "../components/form-builder/types/question";
 
 interface FormCreateProps {
   initialId?: string;
@@ -14,6 +17,16 @@ interface FormCreateProps {
 function CreateFormContent({ initialId }: FormCreateProps) {
   const navigate = useNavigate();
   const { addForm, updateForm } = useForms();
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [formData, setFormData] = useState<{
+    title: string;
+    description: string;
+    questions: Question[];
+  }>({
+    title: "Formulário sem título",
+    description: "",
+    questions: [],
+  });
 
   const handleSave = (data: any) => {
     if (initialId) {
@@ -23,8 +36,17 @@ function CreateFormContent({ initialId }: FormCreateProps) {
     }
     navigate({ to: "/forms" });
   };
+
+  const handlePreview = () => {
+    const builderElement = document.querySelector("[data-form-builder]") as any;
+    if (builderElement?.__formData) {
+      setFormData(builderElement.__formData);
+    }
+    setPreviewOpen(true);
+  };
+
   return (
-    <div className="flex flex-col h-[100dvh] w-full overflow-hidden bg-background">
+    <div className="flex flex-col h-dvh w-full overflow-hidden bg-background">
       <Header className="flex-col md:flex-row items-start md:items-center gap-0 h-auto py-3 md:h-16 shrink-0 border-b">
         <div className="flex items-center gap-0 w-full md:w-auto">
           <Button
@@ -43,7 +65,7 @@ function CreateFormContent({ initialId }: FormCreateProps) {
             variant="outline"
             size="sm"
             className="md:px-4 h-9"
-            onClick={() => navigate({ to: "/forms" })}
+            onClick={handlePreview}
           >
             <Eye size={16} className="md:hidden" />
             <span className="hidden md:inline">Visualizar</span>
@@ -69,8 +91,20 @@ function CreateFormContent({ initialId }: FormCreateProps) {
       </Header>
 
       <Main className="p-0 flex-1 overflow-hidden flex flex-col">
-        <FormBuilder onSave={handleSave} initialId={initialId} />
+        <FormBuilder
+          onSave={handleSave}
+          initialId={initialId}
+          onDataChange={setFormData}
+        />
       </Main>
+
+      <MobilePreviewDialog
+        open={previewOpen}
+        onOpenChange={setPreviewOpen}
+        title={formData.title}
+        description={formData.description}
+        questions={formData.questions}
+      />
     </div>
   );
 }

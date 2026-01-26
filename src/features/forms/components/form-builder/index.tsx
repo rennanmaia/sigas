@@ -18,12 +18,19 @@ import { useForms } from "../forms-provider";
 import { ResponsesView } from "../responses-view";
 import { formResponses } from "../../data/responses-mock";
 
+import type { Question } from "./types/question";
 export function FormBuilder({
   onSave,
   initialId,
+  onDataChange,
 }: {
   onSave: (data: any) => void;
   initialId?: string;
+  onDataChange?: (data: {
+    title: string;
+    description: string;
+    questions: Question[];
+  }) => void;
 }) {
   const {
     title,
@@ -50,6 +57,12 @@ export function FormBuilder({
       setFilteredResponses(formResponses.filter((r) => r.formId === initialId));
     }
   }, [initialId]);
+
+  useEffect(() => {
+    if (onDataChange) {
+      onDataChange({ title, description, questions });
+    }
+  }, [title, description, questions, onDataChange]);
 
   useEffect(() => {
     if (initialId && forms.length > 0) {
