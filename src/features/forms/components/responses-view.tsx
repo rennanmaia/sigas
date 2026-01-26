@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,46 +16,62 @@ import {
   Calendar,
   TrendingUp,
   User,
+  Trash2,
 } from "lucide-react";
-import type { Question } from "./form-builder/types/question";
+import type { Option, Question } from "./form-builder/types/question";
 import type { FormResponse } from "../data/responses-mock";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 
 interface ResponsesViewProps {
-  formId: string;
   formTitle: string;
   questions: Question[];
   responses: FormResponse[];
+  onDeleteResponse?: (responseId: string) => void;
 }
 
 export function ResponsesView({
-  formId,
   formTitle,
   questions,
   responses,
+  onDeleteResponse,
 }: ResponsesViewProps) {
   const [activeTab, setActiveTab] = useState("summary");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [responseToDelete, setResponseToDelete] = useState<string | null>(null);
 
-  const formResponses = useMemo(() => {
-    return responses.filter((r) => r.formId === formId);
-  }, [responses, formId]);
+  const handleDeleteClick = (responseId: string) => {
+    setResponseToDelete(responseId);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (responseToDelete && onDeleteResponse) {
+      onDeleteResponse(responseToDelete);
+    }
+    setDeleteDialogOpen(false);
+    setResponseToDelete(null);
+  };
 
   const getQuestionStats = (questionId: string, question: Question) => {
-    const answers = formResponses
+    const answers = responses
       .map((r) => r.answers[questionId])
-      .filter(Boolean);
+      .filter((answer) => answer !== null && answer !== undefined);
 
     if (question.type === "select" || question.type === "checkbox") {
       const stats: Record<string, number> = {};
+      let totalAnswered = 0;
       answers.forEach((answer) => {
         if (Array.isArray(answer)) {
+          totalAnswered++;
           answer.forEach((a) => {
             stats[a] = (stats[a] || 0) + 1;
           });
         } else {
+          totalAnswered++;
           stats[answer] = (stats[answer] || 0) + 1;
         }
       });
-      return stats;
+      return { ...stats, _totalAnswered: totalAnswered };
     }
 
     if (question.type === "number") {
@@ -66,6 +82,17 @@ export function ResponsesView({
       const min = Math.min(...numbers);
       const max = Math.max(...numbers);
       return { avg, min, max, count: numbers.length };
+    }
+
+    if (question.type === "date") {
+      const dates = answers
+        .map((d) => new Date(d))
+        .filter((d) => !isNaN(d.getTime()))
+        .sort((a, b) => a.getTime() - b.getTime());
+      if (dates.length === 0) return null;
+      const earliest = dates[0];
+      const latest = dates[dates.length - 1];
+      return { earliest, latest, count: dates.length };
     }
 
     return { count: answers.length, answers };
@@ -92,7 +119,7 @@ export function ResponsesView({
       ...questions.map((q) => q.label),
     ];
 
-    const rows = formResponses.map((r) => {
+    const rows = responses.map((r) => {
       const date = new Date(r.submittedAt);
       return [
         date.toLocaleDateString("pt-BR"),
@@ -100,10 +127,26 @@ export function ResponsesView({
         r.submittedBy,
         ...questions.map((q) => {
           const answer = r.answers[q.id];
+
           if (q.type === "select" && q.options) {
-            const option = q.options.find((o: any) => o.id === answer);
+            const option = q.options.find((o) => o.id === answer);
             return option?.label || answer || "";
           }
+
+          if (q.type === "checkbox" && q.options && Array.isArray(answer)) {
+            const labels = answer
+              .map((optionId) => {
+                const option = q.options?.find((o: any) => o.id === optionId);
+                return option?.label || optionId;
+              })
+              .filter(Boolean);
+            return labels.join("; ");
+          }
+
+          if (Array.isArray(answer)) {
+            return answer.join("; ");
+          }
+
           return answer || "";
         }),
       ];
@@ -119,7 +162,7 @@ export function ResponsesView({
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `respostas_${formId}_${Date.now()}.csv`;
+    a.download = `respostas_${Date.now()}.csv`;
     document.body.appendChild(a);
     a.click();
     window.URL.revokeObjectURL(url);
@@ -135,7 +178,7 @@ export function ResponsesView({
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
               <span className="flex items-center gap-1">
                 <FileText className="h-4 w-4" />
-                {formResponses.length} respostas
+                {responses.length} respostas
               </span>
               <span className="flex items-center gap-1">
                 <Calendar className="h-4 w-4" />
@@ -181,19 +224,26 @@ export function ResponsesView({
                         {question.label}
                       </CardTitle>
                       <CardDescription>
-                        {formResponses.length} respostas totais
+                        {(question.type === "select" ||
+                          question.type === "checkbox") &&
+                        stats &&
+                        typeof stats === "object" &&
+                        "_totalAnswered" in stats
+                          ? `${stats._totalAnswered} de ${responses.length} responderam`
+                          : `${responses.length} respostas`}
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
                       {(question.type === "select" ||
                         question.type === "checkbox") && (
                         <div className="space-y-3">
-                          {question.options?.map((option: any) => {
-                            const count =
-                              (stats as Record<string, number>)[option.id] || 0;
+                          {question.options?.map((option: Option) => {
+                            const count = (stats as any)[option.id] || 0;
+                            const totalAnswered =
+                              (stats as any)._totalAnswered || responses.length;
                             const percentage =
-                              formResponses.length > 0
-                                ? (count / formResponses.length) * 100
+                              totalAnswered > 0
+                                ? (count / totalAnswered) * 100
                                 : 0;
 
                             return (
@@ -221,7 +271,8 @@ export function ResponsesView({
                       {question.type === "number" &&
                         stats &&
                         typeof stats === "object" &&
-                        "avg" in stats && (
+                        "avg" in stats &&
+                        typeof stats.avg === "number" && (
                           <div className="grid grid-cols-3 gap-4">
                             <Card className="bg-muted/50">
                               <CardHeader className="pb-2">
@@ -262,27 +313,54 @@ export function ResponsesView({
                           </div>
                         )}
 
+                      {question.type === "date" &&
+                        stats &&
+                        typeof stats === "object" &&
+                        "earliest" in stats &&
+                        "latest" in stats &&
+                        stats.earliest instanceof Date &&
+                        stats.latest instanceof Date && (
+                          <div className="grid grid-cols-2 gap-4">
+                            <Card className="bg-muted/50">
+                              <CardHeader className="pb-2">
+                                <CardDescription className="text-xs">
+                                  Primeira data
+                                </CardDescription>
+                              </CardHeader>
+                              <CardContent>
+                                <div className="text-xl font-bold">
+                                  {stats.earliest.toLocaleDateString("pt-BR")}
+                                </div>
+                              </CardContent>
+                            </Card>
+                            <Card className="bg-muted/50">
+                              <CardHeader className="pb-2">
+                                <CardDescription className="text-xs">
+                                  Última data
+                                </CardDescription>
+                              </CardHeader>
+                              <CardContent>
+                                <div className="text-xl font-bold">
+                                  {stats.latest.toLocaleDateString("pt-BR")}
+                                </div>
+                              </CardContent>
+                            </Card>
+                          </div>
+                        )}
+
                       {question.type === "text" &&
                         stats &&
                         typeof stats === "object" &&
                         "answers" in stats && (
                           <div className="space-y-2">
-                            {(stats.answers as string[])
-                              .slice(0, 5)
-                              .map((answer, idx) => (
-                                <div
-                                  key={idx}
-                                  className="p-3 bg-muted/50 rounded-lg text-sm"
-                                >
-                                  {answer}
-                                </div>
-                              ))}
-                            {(stats.answers as string[]).length > 5 && (
-                              <p className="text-sm text-muted-foreground">
-                                + {(stats.answers as string[]).length - 5}{" "}
-                                respostas
-                              </p>
-                            )}
+                            {(stats.answers as string[]).map((answer, idx) => (
+                              <div
+                                key={idx}
+                                className="p-3 bg-muted/50 rounded-lg text-sm"
+                              >
+                                {answer}
+                              </div>
+                            ))}
                           </div>
                         )}
 
@@ -309,7 +387,7 @@ export function ResponsesView({
         <TabsContent value="individual" className="flex-1 overflow-hidden m-0">
           <ScrollArea className="h-full">
             <div className="p-6 pt-4 space-y-4">
-              {formResponses.map((response) => (
+              {responses.map((response) => (
                 <Card key={response.id}>
                   <CardHeader>
                     <div className="flex items-start justify-between">
@@ -328,6 +406,16 @@ export function ResponsesView({
                           )}
                         </CardDescription>
                       </div>
+                      {onDeleteResponse && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDeleteClick(response.id)}
+                          className="text-muted-foreground hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -361,7 +449,7 @@ export function ResponsesView({
                 </Card>
               ))}
 
-              {formResponses.length === 0 && (
+              {responses.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <FileText className="h-12 w-12 text-muted-foreground/50 mb-4" />
                   <p className="text-lg font-medium">Nenhuma resposta ainda</p>
@@ -374,6 +462,17 @@ export function ResponsesView({
           </ScrollArea>
         </TabsContent>
       </Tabs>
+
+      <ConfirmDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        handleConfirm={handleConfirmDelete}
+        title="Excluir resposta"
+        desc="Tem certeza que deseja excluir esta resposta? Esta ação não pode ser desfeita."
+        confirmText="Excluir"
+        cancelBtnText="Cancelar"
+        destructive
+      />
     </div>
   );
 }
