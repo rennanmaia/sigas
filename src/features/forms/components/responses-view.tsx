@@ -70,6 +70,61 @@ export function ResponsesView({
 
     return { count: answers.length, answers };
   };
+  const exportToCSV = () => {
+    const escapeCSV = (value: any): string => {
+      if (value == null) return '""';
+      const str = String(value);
+      if (
+        str.includes(",") ||
+        str.includes('"') ||
+        str.includes("\n") ||
+        str.includes("\r")
+      ) {
+        return `"${str.replace(/"/g, '""')}"`;
+      }
+      return `"${str}"`;
+    };
+
+    const headers = [
+      "Data",
+      "Hora",
+      "Enviado por",
+      ...questions.map((q) => q.label),
+    ];
+
+    const rows = formResponses.map((r) => {
+      const date = new Date(r.submittedAt);
+      return [
+        date.toLocaleDateString("pt-BR"),
+        date.toLocaleTimeString("pt-BR"),
+        r.submittedBy,
+        ...questions.map((q) => {
+          const answer = r.answers[q.id];
+          if (q.type === "select" && q.options) {
+            const option = q.options.find((o: any) => o.id === answer);
+            return option?.label || answer || "";
+          }
+          return answer || "";
+        }),
+      ];
+    });
+
+    const csv = [headers, ...rows]
+      .map((row) => row.map(escapeCSV).join(","))
+      .join("\n");
+
+    const blob = new Blob(["\uFEFF" + csv], {
+      type: "text/csv;charset=utf-8;",
+    });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `respostas_${formId}_${Date.now()}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  };
 
   return (
     <div className="flex-1 h-full overflow-hidden flex flex-col bg-slate-50/50">
@@ -88,7 +143,7 @@ export function ResponsesView({
               </span>
             </div>
           </div>
-          <Button onClick={() => {}} variant="outline" size="sm">
+          <Button onClick={exportToCSV} variant="outline" size="sm">
             <Download className="h-4 w-4 mr-2" />
             Exportar CSV
           </Button>
