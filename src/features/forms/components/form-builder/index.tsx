@@ -15,12 +15,19 @@ import { motion, AnimatePresence } from "framer-motion";
 import { createFormSchema } from "../../data/schema";
 import { useEffect, useState } from "react";
 import { useForms } from "../forms-provider";
+import type { Question } from "./types/question";
 export function FormBuilder({
   onSave,
   initialId,
+  onDataChange,
 }: {
   onSave: (data: any) => void;
   initialId?: string;
+  onDataChange?: (data: {
+    title: string;
+    description: string;
+    questions: Question[];
+  }) => void;
 }) {
   const {
     title,
@@ -34,6 +41,13 @@ export function FormBuilder({
   } = useFormBuilder();
   const { forms } = useForms();
   const [isLoaded, setIsLoaded] = useState(!initialId);
+
+  useEffect(() => {
+    if (onDataChange) {
+      onDataChange({ title, description, questions });
+    }
+  }, [title, description, questions, onDataChange]);
+
   useEffect(() => {
     if (initialId && forms.length > 0) {
       const existingForm = forms.find((f) => f.id === initialId);
@@ -85,7 +99,7 @@ export function FormBuilder({
             return { ...q, options: newOpts };
           }
           return q;
-        })
+        }),
       );
     }
   };
