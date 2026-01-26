@@ -334,22 +334,14 @@ export function ResponsesView({
                         typeof stats === "object" &&
                         "answers" in stats && (
                           <div className="space-y-2">
-                            {(stats.answers as string[])
-                              .slice(0, 5)
-                              .map((answer, idx) => (
-                                <div
-                                  key={idx}
-                                  className="p-3 bg-muted/50 rounded-lg text-sm"
-                                >
-                                  {answer}
-                                </div>
-                              ))}
-                            {(stats.answers as string[]).length > 5 && (
-                              <p className="text-sm text-muted-foreground">
-                                + {(stats.answers as string[]).length - 5}{" "}
-                                respostas
-                              </p>
-                            )}
+                            {(stats.answers as string[]).map((answer, idx) => (
+                              <div
+                                key={idx}
+                                className="p-3 bg-muted/50 rounded-lg text-sm"
+                              >
+                                {answer}
+                              </div>
+                            ))}
                           </div>
                         )}
 
