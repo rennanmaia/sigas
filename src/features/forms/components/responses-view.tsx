@@ -181,7 +181,7 @@ export function ResponsesView({
                         {question.label}
                       </CardTitle>
                       <CardDescription>
-                        {formResponses.length} respostas
+                        {formResponses.length} respostas totais
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
