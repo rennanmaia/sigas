@@ -22,7 +22,7 @@ export const forms: FormItem[] = [
     description:
       "Monitoramento de atropelamento e avistamento de animais silvestres em rodovias.",
     status: "Ativo",
-    responses: 840,
+    responses: 8,
     questionsCount: 3,
     lastUpdated: "2026-01-05",
     createdAt: "2025-10-10",
@@ -66,7 +66,7 @@ export const forms: FormItem[] = [
     description:
       "Avaliação técnica de encostas e sistemas de escoamento de águas pluviais.",
     status: "Ativo",
-    responses: 156,
+    responses: 8,
     questionsCount: 2,
     lastUpdated: "2026-01-07",
     createdAt: "2025-11-02",

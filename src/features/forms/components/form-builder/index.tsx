@@ -115,10 +115,9 @@ export function FormBuilder({
 
           {showingResponses && initialId ? (
             <ResponsesView
-              formId={initialId}
               formTitle={title}
               questions={questions}
-              responses={formResponses}
+              responses={formResponses.filter((r) => r.formId === initialId)}
             />
           ) : (
             <main className="flex-1 h-full overflow-hidden flex flex-col bg-slate-50/50">
