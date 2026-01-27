@@ -99,8 +99,8 @@ function CreateFormContent({ initialId }: FormCreateProps) {
             className="md:px-4 h-9"
             onClick={handlePreview}
           >
-            <Eye size={16} className="md:hidden" />
-            <span className="hidden md:inline">Visualizar</span>
+            <Eye size={16} />
+            <span className="hidden md:inline md:ml-2">Visualizar</span>
           </Button>
           <Button
             variant="outline"
@@ -108,16 +108,19 @@ function CreateFormContent({ initialId }: FormCreateProps) {
             className="md:px-4 h-9"
             onClick={() => navigate({ to: "/forms" })}
           >
-            <X size={16} className="md:hidden" />
-            <span className="hidden md:inline">Cancelar</span>
+            <X size={16} />
+            <span className="hidden md:inline md:ml-2">Cancelar</span>
           </Button>
 
           <Button
             size="sm"
+            className="md:px-4 h-9"
             onClick={() => document.getElementById("submit-builder")?.click()}
           >
-            <Save size={18} className="mr-2" />
-            <span>{initialId ? "Salvar Alterações" : "Salvar Formulário"}</span>
+            <Save size={18} />
+            <span className="hidden md:inline md:ml-2">
+              {initialId ? "Salvar Alterações" : "Salvar Formulário"}
+            </span>
           </Button>
         </div>
       </Header>
