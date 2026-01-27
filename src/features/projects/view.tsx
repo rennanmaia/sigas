@@ -173,7 +173,25 @@ function ProjectDetailsContent() {
     0,
   );
 
-  const timeProgress = 65;
+  const calculateTimeProgress = () => {
+    if (!project.startDate || !project.endDate) return 0;
+
+    const start = new Date(project.startDate).getTime();
+    const end = new Date(project.endDate).getTime();
+    const now = new Date().getTime();
+
+    if (now < start) return 0;
+
+    if (now > end) return 100;
+
+    const totalDuration = end - start;
+    const elapsed = now - start;
+    const progress = (elapsed / totalDuration) * 100;
+
+    return Math.round(progress);
+  };
+
+  const timeProgress = calculateTimeProgress();
   const responsibleMember = allMembers.find(
     (m) => m.name === project.responsible,
   );
