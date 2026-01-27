@@ -10,7 +10,7 @@ import useDialogState from "@/hooks/use-dialog-state";
 type FormDialogType = "add" | "edit" | "delete";
 interface FormsContextType {
   forms: FormItem[];
-  addForm: (form: any) => void;
+  addForm: (form: any) => string;
   updateForm: (id: string, form: Partial<FormItem>) => void;
   deleteForms: (ids: string[]) => void;
   open: FormDialogType | null;
@@ -28,7 +28,19 @@ export function FormsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const saved = localStorage.getItem("local-forms");
     if (saved) {
-      setForms(JSON.parse(saved));
+      try {
+        const parsedForms = JSON.parse(saved);
+        const migratedForms = parsedForms.map((form: any) => ({
+          ...form,
+          projectId: form.projectId || "proj-001",
+        }));
+        setForms(migratedForms);
+        localStorage.setItem("local-forms", JSON.stringify(migratedForms));
+      } catch (error) {
+        console.error("Erro ao carregar formulários do localStorage:", error);
+        setForms(initialMockForms);
+        localStorage.setItem("local-forms", JSON.stringify(initialMockForms));
+      }
     } else {
       setForms(initialMockForms);
       localStorage.setItem("local-forms", JSON.stringify(initialMockForms));
@@ -36,9 +48,10 @@ export function FormsProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const addForm = (newFormData: any) => {
+    const newFormId = `frm-${Math.floor(Math.random() * 10000)}`;
     const formToAdd: FormItem = {
       ...newFormData,
-      id: `frm-${Math.floor(Math.random() * 10000)}`,
+      id: newFormId,
       responses: 0,
       questionsCount: newFormData.questions.length,
       lastUpdated: new Date().toISOString().split("T")[0],
@@ -48,6 +61,7 @@ export function FormsProvider({ children }: { children: ReactNode }) {
     const updated = [formToAdd, ...forms];
     setForms(updated);
     localStorage.setItem("local-forms", JSON.stringify(updated));
+    return newFormId;
   };
 
   const updateForm = (id: string, updatedData: Partial<FormItem>) => {
