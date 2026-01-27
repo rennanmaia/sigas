@@ -33,7 +33,7 @@ export function useFormBuilder() {
     label: "",
   });
 
-  const addQuestion = (type: QuestionType, atIndex?: number) => {
+  const addQuestion = useCallback((type: QuestionType, atIndex?: number) => {
     const newQuestion: Question = {
       id: crypto.randomUUID(),
       type,
@@ -51,9 +51,9 @@ export function useFormBuilder() {
       newQuestions.splice(atIndex + 1, 0, newQuestion);
       return newQuestions;
     });
-  };
+  }, []);
 
-  const duplicateQuestion = (id: string) => {
+  const duplicateQuestion = useCallback((id: string) => {
     setQuestions((prev) => {
       const index = prev.findIndex((q) => q.id === id);
       if (index === -1) return prev;
@@ -66,42 +66,55 @@ export function useFormBuilder() {
       newQuestions.splice(index + 1, 0, copy);
       return newQuestions;
     });
-  };
+  }, []);
 
-  const removeQuestion = (id: string) =>
-    setQuestions((q) => q.filter((item) => item.id !== id));
+  const removeQuestion = useCallback(
+    (id: string) => setQuestions((q) => q.filter((item) => item.id !== id)),
+    [],
+  );
 
-  const updateQuestion = (id: string, updates: Partial<Question>) => {
-    setQuestions((qs) =>
-      qs.map((q) => (q.id === id ? { ...q, ...updates } : q))
-    );
-  };
+  const updateQuestion = useCallback(
+    (id: string, updates: Partial<Question>) => {
+      setQuestions((qs) =>
+        qs.map((q) => (q.id === id ? { ...q, ...updates } : q)),
+      );
+    },
+    [],
+  );
 
-  const updateQuestionLabel = (id: string, label: string) =>
-    updateQuestion(id, { label });
+  const updateQuestionLabel = useCallback(
+    (id: string, label: string) => updateQuestion(id, { label }),
+    [updateQuestion],
+  );
 
-  const updateQuestionType = (id: string, type: QuestionType) =>
-    setQuestions((qs) =>
-      qs.map((q) =>
-        q.id === id
-          ? {
-              ...q,
-              type,
-              options:
-                type === "select" || type === "checkbox"
-                  ? q.options || [createInitialOption()]
-                  : undefined,
-            }
-          : q
-      )
-    );
+  const updateQuestionType = useCallback(
+    (id: string, type: QuestionType) =>
+      setQuestions((qs) =>
+        qs.map((q) =>
+          q.id === id
+            ? {
+                ...q,
+                type,
+                options:
+                  type === "select" || type === "checkbox"
+                    ? q.options || [createInitialOption()]
+                    : undefined,
+              }
+            : q,
+        ),
+      ),
+    [],
+  );
 
-  const toggleRequired = (id: string) =>
-    setQuestions((qs) =>
-      qs.map((q) => (q.id === id ? { ...q, required: !q.required } : q))
-    );
+  const toggleRequired = useCallback(
+    (id: string) =>
+      setQuestions((qs) =>
+        qs.map((q) => (q.id === id ? { ...q, required: !q.required } : q)),
+      ),
+    [],
+  );
 
-  const addOption = (questionId: string) => {
+  const addOption = useCallback((questionId: string) => {
     setQuestions((prev) =>
       prev.map((q) => {
         if (q.id === questionId) {
@@ -109,31 +122,37 @@ export function useFormBuilder() {
           return { ...q, options: [...(q.options || []), newOption] };
         }
         return q;
-      })
+      }),
     );
-  };
+  }, []);
 
-  const updateOption = (questionId: string, idx: number, val: string) => {
-    setQuestions((prev) =>
-      prev.map((q) => {
-        if (q.id === questionId && q.options) {
-          const newOpts = [...q.options];
-          newOpts[idx] = { ...newOpts[idx], label: val };
-          return { ...q, options: newOpts };
-        }
-        return q;
-      })
-    );
-  };
+  const updateOption = useCallback(
+    (questionId: string, idx: number, val: string) => {
+      setQuestions((prev) =>
+        prev.map((q) => {
+          if (q.id === questionId && q.options) {
+            const newOpts = [...q.options];
+            newOpts[idx] = { ...newOpts[idx], label: val };
+            return { ...q, options: newOpts };
+          }
+          return q;
+        }),
+      );
+    },
+    [],
+  );
 
-  const removeOption = (qId: string, idx: number) =>
-    setQuestions((qs) =>
-      qs.map((q) =>
-        q.id === qId && q.options
-          ? { ...q, options: q.options.filter((_, i) => i !== idx) }
-          : q
-      )
-    );
+  const removeOption = useCallback(
+    (qId: string, idx: number) =>
+      setQuestions((qs) =>
+        qs.map((q) =>
+          q.id === qId && q.options
+            ? { ...q, options: q.options.filter((_, i) => i !== idx) }
+            : q,
+        ),
+      ),
+    [],
+  );
 
   return {
     title,
