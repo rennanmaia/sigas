@@ -27,7 +27,7 @@ export function ProjectsProvider({ children }: { children: ReactNode }) {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        const merged = parsed.map((savedProject: Project) => {
+        const merged = parsed.map((savedProject: any) => {
           const original = initialProjects.find(
             (p) => p.id === savedProject.id,
           );
@@ -36,8 +36,6 @@ export function ProjectsProvider({ children }: { children: ReactNode }) {
             logo: original?.logo || savedProject.logo,
           };
         });
-        initialProjects.length = 0;
-        initialProjects.push(...merged);
         return merged;
       } catch {
         return initialProjects;
@@ -49,10 +47,35 @@ export function ProjectsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const toSave = projectsState.map(({ logo, ...rest }) => rest);
     localStorage.setItem("local-projects", JSON.stringify(toSave));
-
-    initialProjects.length = 0;
-    initialProjects.push(...projectsState);
   }, [projectsState]);
+
+  useEffect(() => {
+    const handleProjectsUpdate = () => {
+      const saved = localStorage.getItem("local-projects");
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          const merged = parsed.map((savedProject: any) => {
+            const original = initialProjects.find(
+              (p) => p.id === savedProject.id,
+            );
+            return {
+              ...savedProject,
+              logo: original?.logo || savedProject.logo,
+            };
+          });
+          setProjectsState(merged);
+        } catch (error) {
+          console.error("Erro ao recarregar projetos:", error);
+        }
+      }
+    };
+
+    window.addEventListener("projects-updated", handleProjectsUpdate);
+    return () => {
+      window.removeEventListener("projects-updated", handleProjectsUpdate);
+    };
+  }, []);
 
   const deleteProject = (id: string) => {
     setProjectsState((prev) => prev.filter((p) => p.id !== id));

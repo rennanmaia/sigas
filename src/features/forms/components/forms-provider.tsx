@@ -83,32 +83,37 @@ export function FormsProvider({ children }: { children: ReactNode }) {
 
       if (oldProjectId !== newProjectId) {
         try {
-          const projectsMock =
-            require("@/features/projects/data/projects-mock").projects;
+          const savedProjects = localStorage.getItem("local-projects");
+          if (savedProjects) {
+            const projects = JSON.parse(savedProjects);
 
-          if (oldProjectId) {
-            const oldProjectIndex = projectsMock.findIndex(
-              (p: any) => p.id === oldProjectId,
-            );
-            if (oldProjectIndex !== -1 && projectsMock[oldProjectIndex].forms) {
-              projectsMock[oldProjectIndex].forms = projectsMock[
-                oldProjectIndex
-              ].forms.filter((formId: string) => formId !== id);
-            }
-          }
-
-          if (newProjectId) {
-            const newProjectIndex = projectsMock.findIndex(
-              (p: any) => p.id === newProjectId,
-            );
-            if (newProjectIndex !== -1) {
-              if (!projectsMock[newProjectIndex].forms) {
-                projectsMock[newProjectIndex].forms = [];
-              }
-              if (!projectsMock[newProjectIndex].forms.includes(id)) {
-                projectsMock[newProjectIndex].forms.push(id);
+            if (oldProjectId) {
+              const oldProjectIndex = projects.findIndex(
+                (p: any) => p.id === oldProjectId,
+              );
+              if (oldProjectIndex !== -1 && projects[oldProjectIndex].forms) {
+                projects[oldProjectIndex].forms = projects[
+                  oldProjectIndex
+                ].forms.filter((formId: string) => formId !== id);
               }
             }
+
+            if (newProjectId) {
+              const newProjectIndex = projects.findIndex(
+                (p: any) => p.id === newProjectId,
+              );
+              if (newProjectIndex !== -1) {
+                if (!projects[newProjectIndex].forms) {
+                  projects[newProjectIndex].forms = [];
+                }
+                if (!projects[newProjectIndex].forms.includes(id)) {
+                  projects[newProjectIndex].forms.push(id);
+                }
+              }
+            }
+
+            localStorage.setItem("local-projects", JSON.stringify(projects));
+            window.dispatchEvent(new Event("projects-updated"));
           }
         } catch (error) {
           console.error("Erro ao atualizar projetos:", error);
