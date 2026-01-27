@@ -17,6 +17,15 @@ import { useEffect, useState } from "react";
 import { useForms } from "../forms-provider";
 import { ResponsesView } from "../responses-view";
 import { formResponses } from "../../data/responses-mock";
+import { projects } from "@/features/projects/data/projects-mock";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 import type { Question } from "./types/question";
 export function FormBuilder({
@@ -48,6 +57,7 @@ export function FormBuilder({
   const [filteredResponses, setFilteredResponses] = useState<
     typeof formResponses
   >([]);
+  const [projectId, setProjectId] = useState<string>("");
 
   const currentForm = forms.find((f) => f.id === initialId);
   const responsesCount = currentForm?.responses || 0;
@@ -69,6 +79,7 @@ export function FormBuilder({
       const existingForm = forms.find((f) => f.id === initialId);
       if (existingForm) {
         loadForm(existingForm);
+        setProjectId(existingForm.projectId || "");
         setIsLoaded(true);
       }
     }
@@ -87,6 +98,7 @@ export function FormBuilder({
       description: "Formulário sem descrição",
       status: "Rascunho",
       owner: "Carlos Silva",
+      projectId,
       questions,
     };
 
@@ -165,6 +177,35 @@ export function FormBuilder({
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                     />
+
+                    <div className="mt-4 space-y-2">
+                      <Label
+                        htmlFor="project-select"
+                        className="text-sm font-medium"
+                      >
+                        Projeto vinculado *
+                      </Label>
+                      <Select value={projectId} onValueChange={setProjectId}>
+                        <SelectTrigger
+                          id="project-select"
+                          className={!projectId ? "border-destructive" : ""}
+                        >
+                          <SelectValue placeholder="Selecione um projeto" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {projects.map((project) => (
+                            <SelectItem key={project.id} value={project.id}>
+                              {project.title}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {!projectId && (
+                        <p className="text-xs text-destructive">
+                          Você deve vincular o formulário a um projeto
+                        </p>
+                      )}
+                    </div>
                   </Card>
 
                   <Droppable droppableId="form-questions" type="QUESTION">
