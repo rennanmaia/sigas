@@ -166,17 +166,25 @@ export default function ProjectForm({
           <FormField
             control={form.control}
             name="endDate"
-            render={({ field }) => (
-              <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4">
-                <FormLabel className="col-span-2 text-end font-medium">
-                  Data de Término
-                </FormLabel>
-                <FormControl className="col-span-4">
-                  <Input type="date" className="w-fit" {...field} />
-                </FormControl>
-                <FormMessage className="col-span-4 col-start-3" />
-              </FormItem>
-            )}
+            render={({ field }) => {
+              const startDate = form.watch("startDate");
+              return (
+                <FormItem className="grid grid-cols-6 items-center space-y-0 gap-x-4">
+                  <FormLabel className="col-span-2 text-end font-medium">
+                    Data de Término
+                  </FormLabel>
+                  <FormControl className="col-span-4">
+                    <Input
+                      type="date"
+                      className="w-fit"
+                      min={startDate || undefined}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage className="col-span-4 col-start-3" />
+                </FormItem>
+              );
+            }}
           />
 
           <FormField
