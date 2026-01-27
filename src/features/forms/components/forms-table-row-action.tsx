@@ -1,6 +1,6 @@
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { type Row } from "@tanstack/react-table";
-import { Pen, Trash2, Eye } from "lucide-react";
+import { Pen, Trash2, Eye, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -18,7 +18,7 @@ type DataTableRowActionsProps = {
 };
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-  const { setOpen, setCurrentForm } = useForms();
+  const { setOpen, setCurrentForm, duplicateForm } = useForms();
 
   return (
     <div className="z-100">
@@ -55,6 +55,14 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
                 Editar
               </span>
             </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              duplicateForm(row.original.id);
+            }}
+          >
+            <Copy className="mr-2 h-4 w-4" />
+            Duplicar
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
