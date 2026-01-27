@@ -9,6 +9,7 @@ import { FormsProvider, useForms } from "../components/forms-provider";
 import { FormBuilder } from "../components/form-builder";
 import { MobilePreviewDialog } from "../components/mobile-preview-dialog";
 import type { Question } from "../components/form-builder/types/question";
+import { projects as projectsMock } from "@/features/projects/data/projects-mock";
 
 interface FormCreateProps {
   initialId?: string;
@@ -33,10 +34,39 @@ function CreateFormContent({ initialId }: FormCreateProps) {
   const handleSave = (data: any) => {
     if (initialId) {
       updateForm(initialId, data);
+      navigate({ to: "/forms" });
     } else {
-      addForm(data);
+      const newFormId = addForm(data);
+
+      if (data.projectId && newFormId) {
+        try {
+          const projectIndex = projectsMock.findIndex(
+            (p) => p.id === data.projectId,
+          );
+          if (projectIndex !== -1) {
+            if (!projectsMock[projectIndex].forms) {
+              projectsMock[projectIndex].forms = [];
+            }
+            if (!projectsMock[projectIndex].forms.includes(newFormId)) {
+              projectsMock[projectIndex].forms.push(newFormId);
+              projectsMock[projectIndex].stats.formsCount =
+                projectsMock[projectIndex].forms.length;
+            }
+          }
+
+          if (projectId) {
+            navigate({
+              to: "/projects/$projectId",
+              params: { projectId: data.projectId },
+            });
+            return;
+          }
+        } catch (error) {
+          console.error("Erro ao vincular formulário ao projeto:", error);
+        }
+      }
+      navigate({ to: "/forms" });
     }
-    navigate({ to: "/forms" });
   };
 
   const handlePreview = () => {
