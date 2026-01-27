@@ -12,6 +12,7 @@ export interface FormItem {
   lastUpdated: string;
   createdAt: string;
   owner: string;
+  projectId: string;
   questions: Question[];
 }
 
@@ -27,6 +28,7 @@ export const forms: FormItem[] = [
     lastUpdated: "2026-01-05",
     createdAt: "2025-10-10",
     owner: "Carlos Silva",
+    projectId: "proj-001",
     questions: [
       {
         id: "q1",
@@ -71,6 +73,7 @@ export const forms: FormItem[] = [
     lastUpdated: "2026-01-07",
     createdAt: "2025-11-02",
     owner: "Carlos Silva",
+    projectId: "proj-001",
     questions: [
       {
         id: "q4",
@@ -104,6 +107,7 @@ export const forms: FormItem[] = [
     lastUpdated: "2026-01-26",
     createdAt: "2026-01-15",
     owner: "Carlos Silva",
+    projectId: "proj-002",
     questions: [
       {
         id: "q-text",
