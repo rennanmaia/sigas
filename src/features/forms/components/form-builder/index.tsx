@@ -13,7 +13,13 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Plus, ArrowUp } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createFormSchema } from "../../data/schema";
-import { useEffect, useState, useRef } from "react";
+import {
+  useEffect,
+  useState,
+  useRef,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
 import { useForms } from "../forms-provider";
 import { ResponsesView } from "../responses-view";
 import { formResponses } from "../../data/responses-mock";
@@ -26,23 +32,24 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-
 import type { Question } from "./types/question";
-export function FormBuilder({
-  onSave,
-  initialId,
-  onDataChange,
-  initialProjectId,
-}: {
-  onSave: (data: any) => void;
-  initialId?: string;
-  initialProjectId?: string;
-  onDataChange?: (data: {
+
+export interface FormBuilderRef {
+  getFormData: () => {
     title: string;
     description: string;
     questions: Question[];
-  }) => void;
-}) {
+  };
+}
+
+export const FormBuilder = forwardRef<
+  FormBuilderRef,
+  {
+    onSave: (data: any) => void;
+    initialId?: string;
+    initialProjectId?: string;
+  }
+>(function FormBuilder({ onSave, initialId, initialProjectId }, ref) {
   const {
     title,
     setTitle,
@@ -65,6 +72,14 @@ export function FormBuilder({
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const scrollButtonRef = useRef<HTMLButtonElement>(null);
 
+  useImperativeHandle(
+    ref,
+    () => ({
+      getFormData: () => ({ title, description, questions }),
+    }),
+    [title, description, questions],
+  );
+
   const currentForm = forms.find((f) => f.id === initialId);
   const responsesCount = currentForm?.responses || 0;
 
@@ -73,12 +88,6 @@ export function FormBuilder({
       setFilteredResponses(formResponses.filter((r) => r.formId === initialId));
     }
   }, [initialId]);
-
-  useEffect(() => {
-    if (onDataChange) {
-      onDataChange({ title, description, questions });
-    }
-  }, [title, description, questions, onDataChange]);
 
   useEffect(() => {
     if (initialId && forms.length > 0) {
@@ -403,4 +412,4 @@ export function FormBuilder({
       </DragDropContext>
     </>
   );
-}
+});
