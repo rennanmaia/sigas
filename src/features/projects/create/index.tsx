@@ -24,7 +24,7 @@ export default function CreateProject() {
       endDate: values.endDate,
       responsible: values.responsible,
       budget: values.budget,
-      status: "em andamento",
+      status: "ativo",
       company: values.company,
       customFields: values.customFields || [],
       logo:
