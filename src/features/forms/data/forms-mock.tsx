@@ -236,12 +236,12 @@ export const forms: FormItem[] = [
     id: "frm-5",
     title: "Registro de Espécies Aquáticas",
     description: "Documentação de biodiversidade em corpos d'água.",
-    status: "Ativo",
-    responses: 12,
+    status: "Rascunho",
+    responses: 0,
     questionsCount: 4,
     lastUpdated: "2026-01-22",
     createdAt: "2026-01-10",
-    owner: "Ana Silva",
+    owner: "Carlos Silva",
     projectId: "",
     questions: [
       {
@@ -261,7 +261,7 @@ export const forms: FormItem[] = [
     questionsCount: 6,
     lastUpdated: "2026-01-25",
     createdAt: "2026-01-25",
-    owner: "Ana Silva",
+    owner: "Carlos Silva",
     projectId: "",
     questions: [
       {
@@ -277,8 +277,8 @@ export const forms: FormItem[] = [
     id: "frm-7",
     title: "Inspeção de Segurança do Trabalho",
     description: "Verificação de conformidade com normas de segurança.",
-    status: "Ativo",
-    responses: 28,
+    status: "Rascunho",
+    responses: 0,
     questionsCount: 8,
     lastUpdated: "2026-01-24",
     createdAt: "2025-11-15",
