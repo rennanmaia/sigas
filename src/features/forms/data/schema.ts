@@ -33,6 +33,7 @@ export const createFormSchema = z.object({
     .enum(["Ativo", "Rascunho", "Arquivado", "Concluído"])
     .default("Rascunho"),
   owner: z.string().min(1, "Defina um proprietário responsável"),
+  projectId: z.string().min(1, "Você deve vincular o formulário a um projeto"),
   questions: z
     .array(questionSchema)
     .min(1, "O formulário deve ter pelo menos uma pergunta"),
