@@ -218,9 +218,11 @@ export function FormBuilder({
                           <SelectValue placeholder="Selecione um projeto" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="__empty__">
-                            Nenhum (criar como rascunho)
-                          </SelectItem>
+                          {!initialId && (
+                            <SelectItem value="__empty__">
+                              Nenhum (criar como rascunho)
+                            </SelectItem>
+                          )}
                           {projects.map((project) => (
                             <SelectItem key={project.id} value={project.id}>
                               {project.title}
