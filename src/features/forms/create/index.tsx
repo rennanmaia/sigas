@@ -4,7 +4,7 @@ import { Header } from "@/components/layout/header";
 import { Main } from "@/components/layout/main";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Eye, Save, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 
 import { FormsProvider, useForms } from "../components/forms-provider";
 import { FormBuilder } from "../components/form-builder";
@@ -14,6 +14,14 @@ import { projects as projectsMock } from "@/features/projects/data/projects-mock
 
 interface FormCreateProps {
   initialId?: string;
+}
+
+interface FormBuilderRef {
+  getFormData: () => {
+    title: string;
+    description: string;
+    questions: Question[];
+  };
 }
 
 function CreateFormContent({ initialId }: FormCreateProps) {
@@ -31,6 +39,7 @@ function CreateFormContent({ initialId }: FormCreateProps) {
     description: "",
     questions: [],
   });
+  const formBuilderRef = useRef<FormBuilderRef>(null);
 
   const handleSave = (data: any) => {
     if (initialId) {
@@ -72,13 +81,13 @@ function CreateFormContent({ initialId }: FormCreateProps) {
     }
   };
 
-  const handlePreview = () => {
-    const builderElement = document.querySelector("[data-form-builder]") as any;
-    if (builderElement?.__formData) {
-      setFormData(builderElement.__formData);
+  const handlePreview = useCallback(() => {
+    const data = formBuilderRef.current?.getFormData();
+    if (data) {
+      setFormData(data);
     }
     setPreviewOpen(true);
-  };
+  }, []);
 
   return (
     <div className="flex flex-col h-dvh w-full overflow-hidden bg-background">
@@ -130,9 +139,9 @@ function CreateFormContent({ initialId }: FormCreateProps) {
 
       <Main className="p-0 flex-1 overflow-hidden flex flex-col">
         <FormBuilder
+          ref={formBuilderRef}
           onSave={handleSave}
           initialId={initialId}
-          onDataChange={setFormData}
           initialProjectId={projectId}
         />
       </Main>
