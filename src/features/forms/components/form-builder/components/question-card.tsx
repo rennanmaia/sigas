@@ -63,7 +63,7 @@ export function QuestionCard({
             cardRef.current = node;
           }}
           {...provided.draggableProps}
-          className={`relative flex flex-col md:flex-row gap-4 p-5 border-l-4 transition-all mb-4 ${
+          className={`relative flex flex-col md:flex-row gap-4 p-5 border-l-4 transition-all mb-4 overflow-hidden ${
             snapshot.isDragging
               ? "shadow-2xl border-l-primary z-50 scale-[1.01] bg-white"
               : error
@@ -71,7 +71,7 @@ export function QuestionCard({
                 : "hover:shadow-md border-l-transparent bg-card"
           }`}
         >
-          <div className="flex-1 space-y-4 min-w-0">
+          <div className="flex-1 space-y-4 min-w-0 overflow-hidden">
             <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
               <div className="flex items-center gap-2 flex-1">
                 <span
