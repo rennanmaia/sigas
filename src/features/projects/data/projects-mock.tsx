@@ -4,45 +4,6 @@ import { Users, Bird } from "lucide-react";
 export type ProjectStatus = "em andamento" | "concluido";
 export type ProjectCategory = "Ambiental" | "Social";
 
-export let projectForms = [
-  {
-    id: "frm-1",
-    title: "Checklist de Campo - Fauna",
-    responses: 840,
-    status: "Ativo",
-  },
-  {
-    id: "frm-2",
-    title: "Registro de Avistamento Especial",
-    responses: 400,
-    status: "Ativo",
-  },
-  {
-    id: "frm-3",
-    title: "Relatório de Incidentes Ambientais",
-    responses: 0,
-    status: "Rascunho",
-  },
-  {
-    id: "frm-4",
-    title: "Pesquisa de Opinião Comunitária",
-    responses: 120,
-    status: "Ativo",
-  },
-  {
-    id: "frm-5",
-    title: "Inspeção de Segurança do Trabalho",
-    responses: 45,
-    status: "Ativo",
-  },
-  {
-    id: "frm-6",
-    title: "Monitoramento de Ruído Urbano",
-    responses: 12,
-    status: "Em Revisão",
-  },
-];
-
 export const projectTeam = [
   { id: "u-1", name: "Ana Silva", role: "Gerente de Projeto", initial: "AS" },
   { id: "u-2", name: "Lucas Martins", role: "Coletor Pleno", initial: "LM" },
