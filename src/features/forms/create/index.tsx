@@ -1,4 +1,4 @@
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, getRouteApi } from "@tanstack/react-router";
 import { Header } from "@/components/layout/header";
 import { Main } from "@/components/layout/main";
 import { Button } from "@/components/ui/button";
@@ -10,12 +10,15 @@ import { FormBuilder } from "../components/form-builder";
 import { MobilePreviewDialog } from "../components/mobile-preview-dialog";
 import type { Question } from "../components/form-builder/types/question";
 
+const route = getRouteApi("/_authenticated/forms/create/");
+
 interface FormCreateProps {
   initialId?: string;
 }
 
 function CreateFormContent({ initialId }: FormCreateProps) {
   const navigate = useNavigate();
+  const { projectId } = route.useSearch();
   const { addForm, updateForm } = useForms();
   const [previewOpen, setPreviewOpen] = useState(false);
   const [formData, setFormData] = useState<{
@@ -95,6 +98,7 @@ function CreateFormContent({ initialId }: FormCreateProps) {
           onSave={handleSave}
           initialId={initialId}
           onDataChange={setFormData}
+          initialProjectId={projectId}
         />
       </Main>
 
