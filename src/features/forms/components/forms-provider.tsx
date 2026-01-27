@@ -13,6 +13,7 @@ interface FormsContextType {
   addForm: (form: any) => string;
   updateForm: (id: string, form: Partial<FormItem>) => void;
   deleteForms: (ids: string[]) => void;
+  duplicateForm: (id: string) => void;
   open: FormDialogType | null;
   setOpen: (state: FormDialogType | null) => void;
   currentForm: FormItem | null;
@@ -30,12 +31,7 @@ export function FormsProvider({ children }: { children: ReactNode }) {
     if (saved) {
       try {
         const parsedForms = JSON.parse(saved);
-        const migratedForms = parsedForms.map((form: any) => ({
-          ...form,
-          projectId: form.projectId || "proj-001",
-        }));
-        setForms(migratedForms);
-        localStorage.setItem("local-forms", JSON.stringify(migratedForms));
+        setForms(parsedForms);
       } catch (error) {
         console.error("Erro ao carregar formulários do localStorage:", error);
         setForms(initialMockForms);
@@ -90,6 +86,30 @@ export function FormsProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const duplicateForm = (id: string) => {
+    const formToDuplicate = forms.find((f) => f.id === id);
+    if (!formToDuplicate) return;
+
+    const newFormId = `frm-${Math.floor(Math.random() * 10000)}`;
+    const duplicatedForm: FormItem = {
+      ...formToDuplicate,
+      id: newFormId,
+      title: `${formToDuplicate.title} (Cópia)`,
+      status: "Rascunho",
+      owner: "Carlos Silva", // should be the logged user who has permissions todo it
+      projectId: "",
+      responses: 0,
+      questionsCount: formToDuplicate.questions.length,
+      createdAt: new Date().toISOString().split("T")[0],
+      lastUpdated: new Date().toISOString().split("T")[0],
+      questions: formToDuplicate.questions,
+    };
+
+    const updated = [duplicatedForm, ...forms];
+    setForms(updated);
+    localStorage.setItem("local-forms", JSON.stringify(updated));
+  };
+
   return (
     <FormsContext.Provider
       value={{
@@ -97,6 +117,7 @@ export function FormsProvider({ children }: { children: ReactNode }) {
         addForm,
         updateForm,
         deleteForms,
+        duplicateForm,
         open,
         setOpen,
         currentForm,
