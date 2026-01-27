@@ -6,7 +6,7 @@ import { QuestionPreview } from "./question-preview";
 import type { Question, QuestionType } from "../types/question";
 import { ActionsBar } from "./actions-bar";
 import { LogicEditor } from "./logic-editor";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, memo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ValidationEditor } from "./validation-editor";
 
@@ -27,7 +27,7 @@ interface QuestionCardProps {
   onRemoveOption: (id: string, idx: number) => void;
 }
 
-export function QuestionCard({
+export const QuestionCard = memo(function QuestionCard({
   question,
   index,
   allQuestions,
@@ -36,10 +36,40 @@ export function QuestionCard({
 }: QuestionCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const hasScrolled = useRef(false);
+  const debounceTimer = useRef<NodeJS.Timeout | undefined>(undefined);
 
   const [showLogic, setShowLogic] = useState(!!question.logic);
   const [showSettings, setShowSettings] = useState(false);
+  const [localLabel, setLocalLabel] = useState(question.label);
   const hasValidationSupport = !["select", "map"].includes(question.type);
+
+  useEffect(() => {
+    setLocalLabel(question.label);
+  }, [question.label]);
+
+  const handleLabelChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      setLocalLabel(value);
+
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current);
+      }
+
+      debounceTimer.current = setTimeout(() => {
+        props.onUpdateLabel(question.id, value);
+      }, 50);
+    },
+    [question.id, props],
+  );
+
+  useEffect(() => {
+    return () => {
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (!hasScrolled.current) {
@@ -93,10 +123,8 @@ export function QuestionCard({
                           ? "text-destructive placeholder:text-destructive/60"
                           : ""
                       }`}
-                      value={question.label}
-                      onChange={(e) =>
-                        props.onUpdateLabel(question.id, e.target.value)
-                      }
+                      value={localLabel}
+                      onChange={handleLabelChange}
                     />
                     {question.required && (
                       <span className="text-destructive font-bold text-lg">
@@ -198,4 +226,4 @@ export function QuestionCard({
       )}
     </Draggable>
   );
-}
+});
