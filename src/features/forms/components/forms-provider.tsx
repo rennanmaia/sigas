@@ -62,6 +62,10 @@ export function FormsProvider({ children }: { children: ReactNode }) {
 
   const updateForm = (id: string, updatedData: Partial<FormItem>) => {
     setForms((prev) => {
+      const oldForm = prev.find((f) => f.id === id);
+      const oldProjectId = oldForm?.projectId;
+      const newProjectId = updatedData.projectId;
+
       const updated = prev.map((f) =>
         f.id === id
           ? {
@@ -74,6 +78,43 @@ export function FormsProvider({ children }: { children: ReactNode }) {
       );
 
       localStorage.setItem("local-forms", JSON.stringify(updated));
+
+      window.dispatchEvent(new Event("forms-updated"));
+
+      if (oldProjectId !== newProjectId) {
+        try {
+          const projectsMock =
+            require("@/features/projects/data/projects-mock").projects;
+
+          if (oldProjectId) {
+            const oldProjectIndex = projectsMock.findIndex(
+              (p: any) => p.id === oldProjectId,
+            );
+            if (oldProjectIndex !== -1 && projectsMock[oldProjectIndex].forms) {
+              projectsMock[oldProjectIndex].forms = projectsMock[
+                oldProjectIndex
+              ].forms.filter((formId: string) => formId !== id);
+            }
+          }
+
+          if (newProjectId) {
+            const newProjectIndex = projectsMock.findIndex(
+              (p: any) => p.id === newProjectId,
+            );
+            if (newProjectIndex !== -1) {
+              if (!projectsMock[newProjectIndex].forms) {
+                projectsMock[newProjectIndex].forms = [];
+              }
+              if (!projectsMock[newProjectIndex].forms.includes(id)) {
+                projectsMock[newProjectIndex].forms.push(id);
+              }
+            }
+          }
+        } catch (error) {
+          console.error("Erro ao atualizar projetos:", error);
+        }
+      }
+
       return updated;
     });
   };
