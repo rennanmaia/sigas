@@ -36,7 +36,6 @@ import {
 import { Label } from "@/components/ui/label";
 import {
   projects as mockProjects,
-  projectForms as allForms,
   projectTeam as allMembers,
   type Project,
 } from "./data/projects-mock";
@@ -44,17 +43,34 @@ import { forms as allAvailableForms } from "@/features/forms/data/forms-mock";
 
 import { ProjectsDeleteDialog } from "./components/project-delete-dialog";
 import { ProjectsProvider, useProjects } from "./components/projects-provider";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ProjectAllocateDialog } from "./components/project-allocate-dialog";
+import { forms as formsMock } from "@/features/forms/data/forms-mock";
+import type { FormItem } from "@/features/forms/data/forms-mock";
 
 function ProjectDetailsContent() {
   const { projects: projectsData, setProjects } = useProjects();
   const [openDelete, setOpenDelete] = useState(false);
   const [openFormDialog, setOpenFormDialog] = useState(false);
   const [openMemberDialog, setOpenMemberDialog] = useState(false);
+  const [availableForms, setAvailableForms] =
+    useState<FormItem[]>(allAvailableForms);
   const { projectId } = useParams({
     from: "/_authenticated/projects/$projectId/",
   });
+
+  useEffect(() => {
+    const savedForms = localStorage.getItem("local-forms");
+    if (savedForms) {
+      try {
+        const parsedForms = JSON.parse(savedForms);
+        setAvailableForms(parsedForms);
+      } catch (error) {
+        console.error("Erro ao carregar formulários:", error);
+        setAvailableForms(allAvailableForms);
+      }
+    }
+  }, [projectId]);
 
   const project = projectsData.find((p) => p.id === projectId);
 
@@ -82,6 +98,29 @@ function ProjectDetailsContent() {
     });
   };
   const handleConfirmForms = (selectedIds: string[]) => {
+    const savedForms = localStorage.getItem("local-forms");
+    if (savedForms) {
+      try {
+        const parsedForms = JSON.parse(savedForms);
+        const updatedFormsList = parsedForms.map((form: any) => {
+          if (selectedIds.includes(form.id)) {
+            return { ...form, projectId: projectId };
+          }
+          return form;
+        });
+        localStorage.setItem("local-forms", JSON.stringify(updatedFormsList));
+
+        selectedIds.forEach((formId) => {
+          const formIndex = formsMock.findIndex((f) => f.id === formId);
+          if (formIndex !== -1) {
+            formsMock[formIndex].projectId = projectId;
+          }
+        });
+      } catch (error) {
+        console.error("Erro ao atualizar projectId dos formulários:", error);
+      }
+    }
+
     const updatedForms = [...(project.forms || []), ...selectedIds];
     updateProjectData({
       forms: updatedForms,
@@ -96,7 +135,7 @@ function ProjectDetailsContent() {
       stats: { ...project.stats, collectorsCount: updatedMembers.length },
     });
   };
-  const currentProjectForms = allForms.filter((f) =>
+  const currentProjectForms = availableForms.filter((f) =>
     project.forms?.includes(f.id),
   );
 
@@ -312,8 +351,15 @@ function ProjectDetailsContent() {
                           </p>
                         </div>
                       </div>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <ExternalLink size={14} />
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        asChild
+                      >
+                        <Link to="/forms/edit/$id" params={{ id: form.id }}>
+                          <ExternalLink size={14} />
+                        </Link>
                       </Button>
                     </div>
                   ))
@@ -391,11 +437,13 @@ function ProjectDetailsContent() {
         onOpenChange={setOpenFormDialog}
         title="Vincular Formulários"
         description="Selecione os formulários que deseja adicionar a este projeto."
-        items={allAvailableForms.map((f) => ({
-          id: f.id,
-          label: f.title,
-          sublabel: f.status,
-        }))}
+        items={availableForms
+          .filter((f) => !f.projectId || f.projectId === projectId)
+          .map((f) => ({
+            id: f.id,
+            label: f.title,
+            sublabel: f.status,
+          }))}
         alreadySelected={project.forms || []}
         onConfirm={handleConfirmForms}
         projectId={projectId}
