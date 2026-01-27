@@ -190,7 +190,7 @@ export function FormBuilder({
                       <Select
                         value={projectId}
                         onValueChange={setProjectId}
-                        disabled={!!initialProjectId}
+                        disabled={!!initialProjectId && !initialId}
                       >
                         <SelectTrigger
                           id="project-select"
@@ -211,7 +211,7 @@ export function FormBuilder({
                           Você deve vincular o formulário a um projeto
                         </p>
                       )}
-                      {initialProjectId && projectId && (
+                      {initialProjectId && projectId && !initialId && (
                         <p className="text-xs text-muted-foreground">
                           Projeto pré-selecionado e não pode ser alterado
                         </p>
