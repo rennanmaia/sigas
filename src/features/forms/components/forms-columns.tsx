@@ -1,7 +1,7 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Trash2, Pen, Eye } from "lucide-react";
+import { Trash2, Pen, Eye, Copy } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import {
   DropdownMenu,
@@ -25,7 +25,7 @@ const statusStyles: Record<string, string> = {
   Arquivado: "border-slate-200 bg-slate-50 text-slate-600",
 };
 const RowActions = ({ row }: { row: any }) => {
-  const { setOpen, setCurrentForm } = useForms();
+  const { setOpen, setCurrentForm, duplicateForm } = useForms();
 
   return (
     <DropdownMenu modal={false}>
@@ -55,6 +55,14 @@ const RowActions = ({ row }: { row: any }) => {
               Editar
             </span>
           </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            duplicateForm(row.original.id);
+          }}
+        >
+          <Copy className="mr-2 h-4 w-4" />
+          Duplicar
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
