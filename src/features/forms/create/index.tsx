@@ -1,4 +1,5 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
+import { toast } from "sonner";
 import { Header } from "@/components/layout/header";
 import { Main } from "@/components/layout/main";
 import { Button } from "@/components/ui/button";
@@ -34,9 +35,11 @@ function CreateFormContent({ initialId }: FormCreateProps) {
   const handleSave = (data: any) => {
     if (initialId) {
       updateForm(initialId, data);
+      toast.success("Formulário atualizado com sucesso!");
       navigate({ to: "/forms" });
     } else {
       const newFormId = addForm(data);
+      toast.success("Formulário criado com sucesso!");
 
       if (data.projectId && newFormId) {
         try {

@@ -1,6 +1,7 @@
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { type Row } from "@tanstack/react-table";
 import { Pen, Trash2, Eye, Copy } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -59,6 +60,9 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           <DropdownMenuItem
             onClick={() => {
               duplicateForm(row.original.id);
+              toast.success(
+                `Formulário "${row.original.title}" duplicado com sucesso!`,
+              );
             }}
           >
             <Copy className="mr-2 h-4 w-4" />

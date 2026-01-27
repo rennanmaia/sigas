@@ -2,6 +2,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Trash2, Pen, Eye, Copy } from "lucide-react";
+import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
 import {
   DropdownMenu,
@@ -59,6 +60,9 @@ const RowActions = ({ row }: { row: any }) => {
         <DropdownMenuItem
           onClick={() => {
             duplicateForm(row.original.id);
+            toast.success(
+              `Formulário "${row.original.title}" duplicado com sucesso!`,
+            );
           }}
         >
           <Copy className="mr-2 h-4 w-4" />

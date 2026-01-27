@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { AlertTriangle } from "lucide-react";
+import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,6 +25,7 @@ export function FormDeleteDialog({
     if (value.trim() !== currentRow.title.trim()) return;
 
     deleteForms([currentRow.id]);
+    toast.success(`Formulário "${currentRow.title}" excluído com sucesso.`);
 
     onOpenChange(false);
     setValue("");
