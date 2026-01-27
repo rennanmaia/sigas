@@ -10,10 +10,10 @@ import { useFormBuilder } from "./hooks/use-form-builder";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Plus } from "lucide-react";
+import { Plus, ArrowUp } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createFormSchema } from "../../data/schema";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useForms } from "../forms-provider";
 import { ResponsesView } from "../responses-view";
 import { formResponses } from "../../data/responses-mock";
@@ -62,6 +62,8 @@ export function FormBuilder({
   const [projectId, setProjectId] = useState<string>(
     initialProjectId || "__empty__",
   );
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const scrollButtonRef = useRef<HTMLButtonElement>(null);
 
   const currentForm = forms.find((f) => f.id === initialId);
   const responsesCount = currentForm?.responses || 0;
@@ -93,6 +95,53 @@ export function FormBuilder({
     setFilteredResponses((prev) => prev.filter((r) => r.id !== responseId));
     // TODO: make an API call to delete the response and update the forms list to decrement the response count
   };
+
+  const scrollToTop = () => {
+    const viewport = scrollAreaRef.current?.querySelector(
+      "[data-radix-scroll-area-viewport]",
+    );
+    if (viewport) {
+      viewport.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
+  useEffect(() => {
+    const viewport = scrollAreaRef.current?.querySelector(
+      "[data-radix-scroll-area-viewport]",
+    );
+    const button = scrollButtonRef.current;
+
+    if (!viewport || !button) return;
+
+    let rafId: number;
+
+    const handleScroll = () => {
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+      }
+
+      rafId = requestAnimationFrame(() => {
+        const scrollTop = viewport.scrollTop;
+        if (scrollTop > 400) {
+          button.style.opacity = "1";
+          button.style.pointerEvents = "auto";
+          button.style.transform = "scale(1)";
+        } else {
+          button.style.opacity = "0";
+          button.style.pointerEvents = "none";
+          button.style.transform = "scale(0.8)";
+        }
+      });
+    };
+
+    viewport.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+      }
+      viewport.removeEventListener("scroll", handleScroll);
+    };
+  }, [isLoaded, showingResponses]);
 
   if (!isLoaded) return null;
 
@@ -180,8 +229,8 @@ export function FormBuilder({
               onDeleteResponse={handleDeleteResponse}
             />
           ) : (
-            <main className="flex-1 h-full overflow-hidden flex flex-col bg-slate-50/50">
-              <ScrollArea className="flex-1 w-full h-full">
+            <main className="flex-1 h-full overflow-hidden flex flex-col bg-slate-50/50 relative">
+              <ScrollArea ref={scrollAreaRef} className="flex-1 w-full h-full">
                 <div className="w-full max-w-4xl mx-auto p-4 md:p-8 space-y-6 pb-40">
                   <Card className="p-4 md:p-6 shadow-sm rounded-lg border-t-4 border-t-primary bg-card">
                     <Input
@@ -322,6 +371,26 @@ export function FormBuilder({
                   )}
                 </div>
               </ScrollArea>
+
+              {!showingResponses && (
+                <button
+                  ref={scrollButtonRef}
+                  onClick={scrollToTop}
+                  className="absolute bottom-6 right-6 z-50 size-12 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 transition-[background-color] flex items-center justify-center group"
+                  style={{
+                    opacity: 0,
+                    pointerEvents: "none",
+                    transform: "scale(0.8)",
+                    transition: "opacity 0.2s ease, transform 0.2s ease",
+                  }}
+                  aria-label="Voltar ao topo"
+                >
+                  <ArrowUp
+                    size={20}
+                    className="group-hover:scale-110 transition-transform"
+                  />
+                </button>
+              )}
             </main>
           )}
         </div>
