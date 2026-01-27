@@ -192,6 +192,9 @@ function ProjectDetailsContent() {
   };
 
   const timeProgress = calculateTimeProgress();
+
+  const isExpired =
+    project.status === "ativo" && new Date(project.endDate) < new Date();
   const responsibleMember = allMembers.find(
     (m) => m.name === project.responsible,
   );
@@ -239,23 +242,41 @@ function ProjectDetailsContent() {
           </div>
 
           <div className="flex items-center gap-2">
+            {isExpired && (
+              <Badge variant="destructive" className="text-[10px]">
+                EXPIRADO
+              </Badge>
+            )}
             <Select defaultValue={project.status}>
-              <SelectTrigger className="w-40 h-9">
+              <SelectTrigger
+                className={`w-40 h-9 ${isExpired ? "border-destructive text-destructive" : ""}`}
+              >
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="em andamento">
+                <SelectItem value="ativo">
                   <div className="flex items-center gap-2">
-                    <Clock size={14} /> Em andamento
+                    <Clock size={14} /> Ativo
                   </div>
                 </SelectItem>
-                <SelectItem value="concluido">
+                <SelectItem value="pausado">
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 size={14} /> Concluído
+                    <Clock size={14} /> Pausado
+                  </div>
+                </SelectItem>
+                <SelectItem value="finalizado">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 size={14} /> Finalizado
+                  </div>
+                </SelectItem>
+                <SelectItem value="cancelado">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 size={14} /> Cancelado
                   </div>
                 </SelectItem>
               </SelectContent>
             </Select>
+
             <Button
               variant="outline"
               size="sm"
