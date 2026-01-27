@@ -40,6 +40,7 @@ import {
   projectTeam as allMembers,
   type Project,
 } from "./data/projects-mock";
+import { forms as allAvailableForms } from "@/features/forms/data/forms-mock";
 
 import { ProjectsDeleteDialog } from "./components/project-delete-dialog";
 import { ProjectsProvider, useProjects } from "./components/projects-provider";
@@ -148,7 +149,7 @@ function ProjectDetailsContent() {
 
           <div className="flex items-center gap-2">
             <Select defaultValue={project.status}>
-              <SelectTrigger className="w-[160px] h-9">
+              <SelectTrigger className="w-40 h-9">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
@@ -390,13 +391,14 @@ function ProjectDetailsContent() {
         onOpenChange={setOpenFormDialog}
         title="Vincular Formulários"
         description="Selecione os formulários que deseja adicionar a este projeto."
-        items={allForms.map((f) => ({
+        items={allAvailableForms.map((f) => ({
           id: f.id,
           label: f.title,
           sublabel: f.status,
         }))}
         alreadySelected={project.forms || []}
         onConfirm={handleConfirmForms}
+        projectId={projectId}
       />
 
       <ProjectAllocateDialog
