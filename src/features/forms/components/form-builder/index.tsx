@@ -59,7 +59,9 @@ export function FormBuilder({
   const [filteredResponses, setFilteredResponses] = useState<
     typeof formResponses
   >([]);
-  const [projectId, setProjectId] = useState<string>(initialProjectId || "");
+  const [projectId, setProjectId] = useState<string>(
+    initialProjectId || "__empty__",
+  );
 
   const currentForm = forms.find((f) => f.id === initialId);
   const responsesCount = currentForm?.responses || 0;
@@ -81,7 +83,7 @@ export function FormBuilder({
       const existingForm = forms.find((f) => f.id === initialId);
       if (existingForm) {
         loadForm(existingForm);
-        setProjectId(existingForm.projectId || "");
+        setProjectId(existingForm.projectId || "__empty__");
         setIsLoaded(true);
       }
     }
@@ -95,12 +97,27 @@ export function FormBuilder({
   if (!isLoaded) return null;
 
   const handleInternalSave = () => {
+    if (!projectId || projectId === "__empty__") {
+      const confirmSave = window.confirm(
+        "ATENÇÃO: Este formulário será criado SEM projeto vinculado.\n\n" +
+          "Isso significa que:\n" +
+          "\u2022 Ele será salvo como RASCUNHO\n" +
+          "\u2022 NÃO poderá ser respondido\n" +
+          "\u2022 Para ativá-lo, você precisará vinculá-lo a um projeto\n\n" +
+          "Deseja continuar mesmo assim?",
+      );
+
+      if (!confirmSave) {
+        return;
+      }
+    }
+
     const formData = {
       title,
       description: "Formulário sem descrição",
-      status: "Rascunho",
-      owner: "Carlos Silva",
-      projectId,
+      status: projectId && projectId !== "__empty__" ? "Ativo" : "Rascunho",
+      owner: "Carlos Silva", // should be the logged user who has permissions todo it
+      projectId: projectId && projectId !== "__empty__" ? projectId : "",
       questions,
     };
 
@@ -188,8 +205,10 @@ export function FormBuilder({
                         Projeto vinculado *
                       </Label>
                       <Select
-                        value={projectId}
-                        onValueChange={setProjectId}
+                        value={projectId || "__empty__"}
+                        onValueChange={(value) =>
+                          setProjectId(value === "__empty__" ? "" : value)
+                        }
                         disabled={!!initialProjectId && !initialId}
                       >
                         <SelectTrigger
@@ -199,6 +218,9 @@ export function FormBuilder({
                           <SelectValue placeholder="Selecione um projeto" />
                         </SelectTrigger>
                         <SelectContent>
+                          <SelectItem value="__empty__">
+                            Nenhum (criar como rascunho)
+                          </SelectItem>
                           {projects.map((project) => (
                             <SelectItem key={project.id} value={project.id}>
                               {project.title}
