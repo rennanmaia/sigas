@@ -60,16 +60,39 @@ function ProjectDetailsContent() {
   });
 
   useEffect(() => {
-    const savedForms = localStorage.getItem("local-forms");
-    if (savedForms) {
-      try {
-        const parsedForms = JSON.parse(savedForms);
-        setAvailableForms(parsedForms);
-      } catch (error) {
-        console.error("Erro ao carregar formulários:", error);
-        setAvailableForms(allAvailableForms);
+    const loadForms = () => {
+      const savedForms = localStorage.getItem("local-forms");
+      if (savedForms) {
+        try {
+          const parsedForms = JSON.parse(savedForms);
+          setAvailableForms(parsedForms);
+        } catch (error) {
+          console.error("Erro ao carregar formulários:", error);
+          setAvailableForms(allAvailableForms);
+        }
       }
-    }
+    };
+
+    loadForms();
+
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "local-forms") {
+        loadForms();
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    const handleCustomEvent = () => {
+      loadForms();
+    };
+
+    window.addEventListener("forms-updated", handleCustomEvent);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("forms-updated", handleCustomEvent);
+    };
   }, [projectId]);
 
   const project = projectsData.find((p) => p.id === projectId);
@@ -104,7 +127,11 @@ function ProjectDetailsContent() {
         const parsedForms = JSON.parse(savedForms);
         const updatedFormsList = parsedForms.map((form: any) => {
           if (selectedIds.includes(form.id)) {
-            return { ...form, projectId: projectId };
+            return {
+              ...form,
+              projectId: projectId,
+              status: "Ativo",
+            };
           }
           return form;
         });
@@ -114,6 +141,7 @@ function ProjectDetailsContent() {
           const formIndex = formsMock.findIndex((f) => f.id === formId);
           if (formIndex !== -1) {
             formsMock[formIndex].projectId = projectId;
+            formsMock[formIndex].status = "Ativo";
           }
         });
       } catch (error) {
@@ -135,8 +163,9 @@ function ProjectDetailsContent() {
       stats: { ...project.stats, collectorsCount: updatedMembers.length },
     });
   };
-  const currentProjectForms = availableForms.filter((f) =>
-    project.forms?.includes(f.id),
+
+  const currentProjectForms = availableForms.filter(
+    (f) => f.projectId === projectId,
   );
 
   const timeProgress = 65;
@@ -436,9 +465,9 @@ function ProjectDetailsContent() {
         open={openFormDialog}
         onOpenChange={setOpenFormDialog}
         title="Vincular Formulários"
-        description="Selecione os formulários que deseja adicionar a este projeto."
+        description="Selecione os formulários que deseja adicionar a este projeto. Apenas formulários sem projeto (Rascunho) podem ser vinculados."
         items={availableForms
-          .filter((f) => !f.projectId || f.projectId === projectId)
+          .filter((f) => f.status === "Rascunho" && !f.projectId)
           .map((f) => ({
             id: f.id,
             label: f.title,
