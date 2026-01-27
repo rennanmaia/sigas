@@ -12,6 +12,7 @@ import {
   List,
   Trash2,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -49,7 +50,7 @@ import { forms as formsMock } from "@/features/forms/data/forms-mock";
 import type { FormItem } from "@/features/forms/data/forms-mock";
 
 function ProjectDetailsContent() {
-  const { projects: projectsData, setProjects } = useProjects();
+  const { projects: projectsData, setProjects, updateProject } = useProjects();
   const [openDelete, setOpenDelete] = useState(false);
   const [openFormDialog, setOpenFormDialog] = useState(false);
   const [openMemberDialog, setOpenMemberDialog] = useState(false);
@@ -206,6 +207,21 @@ function ProjectDetailsContent() {
   const currentProjectTeam = responsibleMember
     ? [responsibleMember, ...otherMembers]
     : otherMembers;
+
+  const statusLabels: Record<typeof project.status, string> = {
+    ativo: "Ativo",
+    pausado: "Pausado",
+    finalizado: "Finalizado",
+    cancelado: "Cancelado",
+  };
+
+  const handleStatusChange = (newStatus: typeof project.status) => {
+    updateProject(project.id, { status: newStatus });
+    toast.success(
+      `Status do projeto alterado para "${statusLabels[newStatus]}" com sucesso!`,
+    );
+  };
+
   return (
     <>
       <Header>
@@ -247,7 +263,12 @@ function ProjectDetailsContent() {
                 EXPIRADO
               </Badge>
             )}
-            <Select defaultValue={project.status}>
+            <Select
+              value={project.status}
+              onValueChange={(value) =>
+                handleStatusChange(value as typeof project.status)
+              }
+            >
               <SelectTrigger
                 className={`w-40 h-9 ${isExpired ? "border-destructive text-destructive" : ""}`}
               >
