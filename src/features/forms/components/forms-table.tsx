@@ -24,6 +24,7 @@ import { DataTablePagination, DataTableToolbar } from "@/components/data-table";
 import { DataTableBulkActions } from "./data-table-bulk-actions";
 import { useForms } from "../components/forms-provider";
 import { formsColumns as columns } from "./forms-columns";
+import { projects } from "@/features/projects/data/projects-mock";
 
 export function FormsTable({
   search,
@@ -52,6 +53,7 @@ export function FormsTable({
       { columnId: "title", searchKey: "title", type: "string" },
       { columnId: "status", searchKey: "status", type: "array" },
       { columnId: "owner", searchKey: "owner", type: "string" },
+      { columnId: "projectId", searchKey: "projectId", type: "array" },
     ],
   });
 
@@ -99,6 +101,14 @@ export function FormsTable({
               { label: "Concluído", value: "Concluído" },
               { label: "Arquivado", value: "Arquivado" },
             ],
+          },
+          {
+            columnId: "projectId",
+            title: "Projeto",
+            options: projects.map((project) => ({
+              label: project.title,
+              value: project.id,
+            })),
           },
         ]}
       />

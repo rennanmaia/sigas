@@ -16,6 +16,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { DataTableColumnHeader } from "@/components/data-table";
 import { useForms } from "./forms-provider";
+import { projects } from "@/features/projects/data/projects-mock";
 
 const statusStyles: Record<string, string> = {
   Ativo: "border-blue-200 bg-blue-50 text-blue-700",
@@ -38,7 +39,7 @@ const RowActions = ({ row }: { row: any }) => {
           <span className="sr-only">Abrir menu</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[160px]">
+      <DropdownMenuContent align="end" className="w-40">
         <DropdownMenuItem asChild>
           <Link to="/forms/edit/$id" params={{ id: row.original.id }}>
             <span className="flex items-center">
@@ -139,6 +140,22 @@ export const formsColumns: ColumnDef<FormItem>[] = [
         <span className="text-sm">{row.getValue("owner")}</span>
       </div>
     ),
+  },
+  {
+    accessorKey: "projectId",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Projeto" />
+    ),
+    cell: ({ row }) => {
+      const projectId = row.getValue("projectId") as string;
+      const project = projects.find((p) => p.id === projectId);
+      return (
+        <div className="text-sm max-w-[200px] truncate">
+          {project?.title || "Sem projeto"}
+        </div>
+      );
+    },
+    filterFn: (row, id, value) => value.includes(row.getValue(id)),
   },
   {
     accessorKey: "lastUpdated",
