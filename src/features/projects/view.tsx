@@ -168,6 +168,11 @@ function ProjectDetailsContent() {
     (f) => f.projectId === projectId,
   );
 
+  const totalResponses = currentProjectForms.reduce(
+    (sum, form) => sum + (form.responses || 0),
+    0,
+  );
+
   const timeProgress = 65;
   const responsibleMember = allMembers.find(
     (m) => m.name === project.responsible,
@@ -322,9 +327,7 @@ function ProjectDetailsContent() {
               <List className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                {project.stats.responsesCount}
-              </div>
+              <div className="text-2xl font-bold">{totalResponses}</div>
               <p className="text-muted-foreground text-xs">Dados coletados</p>
             </CardContent>
           </Card>
