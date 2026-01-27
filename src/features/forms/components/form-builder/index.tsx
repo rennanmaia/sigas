@@ -32,9 +32,11 @@ export function FormBuilder({
   onSave,
   initialId,
   onDataChange,
+  initialProjectId,
 }: {
   onSave: (data: any) => void;
   initialId?: string;
+  initialProjectId?: string;
   onDataChange?: (data: {
     title: string;
     description: string;
@@ -57,7 +59,7 @@ export function FormBuilder({
   const [filteredResponses, setFilteredResponses] = useState<
     typeof formResponses
   >([]);
-  const [projectId, setProjectId] = useState<string>("");
+  const [projectId, setProjectId] = useState<string>(initialProjectId || "");
 
   const currentForm = forms.find((f) => f.id === initialId);
   const responsesCount = currentForm?.responses || 0;
@@ -185,7 +187,11 @@ export function FormBuilder({
                       >
                         Projeto vinculado *
                       </Label>
-                      <Select value={projectId} onValueChange={setProjectId}>
+                      <Select
+                        value={projectId}
+                        onValueChange={setProjectId}
+                        disabled={!!initialProjectId}
+                      >
                         <SelectTrigger
                           id="project-select"
                           className={!projectId ? "border-destructive" : ""}
@@ -203,6 +209,11 @@ export function FormBuilder({
                       {!projectId && (
                         <p className="text-xs text-destructive">
                           Você deve vincular o formulário a um projeto
+                        </p>
+                      )}
+                      {initialProjectId && projectId && (
+                        <p className="text-xs text-muted-foreground">
+                          Projeto pré-selecionado e não pode ser alterado
                         </p>
                       )}
                     </div>
