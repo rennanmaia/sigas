@@ -28,11 +28,6 @@ export function useFormBuilder() {
     setQuestions(defaultQuestions);
   }, []);
 
-  const createInitialOption = () => ({
-    id: crypto.randomUUID(),
-    label: "",
-  });
-
   const addQuestion = useCallback((type: QuestionType, atIndex?: number) => {
     const newQuestion: Question = {
       id: crypto.randomUUID(),
@@ -41,7 +36,10 @@ export function useFormBuilder() {
       required: false,
       options:
         type === "select" || type === "checkbox"
-          ? [createInitialOption()]
+          ? [
+              { id: crypto.randomUUID(), label: "Opção 1" },
+              { id: crypto.randomUUID(), label: "Opção 2" },
+            ]
           : undefined,
     };
 
@@ -97,7 +95,12 @@ export function useFormBuilder() {
                 type,
                 options:
                   type === "select" || type === "checkbox"
-                    ? q.options || [createInitialOption()]
+                    ? q.options && q.options.length >= 2
+                      ? q.options
+                      : [
+                          { id: crypto.randomUUID(), label: "Opção 1" },
+                          { id: crypto.randomUUID(), label: "Opção 2" },
+                        ]
                     : undefined,
               }
             : q,
