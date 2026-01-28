@@ -11,7 +11,7 @@ import { useProjects } from "../components/projects-provider";
 
 export default function CreateProject() {
   const navigate = useNavigate();
-  const { setProjects } = useProjects();
+  const { setProjects, addLog } = useProjects();
 
   const onCreate = (values: ProjectFormValues) => {
     const newProject: Project = {
@@ -44,8 +44,26 @@ export default function CreateProject() {
     };
 
     mockProjects.unshift(newProject);
-
     setProjects([...mockProjects]);
+
+    const creationDetails = [
+      `Título: "${newProject.title}"`,
+      `Categoria: "${newProject.category}"`,
+      `Responsável: "${newProject.responsible}"`,
+      `Empresa: "${newProject.company}"`,
+      `Orçamento: "${newProject.budget}"`,
+      `Data de Início: "${newProject.startDate}"`,
+      `Data de Término: "${newProject.endDate}"`,
+      `Status: "${newProject.status}"`,
+    ].join("\n");
+
+    addLog(
+      "criação",
+      newProject.id,
+      newProject.title,
+      creationDetails,
+      "João Silva",
+    );
 
     toast.success("Projeto criado com sucesso");
     navigate({ to: "/projects" });
