@@ -5,6 +5,7 @@ import {
   ArrowUpAZ,
   ArrowDownAZ,
   Folder,
+  History,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -114,6 +115,12 @@ function ProjectsList() {
             <p className="text-muted-foreground">Gerencie seus projetos</p>
           </div>
           <div className="flex gap-2">
+            <Button variant="outline" className="space-x-0" asChild>
+              <Link to="/projects/logs">
+                <History size={18} />
+                <span>Histórico</span>
+              </Link>
+            </Button>
             <Button className="space-x-1" asChild>
               <Link to="/projects/create">
                 <span>Criar projeto</span> <Folder size={18} />
