@@ -1,23 +1,11 @@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Trash2, Pen, Eye, Copy } from "lucide-react";
-import { toast } from "sonner";
-import { Link } from "@tanstack/react-router";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import type { FormItem } from "../data/forms-mock";
 import type { ColumnDef } from "@tanstack/react-table";
-import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { DataTableColumnHeader } from "@/components/data-table";
-import { useForms } from "./forms-provider";
 import { projects } from "@/features/projects/data/projects-mock";
+import { Link } from "@tanstack/react-router";
+import { DataTableRowActions } from "./forms-table-row-action";
 
 const statusStyles: Record<string, string> = {
   Ativo: "border-blue-200 bg-blue-50 text-blue-700",
@@ -25,66 +13,7 @@ const statusStyles: Record<string, string> = {
   Rascunho: "border-amber-200 bg-amber-50 text-amber-700",
   Arquivado: "border-slate-200 bg-slate-50 text-slate-600",
 };
-const RowActions = ({ row }: { row: any }) => {
-  const { setOpen, setCurrentForm, duplicateForm } = useForms();
 
-  return (
-    <DropdownMenu modal={false}>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className="data-[state=open]:bg-muted flex h-8 w-8 p-0"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <DotsHorizontalIcon className="h-4 w-4" />
-          <span className="sr-only">Abrir menu</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-40">
-        <DropdownMenuItem asChild>
-          <Link to="/forms/edit/$id" params={{ id: row.original.id }}>
-            <span className="flex items-center">
-              <Eye className="mr-2 h-4 w-4" />
-              Visualizar
-            </span>
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link to="/forms/edit/$id" params={{ id: row.original.id }}>
-            <span className="flex items-center">
-              <Pen className="mr-2 h-4 w-4" />
-              Editar
-            </span>
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() => {
-            duplicateForm(row.original.id);
-            toast.success(
-              `Formulário "${row.original.title}" duplicado com sucesso!`,
-            );
-          }}
-        >
-          <Copy className="mr-2 h-4 w-4" />
-          Duplicar
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={() => {
-            setCurrentForm(row.original);
-            setOpen("delete");
-          }}
-          className="text-red-500!"
-        >
-          Deletar
-          <DropdownMenuShortcut>
-            <Trash2 size={16} />
-          </DropdownMenuShortcut>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-};
 export const formsColumns: ColumnDef<FormItem>[] = [
   {
     id: "select",
@@ -199,6 +128,6 @@ export const formsColumns: ColumnDef<FormItem>[] = [
 
   {
     id: "actions",
-    cell: ({ row }) => <RowActions row={row} />,
+    cell: ({ row }) => <DataTableRowActions row={row} />,
   },
 ];
