@@ -6,6 +6,8 @@ import type { Question } from "../types/question";
 
 interface QuestionPreviewProps {
   question: Question;
+  optionsError?: string;
+  optionsErrors?: any[];
   onAddOption: (id: string) => void;
   onUpdateOption: (id: string, idx: number, val: string) => void;
   onRemoveOption: (id: string, idx: number) => void;
@@ -30,6 +32,8 @@ export function QuestionPreview({ question, ...props }: QuestionPreviewProps) {
         questionId={question.id}
         options={question.options || []}
         type={question.type}
+        optionsError={props.optionsError}
+        optionsErrors={props.optionsErrors}
         {...props}
       />
     );
