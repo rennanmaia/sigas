@@ -91,9 +91,13 @@ export const formsColumns: ColumnDef<FormItem>[] = [
       const projectId = row.getValue("projectId") as string;
       const project = projects.find((p) => p.id === projectId);
       return (
-        <div className="text-sm max-w-[200px] truncate">
+        <Link
+          to="/projects/$projectId"
+          params={{ projectId: projectId }}
+          className="text-sm max-w-[200px] truncate hover:underline"
+        >
           {project?.title || "Sem projeto"}
-        </div>
+        </Link>
       );
     },
     filterFn: (row, id, value) => value.includes(row.getValue(id)),
