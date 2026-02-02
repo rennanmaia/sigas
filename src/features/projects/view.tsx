@@ -137,6 +137,7 @@ function ProjectDetailsContent() {
           return form;
         });
         localStorage.setItem("local-forms", JSON.stringify(updatedFormsList));
+        setAvailableForms(updatedFormsList);
 
         selectedIds.forEach((formId) => {
           const formIndex = formsMock.findIndex((f) => f.id === formId);
