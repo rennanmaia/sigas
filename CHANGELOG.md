@@ -1,3 +1,73 @@
+# [1.0.0-beta.4](https://github.com/rennanmaia/sigas/compare/v1.0.0-beta.3...v1.0.0-beta.4) (2026-02-09)
+
+
+### Bug Fixes
+
+* ensure projectId is required in createFormSchema ([37b5e34](https://github.com/rennanmaia/sigas/commit/37b5e3483610ff859511030b9990efae96e7adfc))
+* update FormBuilder to conditionally disable project selection and adjust message display ([7df9911](https://github.com/rennanmaia/sigas/commit/7df991151061981384780c7e99fe8ee52d21a16c))
+
+
+### Features
+
+* add button to navigate to project logs in ProjectsList component ([f4747b2](https://github.com/rennanmaia/sigas/commit/f4747b2e5f73b86388115ecdf6b69281afa55597))
+* add duplicate form option in row actions menu ([c9fb0b5](https://github.com/rennanmaia/sigas/commit/c9fb0b541bad6361aca0aea0134fd9e029f9fe31))
+* add expiration status to project and update status options ([6f76522](https://github.com/rennanmaia/sigas/commit/6f76522ff1579673c05d54153418c3804771eac4))
+* add form duplication option in row actions menu ([72d1cd4](https://github.com/rennanmaia/sigas/commit/72d1cd461a6ce053a34a0a542f56d68029a44d51))
+* add label and options error handling to QuestionCard component ([b126d2e](https://github.com/rennanmaia/sigas/commit/b126d2e56b651ce1b3ed5d4ce87b224d6ac5d090))
+* add link to create new form in ProjectAllocateDialog when projectId is provided ([1f17e9c](https://github.com/rennanmaia/sigas/commit/1f17e9cbfa5eac47d5d51b807411ec22e62b4e7b))
+* add minimum date validation for end date field based on start date ([517dab4](https://github.com/rennanmaia/sigas/commit/517dab4399a5b74829ea5fa18fccb293e2ac62e3))
+* add new forms for community satisfaction survey, aquatic species registration, water quality analysis, and safety inspection ([fb0caf9](https://github.com/rennanmaia/sigas/commit/fb0caf9eab3a633f220b14959f878ab6804860f4))
+* add optionsError and optionsErrors props to QuestionPreview component ([0cce0bb](https://github.com/rennanmaia/sigas/commit/0cce0bbf478adbeb728824c7f0cecfda9df72298))
+* add project selection to FormBuilder for form association ([f1be971](https://github.com/rennanmaia/sigas/commit/f1be9719c0a13e0f371696f6c88c84706183bddc))
+* add projectId to FormItem interface and mock data ([7a3481c](https://github.com/rennanmaia/sigas/commit/7a3481ce5d89e8d65245e99e73a018b6178e93f0))
+* add route for authenticated project logs with corresponding component ([295b882](https://github.com/rennanmaia/sigas/commit/295b882b79b7a659f815f9a82807761b7f8cf011))
+* add scroll-to-top button and enhance scroll behavior in FormBuilder ([1084e32](https://github.com/rennanmaia/sigas/commit/1084e32adc7c278a13e59181e4967c747ac11c2c))
+* add status change functionality with success notification in project details ([4d0cf0e](https://github.com/rennanmaia/sigas/commit/4d0cf0ec1701aa5ca5f9e00dc951beb48ee8e24f))
+* add success notifications for form deletion, duplication, and creation ([66653b3](https://github.com/rennanmaia/sigas/commit/66653b349efb2027c44b8ffa615060c2f8878fcc))
+* add validation for label in optionSchema to ensure it is not empty ([a673b75](https://github.com/rennanmaia/sigas/commit/a673b7517fb1a1825169cc55d16a15ab47ecdc9c))
+* add validation schema for projectId in CreateForm route ([cc241c7](https://github.com/rennanmaia/sigas/commit/cc241c7d90773586952ed8e3b1b3b43149dddcdd))
+* calculate and display total responses for current project forms ([67c2df8](https://github.com/rennanmaia/sigas/commit/67c2df805692a409338ff8fba7e7ede8899b57cc))
+* conditionally display 'Nenhum (criar como rascunho)' option in project selection ([eb906e1](https://github.com/rennanmaia/sigas/commit/eb906e11a6a045e143664f0c7454cdb6d5ab85db))
+* enhance ActionsBar and QuestionCard components with improved button sizes and layout adjustments ([e0c6aa4](https://github.com/rennanmaia/sigas/commit/e0c6aa475e5e83b7231f088834a7bf12e55f086b))
+* enhance button layout and visibility in CreateFormContent ([4233887](https://github.com/rennanmaia/sigas/commit/4233887172f95c2e32aa2bdd604da3a5f3bcfd36))
+* enhance form management by migrating projectId and updating addForm return type ([9613a87](https://github.com/rennanmaia/sigas/commit/9613a873ecb8d8ac0fa4ff7c4ef8baa188af8645))
+* enhance FormBuilder to support initial project selection and disable editing ([944894b](https://github.com/rennanmaia/sigas/commit/944894be460f9b018c606b1f1ea8db78c96605aa))
+* enhance OptionsBuilder to include error handling for options and improve UI structure ([0952385](https://github.com/rennanmaia/sigas/commit/09523859fa5f4dc2b05ce8488c18ad5e270d75a2))
+* enhance project editing functionality with detailed change logging ([b69de01](https://github.com/rennanmaia/sigas/commit/b69de01d801351a15a085326ae32218576797c77))
+* enhance projectId handling in FormBuilder with confirmation for unsaved projects ([5bdc70d](https://github.com/rennanmaia/sigas/commit/5bdc70df7aca9a99270b2ad0898509b668e0cf4f))
+* implement dynamic time progress calculation based on project start and end dates ([cc755c5](https://github.com/rennanmaia/sigas/commit/cc755c5af6bf02bbce65b9ba4262c928c2881267))
+* implement form duplication functionality and streamline local storage handling ([8c40d7e](https://github.com/rennanmaia/sigas/commit/8c40d7ebc99cc0feea9ce0c025e667f85c2eb726))
+* implement logging functionality for project actions with detailed logs ([c5082a9](https://github.com/rennanmaia/sigas/commit/c5082a9d70706f43f68b389c25fb3ae7dc5677c2))
+* implement ProjectLogs component with data table for project action history ([29b1be6](https://github.com/rennanmaia/sigas/commit/29b1be63873f0da7fa34415ba58f6dc94e479c2f))
+* integrate available forms into ProjectDetailsContent for form linking ([6e67934](https://github.com/rennanmaia/sigas/commit/6e679346a8f74d6c12d91fbc13cfbff4bfe897e2))
+* integrate form handling with react-hook-form and add confirmation dialog for saving without project ([fef45ad](https://github.com/rennanmaia/sigas/commit/fef45ad17e47caccf0c0952b992ba9e7bc7aed16))
+* integrate local storage for form management and update projectId handling ([1d58328](https://github.com/rennanmaia/sigas/commit/1d583289e1ad1a9298b2e4e8f53a4a52ab9fd7f0))
+* integrate local storage for project state management and add updateProject function ([5d6f16a](https://github.com/rennanmaia/sigas/commit/5d6f16ad0a8b543faeebbb64b27ecbb6c04d104f))
+* integrate local storage for project updates and handle projects synchronization ([9e38d5f](https://github.com/rennanmaia/sigas/commit/9e38d5f22b6ca43af56fbc031b5ac32a118a3b7a))
+* integrate logging for new project creation with detailed project details ([ce3280b](https://github.com/rennanmaia/sigas/commit/ce3280b5a5b547c67d417239583e2dc09c228ae1))
+* integrate projectId into forms table and columns for better project association ([e9e03c8](https://github.com/rennanmaia/sigas/commit/e9e03c8fbbafdda959b4cc6c196773ed1aba3861))
+* integrate projectId retrieval in CreateFormContent for form association ([1c32ea4](https://github.com/rennanmaia/sigas/commit/1c32ea4ac87766229b60dec28ebe43f35e2975d4))
+* link forms to projects and update project stats on form creation ([b3043a4](https://github.com/rennanmaia/sigas/commit/b3043a4b49a5fc32a89158ef0a9993f0f150e49b))
+* refactor form handling to use useRef for form data management and improve preview functionality ([45842f4](https://github.com/rennanmaia/sigas/commit/45842f47db4947545ef49101d7d8a7604c914e6e))
+* refactor form loading and handling to improve synchronization with local storage and update form status ([594ed68](https://github.com/rennanmaia/sigas/commit/594ed681ce9a6a4a82976db24bd271ddf45c25d4))
+* update available forms state after local storage update ([72ca409](https://github.com/rennanmaia/sigas/commit/72ca409e2df67e857d5a38011833c345ce971367))
+* update form handling to manage projectId changes and synchronize with projects mock data ([fe86571](https://github.com/rennanmaia/sigas/commit/fe865714e55be6a918f557d76d08391b83724666))
+* update form statuses and owners in forms mock data ([cbd5ce8](https://github.com/rennanmaia/sigas/commit/cbd5ce8383471062291a58685903ec30e6bd2609))
+* update option initialization in useFormBuilder to ensure at least two options for select and checkbox types ([12c5575](https://github.com/rennanmaia/sigas/commit/12c5575de3aeda65ba974b095b630211392d3fe8))
+* update owner and projectId fields in createFormSchema to remove validation messages ([a16523d](https://github.com/rennanmaia/sigas/commit/a16523d56b1d43558b034ce568607f63bab04dbb))
+* update project status from "em andamento" to "ativo" ([b5711fc](https://github.com/rennanmaia/sigas/commit/b5711fcbbab1b8fc787b01f9de64480fd5118fb7))
+* update project status types and add new projects with varied statuses ([96aa1bf](https://github.com/rennanmaia/sigas/commit/96aa1bfe3b7425c81f6b837343c8356feac1da28))
+* update project title display to link to project details page ([c814e5a](https://github.com/rennanmaia/sigas/commit/c814e5a1d587a66c0f8e9f2b258f0977640c4497))
+* update project type options in search schema to include new statuses ([820d043](https://github.com/rennanmaia/sigas/commit/820d0438e133762aa7915646dc02ed3255a92b00))
+* update project types and statuses in project list ([39caf0b](https://github.com/rennanmaia/sigas/commit/39caf0bcc0de6a28d93d1d4fe9956241302e792d))
+
+
+### Performance Improvements
+
+* refactor FormBuilder to use forwardRef and useImperativeHandle for improved data access ([9d5cdef](https://github.com/rennanmaia/sigas/commit/9d5cdefd0230c9d75ab8279a3ae59562c315dcc5))
+* refactor OptionsBuilder and QuestionCard to use memoization and useCallback for improved performance and state management ([8b50e42](https://github.com/rennanmaia/sigas/commit/8b50e42e1615f971d8dd682f0a190a82cb5a3490))
+* refactor question management functions to use useCallback for performance optimization ([ef9a8ca](https://github.com/rennanmaia/sigas/commit/ef9a8ca721c619b1db260c6b2dbd9e0abcdd1987))
+
 # [1.0.0-beta.3](https://github.com/rennanmaia/sigas/compare/v1.0.0-beta.2...v1.0.0-beta.3) (2026-01-26)
 
 
