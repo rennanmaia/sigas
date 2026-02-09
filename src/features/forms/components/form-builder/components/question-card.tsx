@@ -6,7 +6,7 @@ import { QuestionPreview } from "./question-preview";
 import type { Question, QuestionType } from "../types/question";
 import { ActionsBar } from "./actions-bar";
 import { LogicEditor } from "./logic-editor";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, memo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ValidationEditor } from "./validation-editor";
 
@@ -15,6 +15,9 @@ interface QuestionCardProps {
   index: number;
   allQuestions: Question[];
   error?: string;
+  labelError?: string;
+  optionsError?: string;
+  optionsErrors?: any[];
   onUpdateLabel: (id: string, val: string) => void;
   onUpdateType: (id: string, type: QuestionType) => void;
   onUpdateQuestion: (id: string, updates: Partial<Question>) => void;
@@ -27,19 +30,52 @@ interface QuestionCardProps {
   onRemoveOption: (id: string, idx: number) => void;
 }
 
-export function QuestionCard({
+export const QuestionCard = memo(function QuestionCard({
   question,
   index,
   allQuestions,
   error,
+  labelError,
+  optionsError,
+  optionsErrors,
   ...props
 }: QuestionCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const hasScrolled = useRef(false);
+  const debounceTimer = useRef<NodeJS.Timeout | undefined>(undefined);
 
   const [showLogic, setShowLogic] = useState(!!question.logic);
   const [showSettings, setShowSettings] = useState(false);
+  const [localLabel, setLocalLabel] = useState(question.label);
   const hasValidationSupport = !["select", "map"].includes(question.type);
+
+  useEffect(() => {
+    setLocalLabel(question.label);
+  }, [question.label]);
+
+  const handleLabelChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      setLocalLabel(value);
+
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current);
+      }
+
+      debounceTimer.current = setTimeout(() => {
+        props.onUpdateLabel(question.id, value);
+      }, 50);
+    },
+    [question.id, props],
+  );
+
+  useEffect(() => {
+    return () => {
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (!hasScrolled.current) {
@@ -63,24 +99,16 @@ export function QuestionCard({
             cardRef.current = node;
           }}
           {...provided.draggableProps}
-          className={`relative flex flex-col md:flex-row gap-4 p-5 border-l-4 transition-all mb-4 ${
+          className={`relative flex flex-col md:flex-row gap-4 p-5 border-l-4 transition-all mb-4 overflow-hidden ${
             snapshot.isDragging
               ? "shadow-2xl border-l-primary z-50 scale-[1.01] bg-white"
-              : error
-                ? "border-l-destructive shadow-sm bg-destructive/5"
-                : "hover:shadow-md border-l-transparent bg-card"
+              : "hover:shadow-md border-l-transparent bg-card"
           }`}
         >
-          <div className="flex-1 space-y-4 min-w-0">
+          <div className="flex-1 space-y-4 min-w-0 overflow-hidden">
             <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
               <div className="flex items-center gap-2 flex-1">
-                <span
-                  className={`flex items-center justify-center size-6 rounded-full text-[11px] font-bold shrink-0 ${
-                    error
-                      ? "bg-destructive text-white"
-                      : "bg-muted text-muted-foreground"
-                  }`}
-                >
+                <span className="flex items-center justify-center size-6 rounded-full text-[11px] font-bold shrink-0 bg-muted text-muted-foreground">
                   {index + 1}
                 </span>
                 <div className="flex-1 flex flex-col relative">
@@ -88,15 +116,9 @@ export function QuestionCard({
                     <Input
                       autoFocus={question.label === ""}
                       placeholder="Título da pergunta..."
-                      className={`font-semibold border-none bg-transparent focus-visible:ring-0 h-9 text-base md:text-lg p-2 ${
-                        error
-                          ? "text-destructive placeholder:text-destructive/60"
-                          : ""
-                      }`}
-                      value={question.label}
-                      onChange={(e) =>
-                        props.onUpdateLabel(question.id, e.target.value)
-                      }
+                      className="font-semibold border-none bg-transparent focus-visible:ring-0 h-9 text-base md:text-lg p-2"
+                      value={localLabel}
+                      onChange={handleLabelChange}
                     />
                     {question.required && (
                       <span className="text-destructive font-bold text-lg">
@@ -106,13 +128,14 @@ export function QuestionCard({
                   </div>
 
                   <AnimatePresence>
-                    {error && (
+                    {labelError && (
                       <motion.span
                         initial={{ opacity: 0, y: -5 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="text-[10px] text-destructive font-bold uppercase tracking-wider pl-2"
+                        exit={{ opacity: 0, y: -5 }}
+                        className="text-[10px] text-destructive font-medium pl-2 mt-0.5"
                       >
-                        {error}
+                        {labelError}
                       </motion.span>
                     )}
                   </AnimatePresence>
@@ -125,7 +148,12 @@ export function QuestionCard({
               />
             </div>
 
-            <QuestionPreview question={question} {...props} />
+            <QuestionPreview
+              question={question}
+              optionsError={optionsError}
+              optionsErrors={optionsErrors}
+              {...props}
+            />
 
             <div className="space-y-2">
               <AnimatePresence>
@@ -198,4 +226,4 @@ export function QuestionCard({
       )}
     </Draggable>
   );
-}
+});

@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const optionSchema = z.object({
   id: z.string(),
-  label: z.string(),
+  label: z.string().min(1, "A opção não pode estar vazia"),
 });
 
 const validationSchema = z.object({
@@ -11,15 +11,28 @@ const validationSchema = z.object({
   mask: z.string().optional(),
 });
 
-const questionSchema = z.object({
-  id: z.string(),
-  type: z.string(),
-  label: z.string().min(1, "A pergunta não pode estar vazia"),
-  required: z.boolean().default(false),
-  options: z.array(optionSchema).optional(),
-  validations: validationSchema.optional(),
-  logic: z.any().optional(),
-});
+const questionSchema = z
+  .object({
+    id: z.string(),
+    type: z.string(),
+    label: z.string().min(1, "A pergunta não pode estar vazia"),
+    required: z.boolean().default(false),
+    options: z.array(optionSchema).optional(),
+    validations: validationSchema.optional(),
+    logic: z.any().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.type === "select" || data.type === "checkbox") {
+        return data.options && data.options.length >= 2;
+      }
+      return true;
+    },
+    {
+      message: "Deve ter pelo menos 2 opções",
+      path: ["options"],
+    },
+  );
 
 export const createFormSchema = z.object({
   title: z
@@ -32,7 +45,8 @@ export const createFormSchema = z.object({
   status: z
     .enum(["Ativo", "Rascunho", "Arquivado", "Concluído"])
     .default("Rascunho"),
-  owner: z.string().min(1, "Defina um proprietário responsável"),
+  owner: z.string(),
+  projectId: z.string(),
   questions: z
     .array(questionSchema)
     .min(1, "O formulário deve ter pelo menos uma pergunta"),

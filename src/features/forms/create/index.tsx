@@ -1,21 +1,33 @@
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useSearch } from "@tanstack/react-router";
+import { toast } from "sonner";
 import { Header } from "@/components/layout/header";
 import { Main } from "@/components/layout/main";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Eye, Save, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 
 import { FormsProvider, useForms } from "../components/forms-provider";
 import { FormBuilder } from "../components/form-builder";
 import { MobilePreviewDialog } from "../components/mobile-preview-dialog";
 import type { Question } from "../components/form-builder/types/question";
+import { projects as projectsMock } from "@/features/projects/data/projects-mock";
 
 interface FormCreateProps {
   initialId?: string;
 }
 
+interface FormBuilderRef {
+  getFormData: () => {
+    title: string;
+    description: string;
+    questions: Question[];
+  };
+}
+
 function CreateFormContent({ initialId }: FormCreateProps) {
   const navigate = useNavigate();
+  const search = useSearch({ strict: false }) as { projectId?: string };
+  const projectId = search?.projectId;
   const { addForm, updateForm } = useForms();
   const [previewOpen, setPreviewOpen] = useState(false);
   const [formData, setFormData] = useState<{
@@ -27,23 +39,55 @@ function CreateFormContent({ initialId }: FormCreateProps) {
     description: "",
     questions: [],
   });
+  const formBuilderRef = useRef<FormBuilderRef>(null);
 
   const handleSave = (data: any) => {
     if (initialId) {
       updateForm(initialId, data);
+      toast.success("Formulário atualizado com sucesso!");
+      navigate({ to: "/forms" });
     } else {
-      addForm(data);
+      const newFormId = addForm(data);
+      toast.success("Formulário criado com sucesso!");
+
+      if (data.projectId && newFormId) {
+        try {
+          const projectIndex = projectsMock.findIndex(
+            (p) => p.id === data.projectId,
+          );
+          if (projectIndex !== -1) {
+            if (!projectsMock[projectIndex].forms) {
+              projectsMock[projectIndex].forms = [];
+            }
+            if (!projectsMock[projectIndex].forms.includes(newFormId)) {
+              projectsMock[projectIndex].forms.push(newFormId);
+              projectsMock[projectIndex].stats.formsCount =
+                projectsMock[projectIndex].forms.length;
+            }
+          }
+
+          if (projectId) {
+            navigate({
+              to: "/projects/$projectId",
+              params: { projectId: data.projectId },
+            });
+            return;
+          }
+        } catch (error) {
+          console.error("Erro ao vincular formulário ao projeto:", error);
+        }
+      }
+      navigate({ to: "/forms" });
     }
-    navigate({ to: "/forms" });
   };
 
-  const handlePreview = () => {
-    const builderElement = document.querySelector("[data-form-builder]") as any;
-    if (builderElement?.__formData) {
-      setFormData(builderElement.__formData);
+  const handlePreview = useCallback(() => {
+    const data = formBuilderRef.current?.getFormData();
+    if (data) {
+      setFormData(data);
     }
     setPreviewOpen(true);
-  };
+  }, []);
 
   return (
     <div className="flex flex-col h-dvh w-full overflow-hidden bg-background">
@@ -67,8 +111,8 @@ function CreateFormContent({ initialId }: FormCreateProps) {
             className="md:px-4 h-9"
             onClick={handlePreview}
           >
-            <Eye size={16} className="md:hidden" />
-            <span className="hidden md:inline">Visualizar</span>
+            <Eye size={16} />
+            <span className="hidden md:inline md:ml-2">Visualizar</span>
           </Button>
           <Button
             variant="outline"
@@ -76,25 +120,29 @@ function CreateFormContent({ initialId }: FormCreateProps) {
             className="md:px-4 h-9"
             onClick={() => navigate({ to: "/forms" })}
           >
-            <X size={16} className="md:hidden" />
-            <span className="hidden md:inline">Cancelar</span>
+            <X size={16} />
+            <span className="hidden md:inline md:ml-2">Cancelar</span>
           </Button>
 
           <Button
             size="sm"
+            className="md:px-4 h-9"
             onClick={() => document.getElementById("submit-builder")?.click()}
           >
-            <Save size={18} className="mr-2" />
-            <span>{initialId ? "Salvar Alterações" : "Salvar Formulário"}</span>
+            <Save size={18} />
+            <span className="hidden md:inline md:ml-2">
+              {initialId ? "Salvar Alterações" : "Salvar Formulário"}
+            </span>
           </Button>
         </div>
       </Header>
 
       <Main className="p-0 flex-1 overflow-hidden flex flex-col">
         <FormBuilder
+          ref={formBuilderRef}
           onSave={handleSave}
           initialId={initialId}
-          onDataChange={setFormData}
+          initialProjectId={projectId}
         />
       </Main>
 

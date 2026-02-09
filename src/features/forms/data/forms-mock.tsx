@@ -12,6 +12,7 @@ export interface FormItem {
   lastUpdated: string;
   createdAt: string;
   owner: string;
+  projectId: string;
   questions: Question[];
 }
 
@@ -27,6 +28,7 @@ export const forms: FormItem[] = [
     lastUpdated: "2026-01-05",
     createdAt: "2025-10-10",
     owner: "Carlos Silva",
+    projectId: "proj-001",
     questions: [
       {
         id: "q1",
@@ -71,6 +73,7 @@ export const forms: FormItem[] = [
     lastUpdated: "2026-01-07",
     createdAt: "2025-11-02",
     owner: "Carlos Silva",
+    projectId: "proj-001",
     questions: [
       {
         id: "q4",
@@ -104,6 +107,7 @@ export const forms: FormItem[] = [
     lastUpdated: "2026-01-26",
     createdAt: "2026-01-15",
     owner: "Carlos Silva",
+    projectId: "proj-002",
     questions: [
       {
         id: "q-text",
@@ -197,6 +201,100 @@ export const forms: FormItem[] = [
         type: "audio",
         label: "Gravação de Áudio (Notas de Campo)",
         required: false,
+      },
+    ],
+  },
+  {
+    id: "frm-4",
+    title: "Pesquisa de Satisfação Comunitária",
+    description:
+      "Avaliação da percepção da comunidade sobre os impactos do projeto.",
+    status: "Ativo",
+    responses: 45,
+    questionsCount: 5,
+    lastUpdated: "2026-01-20",
+    createdAt: "2025-12-01",
+    owner: "Carlos Silva",
+    projectId: "proj-002",
+    questions: [
+      {
+        id: "q10",
+        type: "select",
+        label: "Nível de Satisfação",
+        required: true,
+        options: [
+          { id: "opt1", label: "Muito Satisfeito" },
+          { id: "opt2", label: "Satisfeito" },
+          { id: "opt3", label: "Neutro" },
+          { id: "opt4", label: "Insatisfeito" },
+          { id: "opt5", label: "Muito Insatisfeito" },
+        ],
+      },
+    ],
+  },
+  {
+    id: "frm-5",
+    title: "Registro de Espécies Aquáticas",
+    description: "Documentação de biodiversidade em corpos d'água.",
+    status: "Rascunho",
+    responses: 0,
+    questionsCount: 4,
+    lastUpdated: "2026-01-22",
+    createdAt: "2026-01-10",
+    owner: "Carlos Silva",
+    projectId: "",
+    questions: [
+      {
+        id: "q11",
+        type: "text",
+        label: "Nome da Espécie",
+        required: true,
+      },
+    ],
+  },
+  {
+    id: "frm-6",
+    title: "Análise de Qualidade da Água",
+    description: "Medições físico-químicas de recursos hídricos.",
+    status: "Rascunho",
+    responses: 0,
+    questionsCount: 6,
+    lastUpdated: "2026-01-25",
+    createdAt: "2026-01-25",
+    owner: "Carlos Silva",
+    projectId: "",
+    questions: [
+      {
+        id: "q12",
+        type: "number",
+        label: "pH",
+        required: true,
+        validations: { min: 0, max: 14 },
+      },
+    ],
+  },
+  {
+    id: "frm-7",
+    title: "Inspeção de Segurança do Trabalho",
+    description: "Verificação de conformidade com normas de segurança.",
+    status: "Rascunho",
+    responses: 0,
+    questionsCount: 8,
+    lastUpdated: "2026-01-24",
+    createdAt: "2025-11-15",
+    owner: "Carlos Silva",
+    projectId: "",
+    questions: [
+      {
+        id: "q13",
+        type: "checkbox",
+        label: "EPIs Utilizados",
+        required: true,
+        options: [
+          { id: "capacete", label: "Capacete" },
+          { id: "luvas", label: "Luvas" },
+          { id: "botas", label: "Botas de Segurança" },
+        ],
       },
     ],
   },

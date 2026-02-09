@@ -5,7 +5,7 @@ import { Main } from "@/components/layout/main";
 import { Header } from "@/components/layout/header";
 import ProjectForm from "../components/project-form";
 import { useProjects } from "../components/projects-provider";
-import { projects as mockProjects, projectTeam } from "../data/projects-mock";
+import { projectTeam } from "../data/projects-mock";
 import type { ProjectForm as ProjectFormValues } from "../data/schema";
 
 export default function EditProject() {
@@ -13,11 +13,11 @@ export default function EditProject() {
   const { projectId } = useParams({
     from: "/_authenticated/projects/$projectId/edit",
   });
-  const { projects, setProjects } = useProjects();
+  const { projects, setProjects, addLog } = useProjects();
   const project = projects.find((p) => p.id === projectId);
   if (!project) return <div>Projeto não encontrado</div>;
   const onUpdate = (values: ProjectFormValues) => {
-    const projectIndex = mockProjects.findIndex((p) => p.id === projectId);
+    const projectIndex = projects.findIndex((p) => p.id === projectId);
 
     if (projectIndex !== -1) {
       const newManager = projectTeam.find((m) => m.name === values.responsible);
@@ -26,7 +26,7 @@ export default function EditProject() {
         (memberId) => {
           const memberObj = projectTeam.find((m) => m.id === memberId);
           return !memberObj?.role.toLowerCase().includes("gerente");
-        }
+        },
       );
 
       const updatedMembers = newManager
@@ -34,18 +34,55 @@ export default function EditProject() {
         : onlyOperationalMembers;
 
       const updatedProject = {
-        ...mockProjects[projectIndex],
+        ...project,
         ...values,
+        status: project.status,
         members: updatedMembers,
         stats: {
-          ...mockProjects[projectIndex].stats,
+          ...project.stats,
           formsCount: values.forms?.length || 0,
           collectorsCount: updatedMembers.length,
         },
       };
 
-      mockProjects[projectIndex] = updatedProject;
-      setProjects([...mockProjects]);
+      const updatedProjects = [...projects];
+      updatedProjects[projectIndex] = updatedProject;
+      setProjects(updatedProjects);
+
+      const changes: string[] = [];
+      if (values.title !== project.title) {
+        changes.push(`Título: "${project.title}" → "${values.title}"`);
+      }
+      if (values.description !== project.description) {
+        changes.push(`Descrição alterada`);
+      }
+      if (values.responsible !== project.responsible) {
+        changes.push(
+          `Responsável: "${project.responsible}" → "${values.responsible}"`,
+        );
+      }
+      if (values.category !== project.category) {
+        changes.push(`Categoria: "${project.category}" → "${values.category}"`);
+      }
+      if (values.startDate !== project.startDate) {
+        changes.push(
+          `Data de Início: "${project.startDate}" → "${values.startDate}"`,
+        );
+      }
+      if (values.endDate !== project.endDate) {
+        changes.push(
+          `Data de Término: "${project.endDate}" → "${values.endDate}"`,
+        );
+      }
+      if (values.budget !== project.budget) {
+        changes.push(`Orçamento: "${project.budget}" → "${values.budget}"`);
+      }
+      if (values.company !== project.company) {
+        changes.push(`Empresa: "${project.company}" → "${values.company}"`);
+      }
+
+      const details = changes.length > 0 ? changes.join("\n") : undefined;
+      addLog("edição", projectId, values.title, details, "João Silva");
 
       toast.success("Projeto atualizado com sucesso!");
       navigate({
