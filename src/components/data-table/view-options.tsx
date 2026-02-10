@@ -1,7 +1,7 @@
-import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu'
-import { MixerHorizontalIcon } from '@radix-ui/react-icons'
-import { type Table } from '@tanstack/react-table'
-import { Button } from '@/components/ui/button'
+import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
+import { MixerHorizontalIcon } from "@radix-ui/react-icons";
+import { type Table } from "@tanstack/react-table";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -12,8 +12,8 @@ import {
 import { useTranslation } from 'react-i18next'
 
 type DataTableViewOptionsProps<TData> = {
-  table: Table<TData>
-}
+  table: Table<TData>;
+};
 
 export function DataTableViewOptions<TData>({
   table,
@@ -23,9 +23,9 @@ export function DataTableViewOptions<TData>({
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button
-          variant='outline'
-          size='sm'
-          className='ms-auto hidden h-8 lg:flex'
+          variant="outline"
+          size="sm"
+          className="ms-auto hidden h-8 lg:flex"
         >
           <MixerHorizontalIcon className='size-4' />
           {t("table.viewOptions.title")}
@@ -38,21 +38,21 @@ export function DataTableViewOptions<TData>({
           .getAllColumns()
           .filter(
             (column) =>
-              typeof column.accessorFn !== 'undefined' && column.getCanHide()
+              typeof column.accessorFn !== "undefined" && column.getCanHide()
           )
           .map((column) => {
             return (
               <DropdownMenuCheckboxItem
                 key={column.id}
-                className='capitalize'
+                className="capitalize"
                 checked={column.getIsVisible()}
                 onCheckedChange={(value) => column.toggleVisibility(!!value)}
               >
                 {column.id}
               </DropdownMenuCheckboxItem>
-            )
+            );
           })}
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

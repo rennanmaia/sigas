@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Check } from "lucide-react";
+import { Check, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { Link } from "@tanstack/react-router";
 
 interface AllocateItem {
   id: string;
@@ -25,6 +26,7 @@ interface ProjectAllocateDialogProps {
   items: AllocateItem[];
   alreadySelected: string[];
   onConfirm: (selectedIds: string[]) => void;
+  projectId?: string;
 }
 
 export function ProjectAllocateDialog({
@@ -35,6 +37,7 @@ export function ProjectAllocateDialog({
   items,
   alreadySelected,
   onConfirm,
+  projectId,
 }: ProjectAllocateDialogProps) {
   const [selected, setSelected] = useState<string[]>([]);
 
@@ -45,12 +48,12 @@ export function ProjectAllocateDialog({
 
   const toggleItem = (id: string) => {
     setSelected((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
     );
   };
 
   const availableItems = items.filter(
-    (item) => !alreadySelected.includes(item.id)
+    (item) => !alreadySelected.includes(item.id),
   );
 
   return (
@@ -60,6 +63,23 @@ export function ProjectAllocateDialog({
           <DialogTitle>{title}</DialogTitle>
           <p className="text-sm text-muted-foreground">{description}</p>
         </DialogHeader>
+        {projectId && (
+          <div className="py-2">
+            <Button
+              variant="outline"
+              className="w-full border-dashed gap-2"
+              asChild
+            >
+              <Link
+                to="/forms/create"
+                search={{ projectId }}
+                onClick={() => handleOpenChange(false)}
+              >
+                <Plus size={16} /> Criar Novo Formulário
+              </Link>
+            </Button>
+          </div>
+        )}
         <ScrollArea className="h-[300px] pr-4">
           <div className="space-y-2">
             {availableItems.length > 0 ? (
@@ -69,7 +89,7 @@ export function ProjectAllocateDialog({
                   onClick={() => toggleItem(item.id)}
                   className={cn(
                     "flex cursor-pointer items-center justify-between rounded-lg border p-3 transition-colors hover:bg-muted",
-                    selected.includes(item.id) && "border-primary bg-primary/5"
+                    selected.includes(item.id) && "border-primary bg-primary/5",
                   )}
                 >
                   <div className="flex flex-col">

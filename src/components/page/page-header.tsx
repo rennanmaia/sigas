@@ -1,10 +1,6 @@
 import { Header } from '@/components/layout/header'
-import { ProfileDropdown } from '@/components/profile-dropdown'
-import { ConfigDrawer } from '@/components/config-drawer'
-import { ThemeSwitch } from '@/components/theme-switch'
 import { Link, type LinkProps } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
-import type { ReactNode } from 'react'
 import { Separator } from '../ui/separator'
 
 type PageHeaderProps = {

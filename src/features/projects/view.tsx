@@ -12,6 +12,7 @@ import {
   List,
   Trash2,
 } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -33,27 +34,67 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
+import { Label } from "@/components/ui/label";
 import {
   projects as mockProjects,
-  projectForms as allForms,
   projectTeam as allMembers,
   type Project,
 } from "./data/projects-mock";
+import { forms as allAvailableForms } from "@/features/forms/data/forms-mock";
 
 import { ProjectsDeleteDialog } from "./components/project-delete-dialog";
 import { ProjectsProvider, useProjects } from "./components/projects-provider";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ProjectAllocateDialog } from "./components/project-allocate-dialog";
+import { forms as formsMock } from "@/features/forms/data/forms-mock";
+import type { FormItem } from "@/features/forms/data/forms-mock";
 
 function ProjectDetailsContent() {
-  const { projects: projectsData, setProjects } = useProjects();
+  const { projects: projectsData, setProjects, updateProject } = useProjects();
   const [openDelete, setOpenDelete] = useState(false);
   const [openFormDialog, setOpenFormDialog] = useState(false);
   const [openMemberDialog, setOpenMemberDialog] = useState(false);
+  const [availableForms, setAvailableForms] =
+    useState<FormItem[]>(allAvailableForms);
   const { projectId } = useParams({
     from: "/_authenticated/projects/$projectId/",
   });
+
+  useEffect(() => {
+    const loadForms = () => {
+      const savedForms = localStorage.getItem("local-forms");
+      if (savedForms) {
+        try {
+          const parsedForms = JSON.parse(savedForms);
+          setAvailableForms(parsedForms);
+        } catch (error) {
+          console.error("Erro ao carregar formulários:", error);
+          setAvailableForms(allAvailableForms);
+        }
+      }
+    };
+
+    loadForms();
+
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "local-forms") {
+        loadForms();
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    const handleCustomEvent = () => {
+      loadForms();
+    };
+
+    window.addEventListener("forms-updated", handleCustomEvent);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("forms-updated", handleCustomEvent);
+    };
+  }, [projectId]);
 
   const project = projectsData.find((p) => p.id === projectId);
 
@@ -71,7 +112,7 @@ function ProjectDetailsContent() {
   const updateProjectData = (newData: Partial<Project>) => {
     setProjects((prev) => {
       const newList = prev.map((p) =>
-        p.id === projectId ? { ...p, ...newData } : p
+        p.id === projectId ? { ...p, ...newData } : p,
       );
 
       mockProjects.length = 0;
@@ -81,6 +122,35 @@ function ProjectDetailsContent() {
     });
   };
   const handleConfirmForms = (selectedIds: string[]) => {
+    const savedForms = localStorage.getItem("local-forms");
+    if (savedForms) {
+      try {
+        const parsedForms = JSON.parse(savedForms);
+        const updatedFormsList = parsedForms.map((form: any) => {
+          if (selectedIds.includes(form.id)) {
+            return {
+              ...form,
+              projectId: projectId,
+              status: "Ativo",
+            };
+          }
+          return form;
+        });
+        localStorage.setItem("local-forms", JSON.stringify(updatedFormsList));
+        setAvailableForms(updatedFormsList);
+
+        selectedIds.forEach((formId) => {
+          const formIndex = formsMock.findIndex((f) => f.id === formId);
+          if (formIndex !== -1) {
+            formsMock[formIndex].projectId = projectId;
+            formsMock[formIndex].status = "Ativo";
+          }
+        });
+      } catch (error) {
+        console.error("Erro ao atualizar projectId dos formulários:", error);
+      }
+    }
+
     const updatedForms = [...(project.forms || []), ...selectedIds];
     updateProjectData({
       forms: updatedForms,
@@ -95,22 +165,64 @@ function ProjectDetailsContent() {
       stats: { ...project.stats, collectorsCount: updatedMembers.length },
     });
   };
-  const currentProjectForms = allForms.filter((f) =>
-    project.forms?.includes(f.id)
+
+  const currentProjectForms = availableForms.filter(
+    (f) => f.projectId === projectId,
   );
 
-  const timeProgress = 65;
+  const totalResponses = currentProjectForms.reduce(
+    (sum, form) => sum + (form.responses || 0),
+    0,
+  );
+
+  const calculateTimeProgress = () => {
+    if (!project.startDate || !project.endDate) return 0;
+
+    const start = new Date(project.startDate).getTime();
+    const end = new Date(project.endDate).getTime();
+    const now = new Date().getTime();
+
+    if (now < start) return 0;
+
+    if (now > end) return 100;
+
+    const totalDuration = end - start;
+    const elapsed = now - start;
+    const progress = (elapsed / totalDuration) * 100;
+
+    return Math.round(progress);
+  };
+
+  const timeProgress = calculateTimeProgress();
+
+  const isExpired =
+    project.status === "ativo" && new Date(project.endDate) < new Date();
   const responsibleMember = allMembers.find(
-    (m) => m.name === project.responsible
+    (m) => m.name === project.responsible,
   );
 
   const otherMembers = allMembers.filter(
-    (m) => project.members?.includes(m.id) && m.name !== project.responsible
+    (m) => project.members?.includes(m.id) && m.name !== project.responsible,
   );
 
   const currentProjectTeam = responsibleMember
     ? [responsibleMember, ...otherMembers]
     : otherMembers;
+
+  const statusLabels: Record<typeof project.status, string> = {
+    ativo: "Ativo",
+    pausado: "Pausado",
+    finalizado: "Finalizado",
+    cancelado: "Cancelado",
+  };
+
+  const handleStatusChange = (newStatus: typeof project.status) => {
+    updateProject(project.id, { status: newStatus });
+    toast.success(
+      `Status do projeto alterado para "${statusLabels[newStatus]}" com sucesso!`,
+    );
+  };
+
   return (
     <>
       <Header>
@@ -147,23 +259,46 @@ function ProjectDetailsContent() {
           </div>
 
           <div className="flex items-center gap-2">
-            <Select defaultValue={project.status}>
-              <SelectTrigger className="w-[160px] h-9">
+            {isExpired && (
+              <Badge variant="destructive" className="text-[10px]">
+                EXPIRADO
+              </Badge>
+            )}
+            <Select
+              value={project.status}
+              onValueChange={(value) =>
+                handleStatusChange(value as typeof project.status)
+              }
+            >
+              <SelectTrigger
+                className={`w-40 h-9 ${isExpired ? "border-destructive text-destructive" : ""}`}
+              >
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="em andamento">
+                <SelectItem value="ativo">
                   <div className="flex items-center gap-2">
-                    <Clock size={14} /> Em andamento
+                    <Clock size={14} /> Ativo
                   </div>
                 </SelectItem>
-                <SelectItem value="concluido">
+                <SelectItem value="pausado">
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 size={14} /> Concluído
+                    <Clock size={14} /> Pausado
+                  </div>
+                </SelectItem>
+                <SelectItem value="finalizado">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 size={14} /> Finalizado
+                  </div>
+                </SelectItem>
+                <SelectItem value="cancelado">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 size={14} /> Cancelado
                   </div>
                 </SelectItem>
               </SelectContent>
             </Select>
+
             <Button
               variant="outline"
               size="sm"
@@ -183,6 +318,47 @@ function ProjectDetailsContent() {
             </Button>
           </div>
         </div>
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base font-semibold flex items-center gap-2">
+              Empresa Responsável e Campos Extras
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="space-y-1">
+                <Label className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
+                  Empresa Responsável
+                </Label>
+                <p className="text-sm font-medium text-foreground">
+                  {project.company || "Não informada"}
+                </p>
+              </div>
+
+              {project.customFields && project.customFields.length > 0 ? (
+                project.customFields.map((field, idx) => (
+                  <div
+                    key={idx}
+                    className="space-y-1 border-l pl-4 sm:border-l-0 sm:pl-0 lg:border-l lg:pl-4"
+                  >
+                    <Label className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
+                      {field.label}
+                    </Label>
+                    <p className="text-sm font-medium text-foreground">
+                      {field.value}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <div className="sm:col-span-1 lg:col-span-3">
+                  <p className="text-xs text-muted-foreground italic mt-5">
+                    Nenhum campo personalizado adicionado.
+                  </p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card className="lg:col-span-2">
@@ -212,9 +388,7 @@ function ProjectDetailsContent() {
               <List className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
-                {project.stats.responsesCount}
-              </div>
+              <div className="text-2xl font-bold">{totalResponses}</div>
               <p className="text-muted-foreground text-xs">Dados coletados</p>
             </CardContent>
           </Card>
@@ -270,8 +444,15 @@ function ProjectDetailsContent() {
                           </p>
                         </div>
                       </div>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <ExternalLink size={14} />
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        asChild
+                      >
+                        <Link to="/forms/edit/$id" params={{ id: form.id }}>
+                          <ExternalLink size={14} />
+                        </Link>
                       </Button>
                     </div>
                   ))
@@ -348,14 +529,17 @@ function ProjectDetailsContent() {
         open={openFormDialog}
         onOpenChange={setOpenFormDialog}
         title="Vincular Formulários"
-        description="Selecione os formulários que deseja adicionar a este projeto."
-        items={allForms.map((f) => ({
-          id: f.id,
-          label: f.title,
-          sublabel: f.status,
-        }))}
+        description="Selecione os formulários que deseja adicionar a este projeto. Apenas formulários sem projeto (Rascunho) podem ser vinculados."
+        items={availableForms
+          .filter((f) => f.status === "Rascunho" && !f.projectId)
+          .map((f) => ({
+            id: f.id,
+            label: f.title,
+            sublabel: f.status,
+          }))}
         alreadySelected={project.forms || []}
         onConfirm={handleConfirmForms}
+        projectId={projectId}
       />
 
       <ProjectAllocateDialog

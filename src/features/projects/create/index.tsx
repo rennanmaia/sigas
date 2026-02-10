@@ -11,10 +11,11 @@ import { useProjects } from "../components/projects-provider";
 
 export default function CreateProject() {
   const navigate = useNavigate();
-  const { setProjects } = useProjects();
+  const { setProjects, addLog } = useProjects();
 
   const onCreate = (values: ProjectFormValues) => {
     const newProject: Project = {
+      ...values,
       id: `proj-${Date.now()}`,
       title: values.title,
       description: values.description,
@@ -23,7 +24,9 @@ export default function CreateProject() {
       endDate: values.endDate,
       responsible: values.responsible,
       budget: values.budget,
-      status: "em andamento",
+      status: "ativo",
+      company: values.company,
+      customFields: values.customFields || [],
       logo:
         values.category === "Ambiental" ? (
           <Bird className="text-emerald-600" size={20} />
@@ -41,8 +44,26 @@ export default function CreateProject() {
     };
 
     mockProjects.unshift(newProject);
-
     setProjects([...mockProjects]);
+
+    const creationDetails = [
+      `Título: "${newProject.title}"`,
+      `Categoria: "${newProject.category}"`,
+      `Responsável: "${newProject.responsible}"`,
+      `Empresa: "${newProject.company}"`,
+      `Orçamento: "${newProject.budget}"`,
+      `Data de Início: "${newProject.startDate}"`,
+      `Data de Término: "${newProject.endDate}"`,
+      `Status: "${newProject.status}"`,
+    ].join("\n");
+
+    addLog(
+      "criação",
+      newProject.id,
+      newProject.title,
+      creationDetails,
+      "João Silva",
+    );
 
     toast.success("Projeto criado com sucesso");
     navigate({ to: "/projects" });
