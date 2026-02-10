@@ -9,6 +9,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
+import { useTranslation } from 'react-i18next'
 
 type ConfirmDialogProps = {
   open: boolean
@@ -26,6 +27,7 @@ type ConfirmDialogProps = {
 }
 
 export function ConfirmDialog(props: ConfirmDialogProps) {
+  const { t } = useTranslation();
   const {
     title,
     desc,
@@ -38,7 +40,9 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
     disabled = false,
     handleConfirm,
     ...actions
-  } = props
+  } = props;
+
+
   return (
     <AlertDialog {...actions}>
       <AlertDialogContent className={cn(className && className)}>
@@ -51,14 +55,14 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
         {children}
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isLoading}>
-            {cancelBtnText ?? 'Cancel'}
+            {cancelBtnText ?? t('buttons.cancel')}
           </AlertDialogCancel>
           <Button
             variant={destructive ? 'destructive' : 'default'}
             onClick={handleConfirm}
             disabled={disabled || isLoading}
           >
-            {confirmText ?? 'Continue'}
+            {confirmText ?? t('buttons.continue')}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

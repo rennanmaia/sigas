@@ -17,7 +17,36 @@ import { ThemeSwitch } from "@/components/theme-switch";
 import { Analytics } from "./components/analytics";
 import { Overview } from "./components/overview";
 import { RecentSales } from "./components/recent-sales";
+import { t as i18Next } from "i18next";
 import { useTranslation } from "react-i18next";
+
+
+const topNav = [
+  {
+    title: i18Next("dashboard:tabs.nav.overview"),
+    href: "dashboard/overview",
+    isActive: true,
+    disabled: false,
+  },
+  {
+    title: i18Next("dashboard:tabs.nav.costumers"),
+    href: "dashboard/customers",
+    isActive: false,
+    disabled: true,
+  },
+  {
+    title: i18Next("dashboard:tabs.nav.products"),
+    href: "dashboard/products",
+    isActive: false,
+    disabled: true,
+  },
+  {
+    title: i18Next("dashboard:tabs.nav.settings"),
+    href: "dashboard/settings",
+    isActive: false,
+    disabled: true,
+  },
+];
 
 export function Dashboard() {
   const { t } = useTranslation("common")
@@ -194,30 +223,3 @@ export function Dashboard() {
     </>
   );
 }
-
-const topNav = [
-  {
-    title: "Overview",
-    href: "dashboard/overview",
-    isActive: true,
-    disabled: false,
-  },
-  {
-    title: "Customers",
-    href: "dashboard/customers",
-    isActive: false,
-    disabled: true,
-  },
-  {
-    title: "Products",
-    href: "dashboard/products",
-    isActive: false,
-    disabled: true,
-  },
-  {
-    title: "Settings",
-    href: "dashboard/settings",
-    isActive: false,
-    disabled: true,
-  },
-];

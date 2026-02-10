@@ -1,5 +1,6 @@
 import { type ChangeEvent, useState } from "react";
 import { getRouteApi, Link } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 import {
   SlidersHorizontal,
   ArrowUpAZ,
@@ -34,16 +35,8 @@ type ProjectType =
   | "cancelado"
   | "expirado";
 
-const projectText = new Map<ProjectType, string>([
-  ["all", "Todos os projetos"],
-  ["ativo", "Ativos"],
-  ["pausado", "Pausados"],
-  ["finalizado", "Finalizados"],
-  ["cancelado", "Cancelados"],
-  ["expirado", "Expirados"],
-]);
-
 function ProjectsList() {
+  const { t } = useTranslation("projects");
   const { projects: projectsData } = useProjects();
   const {
     filter = "",
@@ -111,19 +104,19 @@ function ProjectsList() {
       <Main className="flex flex-1 flex-col gap-4 sm:gap-1">
         <div className="flex flex-wrap items-end justify-between gap-2">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Projetos</h1>
-            <p className="text-muted-foreground">Gerencie seus projetos</p>
+            <h1 className="text-2xl font-bold tracking-tight">{t("list.title")}</h1>
+            <p className="text-muted-foreground">{t("list.description")}</p>
           </div>
           <div className="flex gap-2">
             <Button variant="outline" className="space-x-0" asChild>
               <Link to="/projects/logs">
                 <History size={18} />
-                <span>Histórico</span>
+                <span>{t("list.buttons.logs")}</span>
               </Link>
             </Button>
             <Button className="space-x-1" asChild>
               <Link to="/projects/create">
-                <span>Criar projeto</span> <Folder size={18} />
+                <span>{t("list.buttons.new")}</span> <Folder size={18} />
               </Link>
             </Button>
           </div>
@@ -132,7 +125,7 @@ function ProjectsList() {
         <div className="my-4 flex items-end justify-between sm:my-0 sm:items-center">
           <div className="flex flex-col gap-4 sm:my-4 sm:flex-row">
             <Input
-              placeholder="Procurar projetos..."
+              placeholder={t("list.searchPlaceholder")}
               className="h-9 w-40 lg:w-[250px]"
               value={searchTerm}
               onChange={handleSearch}
@@ -142,15 +135,15 @@ function ProjectsList() {
               onValueChange={(v) => handleTypeChange(v as ProjectType)}
             >
               <SelectTrigger className="w-36">
-                <SelectValue>{projectText.get(projectType)}</SelectValue>
+                <SelectValue>{t(`list.filters.${projectType}`)}</SelectValue>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Todos os projetos</SelectItem>
-                <SelectItem value="ativo">Ativos</SelectItem>
-                <SelectItem value="pausado">Pausados</SelectItem>
-                <SelectItem value="finalizado">Finalizados</SelectItem>
-                <SelectItem value="cancelado">Cancelados</SelectItem>
-                <SelectItem value="expirado">Expirados</SelectItem>
+                <SelectItem value="all">{t("list.filters.all")}</SelectItem>
+                <SelectItem value="ativo">{t("list.filters.active")}</SelectItem>
+                <SelectItem value="pausado">{t("list.filters.paused")}</SelectItem>
+                <SelectItem value="finalizado">{t("list.filters.finished")}</SelectItem>
+                <SelectItem value="cancelado">{t("list.filters.canceled")}</SelectItem>
+                <SelectItem value="expirado">{t("list.filters.expired")}</SelectItem>
               </SelectContent>
             </Select>
           </div>

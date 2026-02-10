@@ -16,10 +16,11 @@ import {
   Shield
 } from "lucide-react";
 import { type SidebarData } from "../types";
+import { t } from "i18next";
 
 export const sidebarData: SidebarData = {
   user: {
-    name: "usuario",
+    name: t("common:sidebar.user.title"),
     email: "usuario@sigas.com",
     avatar: "/avatars/shadcn.jpg",
   },
@@ -42,175 +43,75 @@ export const sidebarData: SidebarData = {
   ],
   navGroups: [
     {
-      title: "Geral",
+      title: t("common:sidebar.groups.title"),
       items: [
-        //a decidir como colocar outros itens
         {
-          title: "Dashboard",
+          title: t("common:sidebar.groups.items.dashboard"),
           url: "/",
           icon: LayoutDashboard,
 
         },
         {
-          title: "Projetos",
+          title: t("common:sidebar.groups.items.projects"),
           url: "/projects",
           icon: BriefcaseBusiness,
         },
-        // {
-        //   title: "Tasks",
-        //   url: "/tasks",
-        //   icon: ListTodo,
-        // },
-        // {
-        //   title: "Apps",
-        //   url: "/apps",
-        //   icon: Package,
-        // },
         {
-          title: "Formulários",
+          title: t("common:sidebar.groups.items.forms"),
           url: "/forms",
           icon: ClipboardList,
         },
         {
-          title: "Passivos",
+          title: t("common:sidebar.groups.items.liabilities"),
           url: "/passives",
           icon: Banknote,
         },
         {
-          title: "Chats",
+          title: t("common:sidebar.groups.items.chats"),
           url: "/chats",
           badge: "3",
           icon: MessagesSquare,
         },
         {
-          title: "Usuários",
+          title: t("common:sidebar.groups.items.users"),
           url: "/users",
           icon: Users,
           allowedRoles: ['general_administrator']
         },
         {
-          title: "Perfis",
+          title: t("common:sidebar.groups.items.profiles"),
           url: "/profiles",
           icon: Shield,
           allowedRoles: ['general_administrator']
         },
-        // {
-        //   title: "Secured by Clerk",
-        //   items: [
-        //     {
-        //       title: "Sign In",
-        //       url: "/clerk/sign-in",
-        //     },
-        //     {
-        //       title: "Sign Up",
-        //       url: "/clerk/sign-up",
-        //     },
-        //     {
-        //       title: "User Management",
-        //       url: "/clerk/user-management",
-        //     },
-        //   ],
-        // },
       ],
     },
-    // {
-    //   title: "Pages",
-    //   items: [
-    //     {
-    //       title: "Auth",
-    //       icon: ShieldCheck,
-    //       items: [
-    //         {
-    //           title: "Sign In",
-    //           url: "/sign-in",
-    //         },
-    //         {
-    //           title: "Sign In (2 Col)",
-    //           url: "/sign-in-2",
-    //         },
-    //         {
-    //           title: "Sign Up",
-    //           url: "/sign-up",
-    //         },
-    //         {
-    //           title: "Forgot Password",
-    //           url: "/forgot-password",
-    //         },
-    //         {
-    //           title: "OTP",
-    //           url: "/otp",
-    //         },
-    //       ],
-    //     },
-    //     {
-    //       title: "Errors",
-    //       icon: Bug,
-    //       items: [
-    //         {
-    //           title: "Unauthorized",
-    //           url: "/errors/unauthorized",
-    //           icon: Lock,
-    //         },
-    //         {
-    //           title: "Forbidden",
-    //           url: "/errors/forbidden",
-    //           icon: UserX,
-    //         },
-    //         {
-    //           title: "Not Found",
-    //           url: "/errors/not-found",
-    //           icon: FileX,
-    //         },
-    //         {
-    //           title: "Internal Server Error",
-    //           url: "/errors/internal-server-error",
-    //           icon: ServerOff,
-    //         },
-    //         {
-    //           title: "Maintenance Error",
-    //           url: "/errors/maintenance-error",
-    //           icon: Construction,
-    //         },
-    //       ],
-    //     },
-    //   ],
-    // },
     {
-      title: "Outros",
+      title: t("common:sidebar.others.title"),
       items: [
         {
-          title: "Configurações",
+          title: t("common:sidebar.others.items.settings.title"),
           icon: Settings,
           items: [
             {
-              title: "Perfil",
+              title: t("common:sidebar.others.items.settings.items.profile"),
               url: "/settings",
               icon: UserCog,
             },
             {
-              title: "Conta",
+              title: t("common:sidebar.others.items.settings.items.account"),
               url: "/settings/account",
               icon: Wrench,
             },
-            // {
-            //   title: "Appearance",
-            //   url: "/settings/appearance",
-            //   icon: Palette,
-            // },
             {
-              title: "Notificações",
+              title: t("common:sidebar.others.items.settings.items.notifications"),
               url: "/settings/notifications",
               icon: Bell,
             },
-            // {
-            //   title: "Display",
-            //   url: "/settings/display",
-            //   icon: Monitor,
-            // },
           ],
         },
         {
-          title: "Help Center",
+          title: t("common:sidebar.others.items.help.title"),
           url: "/help-center",
           icon: HelpCircle,
         },

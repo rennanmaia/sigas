@@ -10,12 +10,14 @@ import { UsersPrimaryButtons } from './components/profile-primary-buttons'
 import { ProfilesProvider } from './components/profiles-provider'
 import { ProfilesTable } from './components/profiles-table'
 import { profiles } from './data/profiles'
+import { useTranslation } from 'react-i18next'
 
 const route = getRouteApi('/_authenticated/profiles/')
 
 export function Profiles() {
   const search = route.useSearch()
   const navigate = route.useNavigate()
+  const { t } = useTranslation("profiles")
 
   return (
     <ProfilesProvider>
@@ -31,9 +33,9 @@ export function Profiles() {
       <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
         <div className='flex flex-wrap items-end justify-between gap-2'>
           <div>
-            <h2 className='text-2xl font-bold tracking-tight'>Profile List</h2>
+            <h2 className='text-2xl font-bold tracking-tight'>{t("list.title")}</h2>
             <p className='text-muted-foreground'>
-              Manage your profile roles here.
+              {t("list.description")}
             </p>
           </div>
           <UsersPrimaryButtons />

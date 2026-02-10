@@ -1,4 +1,5 @@
 import { Outlet } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 import { Bell, Wrench, UserCog } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { ConfigDrawer } from "@/components/config-drawer";
@@ -9,35 +10,26 @@ import { Search } from "@/components/search";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { SidebarNav } from "./components/sidebar-nav";
 
-const sidebarNavItems = [
-  {
-    title: "Perfil",
-    href: "/settings",
-    icon: <UserCog size={18} />,
-  },
-  {
-    title: "Conta",
-    href: "/settings/account",
-    icon: <Wrench size={18} />,
-  },
-  // {
-  //   title: 'Appearance',
-  //   href: '/settings/appearance',
-  //   icon: <Palette size={18} />,
-  // },
-  {
-    title: "Notificações",
-    href: "/settings/notifications",
-    icon: <Bell size={18} />,
-  },
-  // {
-  //   title: 'Display',
-  //   href: '/settings/display',
-  //   icon: <Monitor size={18} />,
-  // },
-];
-
 export function Settings() {
+  const { t } = useTranslation("settings");
+  
+  const sidebarNavItems = [
+    {
+      title: t("navigation.profile"),
+      href: "/settings",
+      icon: <UserCog size={18} />,
+    },
+    {
+      title: t("navigation.account"),
+      href: "/settings/account",
+      icon: <Wrench size={18} />,
+    },
+    {
+      title: t("navigation.notifications"),
+      href: "/settings/notifications",
+      icon: <Bell size={18} />,
+    },
+  ];
   return (
     <>
       {/* ===== Top Heading ===== */}

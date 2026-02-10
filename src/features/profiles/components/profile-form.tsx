@@ -2,6 +2,8 @@ import { z } from 'zod'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useTranslation } from 'react-i18next'
+import { t as i18next } from 'i18next'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -14,9 +16,9 @@ import { featureGroups } from '@/features/features/data/features'
 import type { Profile } from '../data/schema'
 
 const formSchema = z.object({
-  name: z.string().min(1, 'Profile name is required'),
+  name: z.string().min(1, i18next("profiles:create.form.name.validation.required")),
   description: z.string().optional(),
-  permissions: z.array(z.string()).min(1, 'Select at least one permission'),
+  permissions: z.array(z.string()).min(1, i18next("profiles:create.form.permissions.validation.required")),
 })
 
 export type FormValues = z.infer<typeof formSchema>
@@ -67,18 +69,16 @@ export default function ProfileForm({ initialValues, submitLabel = 'Save', onSub
   }, [permQuery])
 
   const submit = (values: FormValues) => {
-    const enabledPermissions = values.permissions.filter((p) => {
-      const group = featureGroups.find((g) => p.startsWith(`${g.id}.`) || p.startsWith(`${g.id}`))
-      return group ? groupEnabled[group.id] : true
-    })
-    if (enabledPermissions.length === 0) {
-      form.setError('permissions', { message: 'Select at least one permission' })
-      return
-    }
-    return onSubmit({ ...values, permissions: enabledPermissions })
-  }
-
-  const togglePermission = (perm: string) => {
+      const enabledPermissions = values.permissions.filter((p) => {
+        const group = featureGroups.find((g) => p.startsWith(`${g.id}.`) || p.startsWith(`${g.id}`))
+        return group ? groupEnabled[group.id] : true
+      })
+      if (enabledPermissions.length === 0) {
+        form.setError('permissions', { message: i18next("profiles:create.form.permissions.validation.required") })
+        return
+      }
+      return onSubmit({ ...values, permissions: enabledPermissions })
+    }  const togglePermission = (perm: string) => {
     const current: string[] = form.getValues('permissions') || []
     if (current.includes(perm)) {
       form.setValue('permissions', current.filter((p) => p !== perm))

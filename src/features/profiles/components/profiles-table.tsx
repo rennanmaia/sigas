@@ -26,6 +26,7 @@ import type { Profile } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { profilesColumns as columns } from './profiles-columns'
 import { getRouteApi } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 
 type DataTableProps = {
   data: Profile[]
@@ -40,6 +41,7 @@ export function ProfilesTable({ data, search, navigate }: DataTableProps) {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [sorting, setSorting] = useState<SortingState>([])
   const navigateToView = route.useNavigate()
+  const { t } = useTranslation("profiles")
 
   const {
     columnFilters,
@@ -96,7 +98,7 @@ export function ProfilesTable({ data, search, navigate }: DataTableProps) {
     >
       <DataTableToolbar
         table={table}
-        searchPlaceholder='Filter profiles...'
+        searchPlaceholder={t("list.table.searchPlaceholder")}
         searchKey='label'
         filters={[]}
       />
@@ -162,7 +164,7 @@ export function ProfilesTable({ data, search, navigate }: DataTableProps) {
                   colSpan={columns.length}
                   className='h-24 text-center'
                 >
-                  No results.
+                  {t("list.table.noResults")}
                 </TableCell>
               </TableRow>
             )}

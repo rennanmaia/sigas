@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Fragment } from 'react/jsx-runtime'
 import { format } from 'date-fns'
+import { useTranslation } from 'react-i18next'
 import {
   ArrowLeft,
   MoreVertical,
@@ -31,6 +32,7 @@ import { type ChatUser, type Convo } from './data/chat-types'
 import { conversations } from './data/convo.json'
 
 export function Chats() {
+  const { t } = useTranslation('chats')
   const [search, setSearch] = useState('')
   const [selectedUser, setSelectedUser] = useState<ChatUser | null>(null)
   const [mobileSelectedUser, setMobileSelectedUser] = useState<ChatUser | null>(
@@ -107,7 +109,7 @@ export function Chats() {
                 <input
                   type='text'
                   className='w-full flex-1 bg-inherit text-sm focus-visible:outline-hidden'
-                  placeholder='Search chat...'
+                  placeholder={t('search.placeholder')}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />
@@ -297,7 +299,7 @@ export function Chats() {
                       <span className='sr-only'>Chat Text Box</span>
                       <input
                         type='text'
-                        placeholder='Type your messages...'
+                        placeholder={t('messages.typePlaceholder')}
                         className='h-8 w-full bg-inherit focus-visible:outline-hidden'
                       />
                     </label>
@@ -310,7 +312,7 @@ export function Chats() {
                     </Button>
                   </div>
                   <Button className='h-full sm:hidden'>
-                    <Send size={18} /> Send
+                    <Send size={18} /> {t('buttons.send')}
                   </Button>
                 </form>
               </div>
@@ -326,13 +328,13 @@ export function Chats() {
                   <MessagesSquare className='size-8' />
                 </div>
                 <div className='space-y-2 text-center'>
-                  <h1 className='text-xl font-semibold'>Your messages</h1>
+                  <h1 className='text-xl font-semibold'>{t('messages.noChat')}</h1>
                   <p className='text-muted-foreground text-sm'>
-                    Send a message to start a chat.
+                    {t('messages.noChat')}
                   </p>
                 </div>
                 <Button onClick={() => setCreateConversationDialog(true)}>
-                  Send message
+                  {t('buttons.new')}
                 </Button>
               </div>
             </div>
