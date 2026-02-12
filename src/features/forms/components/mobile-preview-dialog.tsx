@@ -98,6 +98,10 @@ function QuestionPreviewMobile({
   const [uploadedFiles, setUploadedFiles] = useState<
     Array<{ id: string; name: string; size: string }>
   >([]);
+  const [markedLocation, setMarkedLocation] = useState<{
+    lat: string;
+    lng: string;
+  } | null>(null);
 
   const handleAddFile = () => {
     const newFile = {
@@ -110,6 +114,17 @@ function QuestionPreviewMobile({
 
   const handleRemoveFile = (id: string) => {
     setUploadedFiles(uploadedFiles.filter((file) => file.id !== id));
+  };
+
+  const handleMarkLocation = () => {
+    setMarkedLocation({
+      lat: "-2.5194",
+      lng: "-54.7082",
+    });
+  };
+
+  const handleRemoveLocation = () => {
+    setMarkedLocation(null);
   };
 
   const maskPreviews: Record<string, string> = {
@@ -218,18 +233,41 @@ function QuestionPreviewMobile({
 
       case "map":
         return (
-          <div className="flex items-center gap-3 rounded-lg border border-dashed border-slate-300 bg-slate-50 p-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white shadow-sm ring-1 ring-slate-200">
-              <MapPin size={18} className="text-slate-400" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xs font-semibold text-slate-600">
-                Localização GPS
-              </span>
-              <span className="text-[10px] text-slate-400">
-                Marcar coordenadas no mapa
-              </span>
-            </div>
+          <div className="space-y-3">
+            {markedLocation ? (
+              <div className="flex items-center gap-3 rounded-lg border border-slate-300 bg-slate-50 p-3 group">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white shadow-sm ring-1 ring-slate-200">
+                  <MapPin size={18} className="text-green-600" />
+                </div>
+                <div className="flex flex-col flex-1 min-w-0">
+                  <span className="text-xs font-semibold text-slate-600">
+                    Localização marcada
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-mono">
+                    {markedLocation.lat}, {markedLocation.lng}
+                  </span>
+                </div>
+                <button
+                  onClick={handleRemoveLocation}
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+                  aria-label="Remover localização"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={handleMarkLocation}
+                className="w-full flex items-center justify-center gap-2 rounded-lg border-2 border-dashed border-primary/30 bg-primary/5 p-3 hover:bg-primary/10 transition-colors cursor-pointer"
+              >
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                  <MapPin size={16} />
+                </div>
+                <span className="text-xs font-medium text-primary">
+                  Marcar localização
+                </span>
+              </button>
+            )}
           </div>
         );
 
