@@ -102,6 +102,9 @@ function QuestionPreviewMobile({
     lat: string;
     lng: string;
   } | null>(null);
+  const [capturedPhotos, setCapturedPhotos] = useState<
+    Array<{ id: string; name: string }>
+  >([]);
 
   const handleAddFile = () => {
     const newFile = {
@@ -125,6 +128,18 @@ function QuestionPreviewMobile({
 
   const handleRemoveLocation = () => {
     setMarkedLocation(null);
+  };
+
+  const handleCapturePhoto = () => {
+    const newPhoto = {
+      id: Math.random().toString(36).substring(7),
+      name: `foto-${capturedPhotos.length + 1}.jpg`,
+    };
+    setCapturedPhotos([...capturedPhotos, newPhoto]);
+  };
+
+  const handleRemovePhoto = (id: string) => {
+    setCapturedPhotos(capturedPhotos.filter((photo) => photo.id !== id));
   };
 
   const maskPreviews: Record<string, string> = {
@@ -216,18 +231,46 @@ function QuestionPreviewMobile({
 
       case "photo":
         return (
-          <div className="flex items-center gap-3 rounded-lg border border-dashed border-slate-300 bg-slate-50 p-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white shadow-sm ring-1 ring-slate-200">
-              <Camera size={18} className="text-slate-400" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xs font-semibold text-slate-600">
-                Capturar Imagem
+          <div className="space-y-3">
+            {capturedPhotos.map((photo) => (
+              <div
+                key={photo.id}
+                className="flex items-center gap-3 rounded-lg border border-slate-300 bg-slate-50 p-3 group"
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white shadow-sm ring-1 ring-slate-200">
+                  <Camera size={18} className="text-blue-600" />
+                </div>
+                <div className="flex flex-col flex-1 min-w-0">
+                  <span className="text-xs font-semibold text-slate-600 truncate">
+                    {photo.name}
+                  </span>
+                  <span className="text-[10px] text-slate-400">
+                    Imagem capturada
+                  </span>
+                </div>
+                <button
+                  onClick={() => handleRemovePhoto(photo.id)}
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+                  aria-label="Remover foto"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            ))}
+
+            <button
+              onClick={handleCapturePhoto}
+              className="w-full flex items-center justify-center gap-2 rounded-lg border-2 border-dashed border-primary/30 bg-primary/5 p-3 hover:bg-primary/10 transition-colors cursor-pointer"
+            >
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                <Camera size={16} />
+              </div>
+              <span className="text-xs font-medium text-primary">
+                {capturedPhotos.length > 0
+                  ? "Capturar outra imagem"
+                  : "Capturar imagem"}
               </span>
-              <span className="text-[10px] text-slate-400">
-                Usar câmera ou galeria
-              </span>
-            </div>
+            </button>
           </div>
         );
 
