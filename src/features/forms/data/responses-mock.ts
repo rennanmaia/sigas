@@ -4,6 +4,8 @@ export interface FormResponse {
   submittedAt: string;
   submittedBy: string;
   answers: Record<string, any>;
+  editedAnswers?: Record<string, boolean>;
+  updatedAt?: string;
 }
 
 export const formResponses: FormResponse[] = [
@@ -188,10 +190,18 @@ export const formResponses: FormResponse[] = [
       "q-select": "sudeste",
       "q-checkbox": ["gps", "camera", "termometro"],
       "q-date": "2026-01-22",
-      "q-photo": "photo_complete_1.jpg",
+      "q-photo": [
+        "foto_coleta_001.jpg",
+        "foto_coleta_002.jpg",
+        "foto_coleta_003.jpg",
+      ],
       "q-map": "lat:-23.5505,lng:-46.6333",
-      "q-file": "autorizacao_001.pdf",
-      "q-audio": "audio_notes_001.mp3",
+      "q-file": [
+        "autorizacao_001.pdf",
+        "relatorio_campo_001.pdf",
+        "planilha_dados_001.xlsx",
+      ],
+      "q-audio": ["audio_notes_001.mp3", "entrevista_001.mp3"],
     },
   },
   {
@@ -207,7 +217,7 @@ export const formResponses: FormResponse[] = [
       "q-select": "sul",
       "q-checkbox": ["gps", "medidor-ph"],
       "q-date": "2026-01-23",
-      "q-photo": "photo_complete_2.jpg",
+      "q-photo": ["foto_amostra_001.jpg", "foto_amostra_002.jpg"],
       "q-map": "lat:-30.0346,lng:-51.2177",
       "q-file": "autorizacao_002.pdf",
       "q-audio": "audio_notes_002.mp3",

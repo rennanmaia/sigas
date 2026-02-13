@@ -13,9 +13,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { SelectDropdown } from "@/components/select-dropdown";
 import { projectFormSchema, type ProjectForm } from "../data/schema";
-import { projectTeam } from "../data/projects-mock";
+import { users } from "@/features/users/data/users";
 import { useNavigate } from "@tanstack/react-router";
 import { Plus, Trash2 } from "lucide-react";
+import { ResponsibleSelectDialog } from "./responsible-select-dialog";
 
 interface ProjectFormProps {
   onSubmit: (values: ProjectForm) => void;
@@ -23,18 +24,21 @@ interface ProjectFormProps {
   initialData?: any;
 }
 
+const projectManagers = users
+  .filter(
+    (u) => u.status === "active" && u.roles.includes("project_administrator"),
+  )
+  .map((u) => ({
+    label: `${u.firstName} ${u.lastName}`,
+    value: `${u.firstName} ${u.lastName}`,
+  }));
+
 export default function ProjectForm({
   onSubmit,
   submitLabel,
   initialData,
 }: ProjectFormProps) {
   const navigate = useNavigate();
-  const managerOptions = projectTeam
-    .filter((m) => m.role.toLowerCase().includes("gerente"))
-    .map((m) => ({
-      label: m.name,
-      value: m.name,
-    }));
 
   const form = useForm<ProjectForm>({
     resolver: zodResolver(projectFormSchema) as any,
@@ -134,12 +138,11 @@ export default function ProjectForm({
                   Responsável Técnico
                 </FormLabel>
                 <div className="col-span-4">
-                  <SelectDropdown
-                    key={field.value}
+                  <ResponsibleSelectDialog
+                    value={field.value}
+                    onSelect={field.onChange}
+                    options={projectManagers}
                     placeholder="Selecione o(a) Responsável"
-                    defaultValue={field.value}
-                    onValueChange={field.onChange}
-                    items={managerOptions}
                   />
                 </div>
                 <FormMessage className="col-span-4 col-start-3" />

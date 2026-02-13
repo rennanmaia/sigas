@@ -160,6 +160,33 @@ export const FormBuilder = forwardRef<
     // TODO: make an API call to delete the response and update the forms list to decrement the response count
   };
 
+  const handleUpdateResponse = (
+    responseId: string,
+    questionId: string,
+    newValue: any,
+  ) => {
+    setFilteredResponses((prev) =>
+      prev.map((r) => {
+        if (r.id === responseId) {
+          return {
+            ...r,
+            answers: {
+              ...r.answers,
+              [questionId]: newValue,
+            },
+            editedAnswers: {
+              ...r.editedAnswers,
+              [questionId]: true,
+            },
+            updatedAt: new Date().toISOString(),
+          };
+        }
+        return r;
+      }),
+    );
+    // TODO: make an API call to update the response
+  };
+
   const scrollToTop = () => {
     const viewport = scrollAreaRef.current?.querySelector(
       "[data-radix-scroll-area-viewport]",
@@ -282,6 +309,7 @@ export const FormBuilder = forwardRef<
                 questions={questions}
                 responses={filteredResponses}
                 onDeleteResponse={handleDeleteResponse}
+                onUpdateResponse={handleUpdateResponse}
               />
             ) : (
               <main className="flex-1 h-full overflow-hidden flex flex-col bg-slate-50/50 relative">

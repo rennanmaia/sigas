@@ -1,44 +1,45 @@
 import React from "react";
 import { Users, Bird } from "lucide-react";
+import { users } from "@/features/users/data/users";
 
 export type ProjectStatus = "ativo" | "cancelado" | "pausado" | "finalizado";
 export type ProjectCategory = "Ambiental" | "Social";
 
+const activeProjectAdmins = users.filter(
+  (u) => u.status === "active" && u.roles.includes("project_administrator"),
+);
+
+const activeTeamMembers = users.filter(
+  (u) => u.status === "active" && !u.roles.includes("project_administrator"),
+);
+
+const getUserFullName = (user: (typeof users)[0]) =>
+  `${user.firstName} ${user.lastName}`;
+
+const projectAdminsForMock = activeProjectAdmins.slice(0, 5);
+
+const teamMembersForMock = activeTeamMembers.slice(0, 15);
+
 export const projectTeam = [
-  { id: "u-1", name: "Ana Silva", role: "Gerente de Projeto", initial: "AS" },
-  { id: "u-2", name: "Lucas Martins", role: "Coletor Pleno", initial: "LM" },
-  { id: "u-3", name: "Patrícia Rocha", role: "Coletor Júnior", initial: "PR" },
-  {
-    id: "u-4",
-    name: "Carlos Mendes",
+  ...projectAdminsForMock.map((u) => ({
+    id: u.id,
+    name: getUserFullName(u),
     role: "Gerente de Projeto",
-    initial: "CM",
-  },
-  {
-    id: "u-5",
-    name: "Mariana Costa",
-    role: "Analista Ambiental",
-    initial: "MC",
-  },
-  { id: "u-6", name: "Roberto Lima", role: "Técnico de Campo", initial: "RL" },
-  {
-    id: "u-7",
-    name: "Ricardo Souza",
-    role: "Gerente de Projeto",
-    initial: "RS",
-  },
-  {
-    id: "u-8",
-    name: "Fernanda Oliveira",
-    role: "Gerente de Projeto",
-    initial: "FO",
-  },
-  {
-    id: "u-9",
-    name: "Juliana Santos",
-    role: "Gerente de Projeto",
-    initial: "JS",
-  },
+    initial: `${u.firstName.charAt(0)}${u.lastName.charAt(0)}`.toUpperCase(),
+  })),
+  ...teamMembersForMock.map((u) => ({
+    id: u.id,
+    name: getUserFullName(u),
+    role:
+      u.roles[0] === "collector"
+        ? "Coletor"
+        : u.roles[0] === "questionnaire_administrator"
+          ? "Administrador de Questionários"
+          : u.roles[0] === "general_administrator"
+            ? "Administrador Geral"
+            : u.roles[0],
+    initial: `${u.firstName.charAt(0)}${u.lastName.charAt(0)}`.toUpperCase(),
+  })),
 ];
 
 export type ProjectStats = {
@@ -79,7 +80,9 @@ export let projects: Project[] = [
     startDate: "2026-01-01",
     endDate: "2026-06-25",
     budget: 150000.0,
-    responsible: "Ana Silva",
+    responsible: projectAdminsForMock[0]
+      ? getUserFullName(projectAdminsForMock[0])
+      : "",
     stats: {
       formsCount: 2,
       responsesCount: 1240,
@@ -87,7 +90,12 @@ export let projects: Project[] = [
       managersCount: 1,
     },
     forms: ["frm-1", "frm-2"],
-    members: ["u-1", "u-2", "u-3"],
+    members: [
+      projectAdminsForMock[0]?.id,
+      teamMembersForMock[0]?.id,
+      teamMembersForMock[1]?.id,
+      teamMembersForMock[2]?.id,
+    ].filter(Boolean) as string[],
   },
   {
     id: "proj-002",
@@ -101,7 +109,9 @@ export let projects: Project[] = [
     startDate: "2025-02-15",
     endDate: "2025-12-10",
     budget: 85000.0,
-    responsible: "Carlos Mendes",
+    responsible: projectAdminsForMock[1]
+      ? getUserFullName(projectAdminsForMock[1])
+      : "",
     stats: {
       formsCount: 2,
       responsesCount: 450,
@@ -109,7 +119,12 @@ export let projects: Project[] = [
       managersCount: 1,
     },
     forms: ["frm-3", "frm-4"],
-    members: ["u-4", "u-5", "u-6"],
+    members: [
+      projectAdminsForMock[1]?.id,
+      teamMembersForMock[3]?.id,
+      teamMembersForMock[4]?.id,
+      teamMembersForMock[5]?.id,
+    ].filter(Boolean) as string[],
   },
   {
     id: "proj-003",
@@ -123,7 +138,9 @@ export let projects: Project[] = [
     startDate: "2025-06-01",
     endDate: "2026-12-31",
     budget: 120000.0,
-    responsible: "Ricardo Souza",
+    responsible: projectAdminsForMock[2]
+      ? getUserFullName(projectAdminsForMock[2])
+      : "",
     stats: {
       formsCount: 0,
       responsesCount: 0,
@@ -131,7 +148,11 @@ export let projects: Project[] = [
       managersCount: 1,
     },
     forms: [],
-    members: ["u-7"],
+    members: [
+      projectAdminsForMock[2]?.id,
+      teamMembersForMock[6]?.id,
+      teamMembersForMock[7]?.id,
+    ].filter(Boolean) as string[],
   },
   {
     id: "proj-004",
@@ -145,15 +166,21 @@ export let projects: Project[] = [
     startDate: "2025-03-01",
     endDate: "2025-09-30",
     budget: 200000.0,
-    responsible: "Fernanda Oliveira",
+    responsible: projectAdminsForMock[3]
+      ? getUserFullName(projectAdminsForMock[3])
+      : "",
     stats: {
       formsCount: 0,
       responsesCount: 0,
-      collectorsCount: 0,
+      collectorsCount: 2,
       managersCount: 1,
     },
     forms: [],
-    members: ["u-8"],
+    members: [
+      projectAdminsForMock[3]?.id,
+      teamMembersForMock[8]?.id,
+      teamMembersForMock[9]?.id,
+    ].filter(Boolean) as string[],
   },
   {
     id: "proj-005",
@@ -167,7 +194,9 @@ export let projects: Project[] = [
     startDate: "2025-08-01",
     endDate: "2025-12-31",
     budget: 95000.0,
-    responsible: "Juliana Santos",
+    responsible: projectAdminsForMock[4]
+      ? getUserFullName(projectAdminsForMock[4])
+      : "",
     stats: {
       formsCount: 1,
       responsesCount: 230,
@@ -175,6 +204,10 @@ export let projects: Project[] = [
       managersCount: 1,
     },
     forms: [],
-    members: ["u-9"],
+    members: [
+      projectAdminsForMock[4]?.id,
+      teamMembersForMock[10]?.id,
+      teamMembersForMock[11]?.id,
+    ].filter(Boolean) as string[],
   },
 ];
