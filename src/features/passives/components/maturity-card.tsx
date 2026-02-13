@@ -1,10 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { ShieldAlert } from "lucide-react";
-import type { PassiveStats } from "../data/schema";
+import type { LiabilityStats } from "../data/schema";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-export function ManagementMaturityCard({ stats }: { stats: PassiveStats }) {
+export function ManagementMaturityCard({ stats }: { stats: LiabilityStats }) {
   const score = Math.round(
     ((stats.comPlano / stats.total) * 0.4 + 
      (stats.comResponsavel / stats.total) * 0.3 + 

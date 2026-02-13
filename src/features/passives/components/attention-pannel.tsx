@@ -1,8 +1,8 @@
 import { AlertCircle } from "lucide-react";
-import type { Passivo } from "../data/schema";
+import type { Liability } from "../data/schema";
 import { PassiveCard } from "./passives-card";
 
-export function ImmediateAttentionPanel({ data }: { data: Passivo[] }) {
+export function ImmediateAttentionPanel({ data }: { data: Liability[] }) {
 
   const urgentes = data
     .filter(p => p.risco === 'Crítico' && (p.statusPlano === 'Não Definido' || p.statusPlano === 'Atrasado'));
