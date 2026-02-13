@@ -24,6 +24,7 @@ import { Main } from "@/components/layout/main";
 import { ProfileDropdown } from "@/components/profile-dropdown";
 import { Search } from "@/components/search";
 import { ThemeSwitch } from "@/components/theme-switch";
+import { LanguageSwitch } from "@/components/language-switch";
 import { ProjectsProvider, useProjects } from "./components/projects-provider";
 
 const route = getRouteApi("/_authenticated/projects/");
@@ -95,6 +96,7 @@ function ProjectsList() {
       <Header>
         <Search />
         <div className="ms-auto flex items-center gap-4">
+          <LanguageSwitch />
           <ThemeSwitch />
           <ConfigDrawer />
           <ProfileDropdown />

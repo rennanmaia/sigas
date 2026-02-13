@@ -3,6 +3,7 @@ import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { LanguageSwitch } from '@/components/language-switch'
 import { Link } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
 import { toast } from 'sonner'
@@ -27,6 +28,7 @@ function EditProfile() {
         <Header fixed>
           <div />
           <div className='ms-auto flex items-center space-x-4'>
+            <LanguageSwitch />
             <ThemeSwitch />
             <ConfigDrawer />
             <ProfileDropdown />
@@ -58,6 +60,7 @@ function EditProfile() {
           </Link>
         </div>
         <div className='ms-auto flex items-center space-x-4'>
+          <LanguageSwitch />
           <ThemeSwitch />
           <ConfigDrawer />
           <ProfileDropdown />

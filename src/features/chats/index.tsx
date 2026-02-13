@@ -26,6 +26,7 @@ import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { LanguageSwitch } from '@/components/language-switch'
 import { NewChat } from './components/new-chat'
 import { type ChatUser, type Convo } from './data/chat-types'
 // Fake Data
@@ -71,6 +72,7 @@ export function Chats() {
       <Header>
         <Search />
         <div className='ms-auto flex items-center space-x-4'>
+          <LanguageSwitch />
           <ThemeSwitch />
           <ConfigDrawer />
           <ProfileDropdown />
@@ -84,7 +86,7 @@ export function Chats() {
             <div className='bg-background sticky top-0 z-10 -mx-4 px-4 pb-3 shadow-md sm:static sm:z-auto sm:mx-0 sm:p-0 sm:shadow-none'>
               <div className='flex items-center justify-between py-2'>
                 <div className='flex gap-2'>
-                  <h1 className='text-2xl font-bold'>Inbox</h1>
+                  <h1 className='text-2xl font-bold'>{t('title')}</h1>
                   <MessagesSquare size={20} />
                 </div>
 

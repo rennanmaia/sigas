@@ -8,6 +8,7 @@ import { Main } from "@/components/layout/main";
 import { ProfileDropdown } from "@/components/profile-dropdown";
 import { Search } from "@/components/search";
 import { ThemeSwitch } from "@/components/theme-switch";
+import { LanguageSwitch } from "@/components/language-switch";
 import { SidebarNav } from "./components/sidebar-nav";
 
 export function Settings() {
@@ -36,6 +37,7 @@ export function Settings() {
       <Header>
         <Search />
         <div className="ms-auto flex items-center space-x-4">
+          <LanguageSwitch />
           <ThemeSwitch />
           <ConfigDrawer />
           <ProfileDropdown />

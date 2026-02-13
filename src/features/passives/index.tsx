@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Header } from '@/components/layout/header';
 import { Search } from '@/components/search';
 import { ThemeSwitch } from '@/components/theme-switch';
+import { LanguageSwitch } from '@/components/language-switch';
 import { ProfileDropdown } from '@/components/profile-dropdown';
 import { ConfigDrawer } from '@/components/config-drawer';
 import { Main } from '@/components/layout/main';
@@ -37,6 +38,7 @@ export function Passives() {
       <Header fixed>
         <Search />
         <div className='ms-auto flex items-center space-x-4'>
+          <LanguageSwitch />
           <ThemeSwitch />
           <ConfigDrawer />
           <ProfileDropdown />

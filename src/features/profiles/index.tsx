@@ -5,6 +5,7 @@ import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { LanguageSwitch } from '@/components/language-switch'
 import { ProfilesDialogs } from './components/profiles-dialogs'
 import { UsersPrimaryButtons } from './components/profile-primary-buttons'
 import { ProfilesProvider } from './components/profiles-provider'
@@ -24,6 +25,7 @@ export function Profiles() {
       <Header fixed>
         <Search />
         <div className='ms-auto flex items-center space-x-4'>
+          <LanguageSwitch />
           <ThemeSwitch />
           <ConfigDrawer />
           <ProfileDropdown />

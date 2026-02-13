@@ -3,6 +3,7 @@ import { Main } from "@/components/layout/main";
 import { ProfileDropdown } from "@/components/profile-dropdown";
 import { Search } from "@/components/search";
 import { ThemeSwitch } from "@/components/theme-switch";
+import { LanguageSwitch } from "@/components/language-switch";
 import { ConfigDrawer } from "@/components/config-drawer";
 import { useTranslation } from "react-i18next";
 import { type NavigateFn } from "@/hooks/use-table-url-state";
@@ -24,6 +25,7 @@ export default function FormList({ search, navigate }: Props) {
         <Header>
           <Search />
           <div className="ms-auto flex items-center gap-4">
+            <LanguageSwitch />
             <ThemeSwitch />
             <ConfigDrawer />
             <ProfileDropdown />

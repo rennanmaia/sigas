@@ -11,6 +11,7 @@ import { Header } from '@/components/layout/header'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { LanguageSwitch } from '@/components/language-switch'
 import { profiles } from '../data/profiles'
 
 export function CreateProfile() {
@@ -32,20 +33,19 @@ export function CreateProfile() {
 
 	return (
 		<>
-			<Header fixed>
-				<div className='flex items-center gap-2'>
-					<Link to='/profiles' className='inline-flex items-center gap-2'>
-						<ArrowLeft /> Back
-					</Link>
-				</div>
-				<div className='ms-auto flex items-center space-x-4'>
-					<ThemeSwitch />
-					<ConfigDrawer />
-					<ProfileDropdown />
-				</div>
-			</Header>
-
-			<Main>
+		<Header fixed>
+			<div className='flex items-center gap-2'>
+				<Link to='/profiles' className='inline-flex items-center gap-2'>
+					<ArrowLeft /> Back
+				</Link>
+			</div>
+			<div className='ms-auto flex items-center space-x-4'>
+				<LanguageSwitch />
+				<ThemeSwitch />
+				<ConfigDrawer />
+				<ProfileDropdown />
+			</div>
+		</Header>			<Main>
 				<div className='grid grid-cols-1 gap-6 lg:grid-cols-3'>
 					<div className='lg:col-span-2'>
 						<Card>
