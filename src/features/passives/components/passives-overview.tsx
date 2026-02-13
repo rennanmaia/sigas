@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from "react";
-import type { PassiveStats } from "../data/schema";
-import { passivosMock } from "../data/passives";
+import type { LiabilityStats } from "../data/schema";
 import { SummaryCard } from "./passives-summary-card";
 import { AlertTriangle, Calendar, History, Info, ShieldAlert, UserCheck } from "lucide-react";
 import { ImmediateAttentionPanel } from "./attention-pannel";
@@ -11,51 +10,19 @@ import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { getRouteApi } from "@tanstack/react-router";
-import { PassiveView } from "@/routes/_authenticated/passives";
+import { LiabilityView } from "@/routes/_authenticated/passives";
+import { useLiabilitiesStore } from "@/stores/passives-store";
 
 const route = getRouteApi('/_authenticated/passives/');
 export function PassivesOverview() {
   const navigate = route.useNavigate();
+  const { getStats, liabilities } = useLiabilitiesStore();
 
-  const goToCritical = useCallback(() => navigate({ search: (prev) => ({ ...prev, view: PassiveView.CRITICAL }) }), [])
-  // Cálculos de Resumo
-  const stats: PassiveStats = useMemo(() => {
-    const total = passivosMock.length;
-    const criticos = passivosMock.filter(p => p.risco === 'Crítico').length;
-    const semPlano = passivosMock.filter(p => p.statusPlano === 'Não Definido').length;
-    const comPlano = passivosMock.filter(p => p.statusPlano !== 'Não Definido').length;
-    const atrasados = passivosMock.filter(p => p.statusPlano === 'Atrasado').length;
-    const ambiental = passivosMock.filter(p => p.tipo === 'Ambiental').length;
-    const comResponsavel = passivosMock.filter(p => p.responsavel && p.responsavel.trim() !== '').length;
-    const comEvidencias = passivosMock.filter(p => p.documentosAnexadas && p.documentosAnexadas > 0).length;
-
-    const altos = passivosMock.filter(p => p.risco === 'Alto').length;
-    const medios = passivosMock.filter(p => p.risco === 'Médio').length;
-    const baixos = passivosMock.filter(p => p.risco === 'Baixo').length;
-
-    const pctCritico = (criticos / total) * 100;
-    const pctAlto = (altos / total) * 100;
-    const pctMedio = (medios / total) * 100;
-    const pctBaixo = (baixos / total) * 100;
-
-    return { 
-      total, 
-      criticos, 
-      semPlano, 
-      atrasados, 
-      ambiental, 
-      social: total - ambiental, 
-      comPlano,
-      comEvidencias,
-      comResponsavel,
-      distribuicao: {
-        critico: pctCritico,
-        alto: pctAlto,
-        medio: pctMedio,
-        baixo: pctBaixo
-      }
-    };
-  }, []);
+  const goToCritical = useCallback(() => navigate({ search: (prev) => ({ ...prev, view: LiabilityView.CRITICAL }) }), [])
+  
+  const stats: LiabilityStats = useMemo(() => {
+    return getStats();
+  }, [getStats]);
 
   return (
     <div className="flex flex-col gap-8">
@@ -83,7 +50,7 @@ export function PassivesOverview() {
         <SummaryCard title="Distribuição" value={`${stats.ambiental}/${stats.social}`} sub="Ambiental vs Social" icon={<UserCheck className="h-4 w-4 text-blue-500" />} />
       </div>
 
-      <ImmediateAttentionPanel data={passivosMock} />
+      <ImmediateAttentionPanel data={liabilities} />
 
       <div className="col-span-12 lg:col-span-3 space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">

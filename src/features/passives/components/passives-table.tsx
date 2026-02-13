@@ -2,13 +2,14 @@ import { flexRender, getCoreRowModel, getFacetedRowModel, getFacetedUniqueValues
 import { columns } from "../components/passive-columns";
 import { useEffect, useState } from "react"
 import { useTableUrlState, type NavigateFn } from "@/hooks/use-table-url-state";
-import { passivosMock, RISCOS, STATUS_PLANO } from "../data/passives";
+import { RISKS, STATUS_PLANS } from "../data/passives";
 import { DataTableBulkActions, DataTablePagination, DataTableToolbar } from "@/components/data-table";
 import { cn } from "@/lib/utils";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
+import { useLiabilitiesStore } from "@/stores/passives-store";
 
 type DataTableProps = {
   search: Record<string, unknown>
@@ -16,6 +17,7 @@ type DataTableProps = {
 }
 
 export function PassivesTable({ search, navigate }: DataTableProps) {
+    const { liabilities } = useLiabilitiesStore();
     const [rowSelection, setRowSelection] = useState({})
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
@@ -38,7 +40,7 @@ export function PassivesTable({ search, navigate }: DataTableProps) {
     })
 
     const table = useReactTable({
-        data: passivosMock,
+        data: liabilities,
         columns,
         state: {
           sorting,
@@ -77,8 +79,8 @@ export function PassivesTable({ search, navigate }: DataTableProps) {
                 searchPlaceholder='Filter passives...'
                 searchKey='nome'
                 filters={[
-                    {columnId: 'risco', options: RISCOS.map(risco => ({ label: risco, value: risco })), title: 'Risco'},
-                    {columnId: 'statusPlano', options: STATUS_PLANO.map(status => ({ label: status, value: status })), title: 'Status do Plano'},
+                    {columnId: 'risco', options: RISKS.map(risco => ({ label: risco, value: risco })), title: 'Risco'},
+                    {columnId: 'statusPlano', options: STATUS_PLANS.map(status => ({ label: status, value: status })), title: 'Status do Plano'},
                     {
                         columnId: 'diasAbertoCategoria',
                         title: 'Dias em Aberto',

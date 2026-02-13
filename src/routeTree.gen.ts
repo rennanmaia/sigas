@@ -41,8 +41,11 @@ import { Route as AuthenticatedUsersIdIndexRouteImport } from './routes/_authent
 import { Route as AuthenticatedProjectsProjectIdIndexRouteImport } from './routes/_authenticated/projects/$projectId/index'
 import { Route as AuthenticatedProfilesCreateIndexRouteImport } from './routes/_authenticated/profiles/create/index'
 import { Route as AuthenticatedProfilesProfileIdIndexRouteImport } from './routes/_authenticated/profiles/$profileId/index'
+import { Route as AuthenticatedPassivesCreateIndexRouteImport } from './routes/_authenticated/passives/create/index'
+import { Route as AuthenticatedPassivesPassiveIdIndexRouteImport } from './routes/_authenticated/passives/$passiveId/index'
 import { Route as AuthenticatedFormsCreateIndexRouteImport } from './routes/_authenticated/forms/create/index'
 import { Route as AuthenticatedProjectsProjectIdEditRouteImport } from './routes/_authenticated/projects/$projectId/edit'
+import { Route as AuthenticatedPassivesPassiveIdEditRouteImport } from './routes/_authenticated/passives/$passiveId/edit'
 import { Route as AuthenticatedFormsEditIdRouteImport } from './routes/_authenticated/forms/edit/$id'
 import { Route as AuthenticatedProfilesEditIdIndexRouteImport } from './routes/_authenticated/profiles/edit/$id/index'
 
@@ -222,6 +225,18 @@ const AuthenticatedProfilesProfileIdIndexRoute =
     path: '/profiles/$profileId/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedPassivesCreateIndexRoute =
+  AuthenticatedPassivesCreateIndexRouteImport.update({
+    id: '/passives/create/',
+    path: '/passives/create/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedPassivesPassiveIdIndexRoute =
+  AuthenticatedPassivesPassiveIdIndexRouteImport.update({
+    id: '/passives/$passiveId/',
+    path: '/passives/$passiveId/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedFormsCreateIndexRoute =
   AuthenticatedFormsCreateIndexRouteImport.update({
     id: '/forms/create/',
@@ -232,6 +247,12 @@ const AuthenticatedProjectsProjectIdEditRoute =
   AuthenticatedProjectsProjectIdEditRouteImport.update({
     id: '/projects/$projectId/edit',
     path: '/projects/$projectId/edit',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedPassivesPassiveIdEditRoute =
+  AuthenticatedPassivesPassiveIdEditRouteImport.update({
+    id: '/passives/$passiveId/edit',
+    path: '/passives/$passiveId/edit',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedFormsEditIdRoute =
@@ -276,8 +297,11 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
   '/forms/edit/$id': typeof AuthenticatedFormsEditIdRoute
+  '/passives/$passiveId/edit': typeof AuthenticatedPassivesPassiveIdEditRoute
   '/projects/$projectId/edit': typeof AuthenticatedProjectsProjectIdEditRoute
   '/forms/create': typeof AuthenticatedFormsCreateIndexRoute
+  '/passives/$passiveId': typeof AuthenticatedPassivesPassiveIdIndexRoute
+  '/passives/create': typeof AuthenticatedPassivesCreateIndexRoute
   '/profiles/$profileId': typeof AuthenticatedProfilesProfileIdIndexRoute
   '/profiles/create': typeof AuthenticatedProfilesCreateIndexRoute
   '/projects/$projectId': typeof AuthenticatedProjectsProjectIdIndexRoute
@@ -312,8 +336,11 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
   '/forms/edit/$id': typeof AuthenticatedFormsEditIdRoute
+  '/passives/$passiveId/edit': typeof AuthenticatedPassivesPassiveIdEditRoute
   '/projects/$projectId/edit': typeof AuthenticatedProjectsProjectIdEditRoute
   '/forms/create': typeof AuthenticatedFormsCreateIndexRoute
+  '/passives/$passiveId': typeof AuthenticatedPassivesPassiveIdIndexRoute
+  '/passives/create': typeof AuthenticatedPassivesCreateIndexRoute
   '/profiles/$profileId': typeof AuthenticatedProfilesProfileIdIndexRoute
   '/profiles/create': typeof AuthenticatedProfilesCreateIndexRoute
   '/projects/$projectId': typeof AuthenticatedProjectsProjectIdIndexRoute
@@ -351,8 +378,11 @@ export interface FileRoutesById {
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
   '/_authenticated/forms/edit/$id': typeof AuthenticatedFormsEditIdRoute
+  '/_authenticated/passives/$passiveId/edit': typeof AuthenticatedPassivesPassiveIdEditRoute
   '/_authenticated/projects/$projectId/edit': typeof AuthenticatedProjectsProjectIdEditRoute
   '/_authenticated/forms/create/': typeof AuthenticatedFormsCreateIndexRoute
+  '/_authenticated/passives/$passiveId/': typeof AuthenticatedPassivesPassiveIdIndexRoute
+  '/_authenticated/passives/create/': typeof AuthenticatedPassivesCreateIndexRoute
   '/_authenticated/profiles/$profileId/': typeof AuthenticatedProfilesProfileIdIndexRoute
   '/_authenticated/profiles/create/': typeof AuthenticatedProfilesCreateIndexRoute
   '/_authenticated/projects/$projectId/': typeof AuthenticatedProjectsProjectIdIndexRoute
@@ -390,8 +420,11 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/users'
     | '/forms/edit/$id'
+    | '/passives/$passiveId/edit'
     | '/projects/$projectId/edit'
     | '/forms/create'
+    | '/passives/$passiveId'
+    | '/passives/create'
     | '/profiles/$profileId'
     | '/profiles/create'
     | '/projects/$projectId'
@@ -426,8 +459,11 @@ export interface FileRouteTypes {
     | '/settings'
     | '/users'
     | '/forms/edit/$id'
+    | '/passives/$passiveId/edit'
     | '/projects/$projectId/edit'
     | '/forms/create'
+    | '/passives/$passiveId'
+    | '/passives/create'
     | '/profiles/$profileId'
     | '/profiles/create'
     | '/projects/$projectId'
@@ -464,8 +500,11 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/'
     | '/_authenticated/users/'
     | '/_authenticated/forms/edit/$id'
+    | '/_authenticated/passives/$passiveId/edit'
     | '/_authenticated/projects/$projectId/edit'
     | '/_authenticated/forms/create/'
+    | '/_authenticated/passives/$passiveId/'
+    | '/_authenticated/passives/create/'
     | '/_authenticated/profiles/$profileId/'
     | '/_authenticated/profiles/create/'
     | '/_authenticated/projects/$projectId/'
@@ -713,6 +752,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProfilesProfileIdIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/passives/create/': {
+      id: '/_authenticated/passives/create/'
+      path: '/passives/create'
+      fullPath: '/passives/create'
+      preLoaderRoute: typeof AuthenticatedPassivesCreateIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/passives/$passiveId/': {
+      id: '/_authenticated/passives/$passiveId/'
+      path: '/passives/$passiveId'
+      fullPath: '/passives/$passiveId'
+      preLoaderRoute: typeof AuthenticatedPassivesPassiveIdIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/forms/create/': {
       id: '/_authenticated/forms/create/'
       path: '/forms/create'
@@ -725,6 +778,13 @@ declare module '@tanstack/react-router' {
       path: '/projects/$projectId/edit'
       fullPath: '/projects/$projectId/edit'
       preLoaderRoute: typeof AuthenticatedProjectsProjectIdEditRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/passives/$passiveId/edit': {
+      id: '/_authenticated/passives/$passiveId/edit'
+      path: '/passives/$passiveId/edit'
+      fullPath: '/passives/$passiveId/edit'
+      preLoaderRoute: typeof AuthenticatedPassivesPassiveIdEditRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/forms/edit/$id': {
@@ -781,8 +841,11 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProjectsIndexRoute: typeof AuthenticatedProjectsIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
   AuthenticatedFormsEditIdRoute: typeof AuthenticatedFormsEditIdRoute
+  AuthenticatedPassivesPassiveIdEditRoute: typeof AuthenticatedPassivesPassiveIdEditRoute
   AuthenticatedProjectsProjectIdEditRoute: typeof AuthenticatedProjectsProjectIdEditRoute
   AuthenticatedFormsCreateIndexRoute: typeof AuthenticatedFormsCreateIndexRoute
+  AuthenticatedPassivesPassiveIdIndexRoute: typeof AuthenticatedPassivesPassiveIdIndexRoute
+  AuthenticatedPassivesCreateIndexRoute: typeof AuthenticatedPassivesCreateIndexRoute
   AuthenticatedProfilesProfileIdIndexRoute: typeof AuthenticatedProfilesProfileIdIndexRoute
   AuthenticatedProfilesCreateIndexRoute: typeof AuthenticatedProfilesCreateIndexRoute
   AuthenticatedProjectsProjectIdIndexRoute: typeof AuthenticatedProjectsProjectIdIndexRoute
@@ -804,9 +867,14 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProjectsIndexRoute: AuthenticatedProjectsIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
   AuthenticatedFormsEditIdRoute: AuthenticatedFormsEditIdRoute,
+  AuthenticatedPassivesPassiveIdEditRoute:
+    AuthenticatedPassivesPassiveIdEditRoute,
   AuthenticatedProjectsProjectIdEditRoute:
     AuthenticatedProjectsProjectIdEditRoute,
   AuthenticatedFormsCreateIndexRoute: AuthenticatedFormsCreateIndexRoute,
+  AuthenticatedPassivesPassiveIdIndexRoute:
+    AuthenticatedPassivesPassiveIdIndexRoute,
+  AuthenticatedPassivesCreateIndexRoute: AuthenticatedPassivesCreateIndexRoute,
   AuthenticatedProfilesProfileIdIndexRoute:
     AuthenticatedProfilesProfileIdIndexRoute,
   AuthenticatedProfilesCreateIndexRoute: AuthenticatedProfilesCreateIndexRoute,
