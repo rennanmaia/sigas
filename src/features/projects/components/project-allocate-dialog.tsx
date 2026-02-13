@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Check, Plus } from "lucide-react";
+import { useState, useMemo } from "react";
+import { Check, Plus, Search, Filter, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,11 +11,26 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Link } from "@tanstack/react-router";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-interface AllocateItem {
+export interface AllocateItem {
   id: string;
   label: string;
   sublabel?: string;
+  role?: string;
+  status?: string;
+}
+
+export interface FilterOption {
+  value: string;
+  label: string;
 }
 
 interface ProjectAllocateDialogProps {
@@ -27,6 +42,9 @@ interface ProjectAllocateDialogProps {
   alreadySelected: string[];
   onConfirm: (selectedIds: string[]) => void;
   projectId?: string;
+  showSearch?: boolean;
+  roleFilters?: FilterOption[];
+  statusFilters?: FilterOption[];
 }
 
 export function ProjectAllocateDialog({
@@ -38,11 +56,22 @@ export function ProjectAllocateDialog({
   alreadySelected,
   onConfirm,
   projectId,
+  showSearch = false,
+  roleFilters,
+  statusFilters,
 }: ProjectAllocateDialogProps) {
   const [selected, setSelected] = useState<string[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [roleFilter, setRoleFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
 
   const handleOpenChange = (isOpen: boolean) => {
-    if (isOpen) setSelected([]);
+    if (isOpen) {
+      setSelected([]);
+      setSearchQuery("");
+      setRoleFilter("all");
+      setStatusFilter("all");
+    }
     onOpenChange(isOpen);
   };
 
@@ -56,9 +85,34 @@ export function ProjectAllocateDialog({
     (item) => !alreadySelected.includes(item.id),
   );
 
+  const filteredItems = useMemo(() => {
+    return availableItems.filter((item) => {
+      const matchesSearch =
+        !searchQuery ||
+        item.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.sublabel?.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const matchesRole = roleFilter === "all" || item.role === roleFilter;
+
+      const matchesStatus =
+        statusFilter === "all" || item.status === statusFilter;
+
+      return matchesSearch && matchesRole && matchesStatus;
+    });
+  }, [availableItems, searchQuery, roleFilter, statusFilter]);
+
+  const hasActiveFilters =
+    searchQuery !== "" || roleFilter !== "all" || statusFilter !== "all";
+
+  const clearFilters = () => {
+    setSearchQuery("");
+    setRoleFilter("all");
+    setStatusFilter("all");
+  };
+
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <p className="text-sm text-muted-foreground">{description}</p>
@@ -80,10 +134,79 @@ export function ProjectAllocateDialog({
             </Button>
           </div>
         )}
+
+        {showSearch && (
+          <div className="space-y-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Buscar por nome..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9"
+              />
+            </div>
+
+            <div className="flex gap-2 flex-wrap">
+              {roleFilters && roleFilters.length > 0 && (
+                <Select value={roleFilter} onValueChange={setRoleFilter}>
+                  <SelectTrigger className="w-[160px] h-8 text-xs">
+                    <Filter className="h-3 w-3 mr-1" />
+                    <SelectValue placeholder="Papel" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos os papéis</SelectItem>
+                    {roleFilters.map((filter) => (
+                      <SelectItem key={filter.value} value={filter.value}>
+                        {filter.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+
+              {statusFilters && statusFilters.length > 0 && (
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-[140px] h-8 text-xs">
+                    <Filter className="h-3 w-3 mr-1" />
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Todos os status</SelectItem>
+                    {statusFilters.map((filter) => (
+                      <SelectItem key={filter.value} value={filter.value}>
+                        {filter.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+
+              {hasActiveFilters && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 px-2 text-xs"
+                  onClick={clearFilters}
+                >
+                  <X className="h-3 w-3 mr-1" />
+                  Limpar
+                </Button>
+              )}
+            </div>
+
+            {hasActiveFilters && (
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <span>{filteredItems.length} resultado(s) encontrado(s)</span>
+              </div>
+            )}
+          </div>
+        )}
+
         <ScrollArea className="h-[300px] pr-4">
           <div className="space-y-2">
-            {availableItems.length > 0 ? (
-              availableItems.map((item) => (
+            {filteredItems.length > 0 ? (
+              filteredItems.map((item) => (
                 <div
                   key={item.id}
                   onClick={() => toggleItem(item.id)}
@@ -107,7 +230,9 @@ export function ProjectAllocateDialog({
               ))
             ) : (
               <p className="py-4 text-center text-sm text-muted-foreground italic">
-                Todos os itens já foram alocados.
+                {hasActiveFilters
+                  ? "Nenhum resultado encontrado para os filtros aplicados."
+                  : "Todos os itens já foram alocados."}
               </p>
             )}
           </div>
