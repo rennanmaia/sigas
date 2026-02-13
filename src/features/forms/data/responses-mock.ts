@@ -4,6 +4,8 @@ export interface FormResponse {
   submittedAt: string;
   submittedBy: string;
   answers: Record<string, any>;
+  editedAnswers?: Record<string, boolean>;
+  updatedAt?: string;
 }
 
 export const formResponses: FormResponse[] = [
