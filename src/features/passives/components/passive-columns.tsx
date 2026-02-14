@@ -1,14 +1,15 @@
 import { type ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import type { Passivo, RiscoNivel } from "../data/schema";
+import type { Liability, RiskLevel } from "../data/schema";
 import { User } from "lucide-react";
 import { differenceInDays, parseISO } from "date-fns";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { DataTableRowActions } from "./data-table-row-actions";
+import { Link } from "@tanstack/react-router";
 
-const riscoMap: Record<RiscoNivel, string> = {
+const riscoMap: Record<RiskLevel, string> = {
   Baixo: "bg-emerald-100 text-emerald-800 border-emerald-200",
   Médio: "bg-amber-100 text-amber-800 border-amber-200",
   Alto: "bg-orange-100 text-orange-800 border-orange-200",
@@ -22,7 +23,7 @@ export function categorizarDiasAberto(dias: number) {
   return '3' //'+180 dias'
 }
 
-export const columns: ColumnDef<Passivo>[] = [
+export const columns: ColumnDef<Liability>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -54,10 +55,16 @@ export const columns: ColumnDef<Passivo>[] = [
     accessorKey: "nome",
     header: "Passivo",
     cell: ({ row }) => (
-      <div className="flex flex-col gap-x-2">
-        <span className="font-medium text-slate-900">{row.original.nome}</span>
-        <span className="text-xs text-slate-500">{row.original.categoria}</span>
-      </div>
+      <Link
+        to="/passives/$passiveId"
+        params={{ passiveId: row.original.id }}
+        className="font-medium truncate hover:underline"
+      >
+        <div className="flex flex-col gap-x-2">
+          <span className="font-medium text-slate-900">{row.original.nome}</span>
+          <span className="text-xs text-slate-500">{row.original.categoria}</span>
+        </div>
+      </Link>
     ),
     meta: {
       className: cn(

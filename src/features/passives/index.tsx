@@ -13,7 +13,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PassivesOverview } from './components/passives-overview';
 import { CriticalRisksManagement } from "./components/critical-risk-management";
 import { useEffect } from "react";
-import { PassiveView, type PassivesSearch } from "@/routes/_authenticated/passives";
+import { LiabilityView, type LiabilitySearch } from "@/routes/_authenticated/passives";
+import { Link } from "@tanstack/react-router";
 
 const route = getRouteApi('/_authenticated/passives/')
 
@@ -24,8 +25,8 @@ export function Passives() {
 
   const { view, tabs } = route.useSearch()
 
-  const goBack = () => navigate({ search: (prev) => ({ ...prev, view: PassiveView.OVERVIEW, selectedId: undefined }) })
-  const setTab = (tab: PassivesSearch['tabs']) => navigate({ search: (prev) => ({ ...prev, tabs: tab }) })
+  const goBack = () => navigate({ search: (prev) => ({ ...prev, view: LiabilityView.OVERVIEW, selectedId: undefined }) })
+  const setTab = (tab: LiabilitySearch['tabs']) => navigate({ search: (prev) => ({ ...prev, tabs: tab }) })
     
   useEffect(() => {
     if (!view) {
@@ -54,7 +55,9 @@ export function Passives() {
           </div>
           <div className="flex gap-3">
             <Button variant="outline">Exportar Relatório</Button>
-            <Button className="">{t("list.buttons.new")}</Button>
+            <Link to='/passives/create'>
+              <Button className="">{t("list.buttons.new")}</Button>
+            </Link>
           </div>
         </div>
 
@@ -64,7 +67,7 @@ export function Passives() {
           value={tabs}
           className="space-y-4"
           onValueChange={(e) => {
-            setTab(e as PassivesSearch['tabs'])
+            setTab(e as LiabilitySearch['tabs'])
           }}
           
         >
@@ -74,11 +77,11 @@ export function Passives() {
               <TabsTrigger value={PassiveView.LIST}>{t("list.tabs.management")}</TabsTrigger>
             </TabsList>
           </div>
-          <TabsContent value={PassiveView.OVERVIEW} className="space-y-4">
-            {view === PassiveView.OVERVIEW && <PassivesOverview />}
-            {view === PassiveView.CRITICAL && <CriticalRisksManagement onBack={goBack} />}
+          <TabsContent value={LiabilityView.OVERVIEW} className="space-y-4">
+            {view === LiabilityView.OVERVIEW && <PassivesOverview />}
+            {view === LiabilityView.CRITICAL && <CriticalRisksManagement onBack={goBack} />}
           </TabsContent>
-          <TabsContent value={PassiveView.LIST} className="space-y-4">
+          <TabsContent value={LiabilityView.LIST} className="space-y-4">
             <PassivesTable navigate={navigate as any} search={search}/> 
           </TabsContent>
         </Tabs>

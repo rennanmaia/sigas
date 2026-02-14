@@ -27,6 +27,7 @@ import { Main } from "@/components/layout/main";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -35,25 +36,72 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import {
-  projects as mockProjects,
-  projectTeam as allMembers,
-  type Project,
-} from "./data/projects-mock";
+import { projects as mockProjects, type Project } from "./data/projects-mock";
 import { forms as allAvailableForms } from "@/features/forms/data/forms-mock";
 
 import { ProjectsDeleteDialog } from "./components/project-delete-dialog";
 import { ProjectsProvider, useProjects } from "./components/projects-provider";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { ProjectAllocateDialog } from "./components/project-allocate-dialog";
+import type {
+  AllocateItem,
+  FilterOption,
+} from "./components/project-allocate-dialog";
 import { forms as formsMock } from "@/features/forms/data/forms-mock";
 import type { FormItem } from "@/features/forms/data/forms-mock";
+import { users } from "@/features/users/data/users";
+import { roles } from "@/features/users/data/data";
+import { UserProfileDialog } from "./components/user-profile-dialog";
+
+const getRoleLabel = (roleValue: string): string => {
+  const roleLabels: Record<string, string> = {
+    general_administrator: "Administrador Geral",
+    project_administrator: "Gerente de Projeto",
+    questionnaire_administrator: "Administrador de Questionários",
+    collector: "Coletor",
+  };
+  return roleLabels[roleValue] || roleValue;
+};
+
+const roleFilterOptions: FilterOption[] = roles.map((role) => ({
+  value: role.value,
+  label: getRoleLabel(role.value),
+}));
+
+const mapUsersToAllocateItems = (
+  userList: typeof users,
+  excludeProjectAdmins = false,
+  onlyActive = false,
+): AllocateItem[] => {
+  return userList
+    .filter((user) => {
+      if (onlyActive && user.status !== "active") {
+        return false;
+      }
+      if (excludeProjectAdmins) {
+        return !user.roles.includes("project_administrator");
+      }
+      return true;
+    })
+    .map((user) => ({
+      id: user.id,
+      label: `${user.firstName} ${user.lastName}`,
+      sublabel: user.roles.map((r) => getRoleLabel(r)).join(", "),
+      role: user.roles[0],
+    }));
+};
+
+const getInitials = (firstName: string, lastName: string): string => {
+  return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+};
 
 function ProjectDetailsContent() {
   const { projects: projectsData, setProjects, updateProject } = useProjects();
   const [openDelete, setOpenDelete] = useState(false);
   const [openFormDialog, setOpenFormDialog] = useState(false);
   const [openMemberDialog, setOpenMemberDialog] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [openUserProfile, setOpenUserProfile] = useState(false);
   const [availableForms, setAvailableForms] =
     useState<FormItem[]>(allAvailableForms);
   const { projectId } = useParams({
@@ -197,17 +245,50 @@ function ProjectDetailsContent() {
 
   const isExpired =
     project.status === "ativo" && new Date(project.endDate) < new Date();
-  const responsibleMember = allMembers.find(
-    (m) => m.name === project.responsible,
-  );
 
-  const otherMembers = allMembers.filter(
-    (m) => project.members?.includes(m.id) && m.name !== project.responsible,
-  );
+  const responsibleMember = useMemo(() => {
+    const user = users.find(
+      (u) => `${u.firstName} ${u.lastName}` === project.responsible,
+    );
+    if (user) {
+      return {
+        id: user.id,
+        name: `${user.firstName} ${user.lastName}`,
+        role: user.roles.map((r) => getRoleLabel(r)).join(", "),
+        initial: getInitials(user.firstName, user.lastName),
+      };
+    }
+    return null;
+  }, [project.responsible]);
+
+  const otherMembers = useMemo(() => {
+    return users
+      .filter(
+        (u) =>
+          project.members?.includes(u.id) &&
+          `${u.firstName} ${u.lastName}` !== project.responsible,
+      )
+      .map((u) => ({
+        id: u.id,
+        name: `${u.firstName} ${u.lastName}`,
+        role: u.roles.map((r) => getRoleLabel(r)).join(", "),
+        initial: getInitials(u.firstName, u.lastName),
+      }));
+  }, [project.members, project.responsible]);
 
   const currentProjectTeam = responsibleMember
     ? [responsibleMember, ...otherMembers]
     : otherMembers;
+
+  const selectedUser = useMemo(() => {
+    if (!selectedUserId) return null;
+    return users.find((u) => u.id === selectedUserId) || null;
+  }, [selectedUserId]);
+
+  const handleViewProfile = (userId: string) => {
+    setSelectedUserId(userId);
+    setOpenUserProfile(true);
+  };
 
   const statusLabels: Record<typeof project.status, string> = {
     ativo: "Ativo",
@@ -487,40 +568,75 @@ function ProjectDetailsContent() {
               </Button>
             </CardHeader>
             <CardContent>
-              <div className="space-y-5">
-                {currentProjectTeam.length > 0 ? (
-                  currentProjectTeam.map((member) => (
-                    <div
-                      key={member.id}
-                      className="flex items-center justify-between"
-                    >
-                      <div className="flex items-center gap-3">
-                        <Avatar className="h-9 w-9">
-                          <AvatarFallback>{member.initial}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="text-sm font-medium leading-none">
-                            {member.name}
-                          </p>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {member.role}
-                          </p>
-                        </div>
-                      </div>
-                      <Badge
-                        variant="secondary"
-                        className="text-[10px] cursor-pointer"
+              {currentProjectTeam.length > 6 ? (
+                <ScrollArea className="h-[350px] pr-4">
+                  <div className="space-y-5">
+                    {currentProjectTeam.map((member) => (
+                      <div
+                        key={member.id}
+                        className="flex items-center justify-between"
                       >
-                        Ver Perfil
-                      </Badge>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-sm text-muted-foreground italic">
-                    Nenhum membro alocado.
-                  </p>
-                )}
-              </div>
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-9 w-9">
+                            <AvatarFallback>{member.initial}</AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="text-sm font-medium leading-none">
+                              {member.name}
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {member.role}
+                            </p>
+                          </div>
+                        </div>
+                        <Badge
+                          variant="secondary"
+                          className="text-[10px] cursor-pointer"
+                          onClick={() => handleViewProfile(member.id)}
+                        >
+                          Ver Perfil
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              ) : (
+                <div className="space-y-5">
+                  {currentProjectTeam.length > 0 ? (
+                    currentProjectTeam.map((member) => (
+                      <div
+                        key={member.id}
+                        className="flex items-center justify-between"
+                      >
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-9 w-9">
+                            <AvatarFallback>{member.initial}</AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="text-sm font-medium leading-none">
+                              {member.name}
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {member.role}
+                            </p>
+                          </div>
+                        </div>
+                        <Badge
+                          variant="secondary"
+                          className="text-[10px] cursor-pointer"
+                          onClick={() => handleViewProfile(member.id)}
+                        >
+                          Ver Perfil
+                        </Badge>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-sm text-muted-foreground italic">
+                      Nenhum membro alocado.
+                    </p>
+                  )}
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -546,21 +662,24 @@ function ProjectDetailsContent() {
         open={openMemberDialog}
         onOpenChange={setOpenMemberDialog}
         title="Alocar Equipe"
-        description="Selecione os profissionais para atuar neste projeto."
-        items={allMembers
-          .filter((m) => !m.role.toLowerCase().includes("gerente"))
-          .map((m) => ({
-            id: m.id,
-            label: m.name,
-            sublabel: m.role,
-          }))}
+        description="Selecione os profissionais para atuar neste projeto. Use a busca e os filtros para encontrar membros específicos."
+        items={mapUsersToAllocateItems(users, true, true)}
         alreadySelected={project.members || []}
         onConfirm={handleConfirmMembers}
+        showSearch={true}
+        roleFilters={roleFilterOptions.filter(
+          (r) => r.value !== "project_administrator",
+        )}
       />
       <ProjectsDeleteDialog
         open={openDelete}
         onOpenChange={setOpenDelete}
         currentRow={{ id: project.id, title: project.title }}
+      />
+      <UserProfileDialog
+        open={openUserProfile}
+        onOpenChange={setOpenUserProfile}
+        user={selectedUser}
       />
     </>
   );

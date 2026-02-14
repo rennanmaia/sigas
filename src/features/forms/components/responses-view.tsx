@@ -18,15 +18,22 @@ import {
   User,
   Trash2,
 } from "lucide-react";
+import { toast } from "sonner";
 import type { Option, Question } from "./form-builder/types/question";
 import type { FormResponse } from "../data/responses-mock";
 import { ConfirmDialog } from "@/components/confirm-dialog";
+import { AnswerEditor } from "./answer-editor";
 
 interface ResponsesViewProps {
   formTitle: string;
   questions: Question[];
   responses: FormResponse[];
   onDeleteResponse?: (responseId: string) => void;
+  onUpdateResponse?: (
+    responseId: string,
+    questionId: string,
+    newValue: any,
+  ) => void;
 }
 
 export function ResponsesView({
@@ -34,6 +41,7 @@ export function ResponsesView({
   questions,
   responses,
   onDeleteResponse,
+  onUpdateResponse,
 }: ResponsesViewProps) {
   const [activeTab, setActiveTab] = useState("summary");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -50,6 +58,19 @@ export function ResponsesView({
     }
     setDeleteDialogOpen(false);
     setResponseToDelete(null);
+  };
+
+  const handleAnswerSave = (
+    responseId: string,
+    questionId: string,
+    newValue: any,
+  ) => {
+    if (onUpdateResponse) {
+      onUpdateResponse(responseId, questionId, newValue);
+      toast.success("Resposta atualizada", {
+        description: "A resposta foi editada e marcada como modificada.",
+      });
+    }
   };
 
   const getQuestionStats = (questionId: string, question: Question) => {
@@ -421,28 +442,19 @@ export function ResponsesView({
                   <CardContent className="space-y-4">
                     {questions.map((question) => {
                       const answer = response.answers[question.id];
-                      let displayAnswer = answer;
-
-                      if (question.type === "select" && question.options) {
-                        const option = question.options.find(
-                          (o: any) => o.id === answer,
-                        );
-                        displayAnswer = option?.label || answer;
-                      }
+                      const isEdited =
+                        response.editedAnswers?.[question.id] ?? false;
 
                       return (
-                        <div key={question.id} className="space-y-1">
-                          <p className="text-sm font-medium text-muted-foreground">
-                            {question.label}
-                          </p>
-                          <p className="text-sm">
-                            {displayAnswer || (
-                              <span className="text-muted-foreground italic">
-                                Sem resposta
-                              </span>
-                            )}
-                          </p>
-                        </div>
+                        <AnswerEditor
+                          key={question.id}
+                          question={question}
+                          answer={answer}
+                          isEdited={isEdited}
+                          onSave={(questionId, newValue) =>
+                            handleAnswerSave(response.id, questionId, newValue)
+                          }
+                        />
                       );
                     })}
                   </CardContent>

@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Camera, MapPin, Mic, UploadCloud } from "lucide-react";
+import { Camera, MapPin, Mic, UploadCloud, Plus, X } from "lucide-react";
 import type { Question } from "./form-builder/types/question";
 
 interface MobilePreviewDialogProps {
@@ -95,6 +95,52 @@ function QuestionPreviewMobile({
 }) {
   const [selectedValue, setSelectedValue] = useState("");
   const [checkedValues, setCheckedValues] = useState<string[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<
+    Array<{ id: string; name: string; size: string }>
+  >([]);
+  const [markedLocation, setMarkedLocation] = useState<{
+    lat: string;
+    lng: string;
+  } | null>(null);
+  const [capturedPhotos, setCapturedPhotos] = useState<
+    Array<{ id: string; name: string }>
+  >([]);
+
+  const handleAddFile = () => {
+    const newFile = {
+      id: Math.random().toString(36).substring(7),
+      name: `documento-exemplo-${uploadedFiles.length + 1}.pdf`,
+      size: "125 KB",
+    };
+    setUploadedFiles([...uploadedFiles, newFile]);
+  };
+
+  const handleRemoveFile = (id: string) => {
+    setUploadedFiles(uploadedFiles.filter((file) => file.id !== id));
+  };
+
+  const handleMarkLocation = () => {
+    setMarkedLocation({
+      lat: "-2.5194",
+      lng: "-54.7082",
+    });
+  };
+
+  const handleRemoveLocation = () => {
+    setMarkedLocation(null);
+  };
+
+  const handleCapturePhoto = () => {
+    const newPhoto = {
+      id: Math.random().toString(36).substring(7),
+      name: `foto-${capturedPhotos.length + 1}.jpg`,
+    };
+    setCapturedPhotos([...capturedPhotos, newPhoto]);
+  };
+
+  const handleRemovePhoto = (id: string) => {
+    setCapturedPhotos(capturedPhotos.filter((photo) => photo.id !== id));
+  };
 
   const maskPreviews: Record<string, string> = {
     cpf: "000.000.000-00",
@@ -185,52 +231,131 @@ function QuestionPreviewMobile({
 
       case "photo":
         return (
-          <div className="flex items-center gap-3 rounded-lg border border-dashed border-slate-300 bg-slate-50 p-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white shadow-sm ring-1 ring-slate-200">
-              <Camera size={18} className="text-slate-400" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xs font-semibold text-slate-600">
-                Capturar Imagem
+          <div className="space-y-3">
+            {capturedPhotos.map((photo) => (
+              <div
+                key={photo.id}
+                className="flex items-center gap-3 rounded-lg border border-slate-300 bg-slate-50 p-3 group"
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white shadow-sm ring-1 ring-slate-200">
+                  <Camera size={18} className="text-blue-600" />
+                </div>
+                <div className="flex flex-col flex-1 min-w-0">
+                  <span className="text-xs font-semibold text-slate-600 truncate">
+                    {photo.name}
+                  </span>
+                  <span className="text-[10px] text-slate-400">
+                    Imagem capturada
+                  </span>
+                </div>
+                <button
+                  onClick={() => handleRemovePhoto(photo.id)}
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+                  aria-label="Remover foto"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            ))}
+
+            <button
+              onClick={handleCapturePhoto}
+              className="w-full flex items-center justify-center gap-2 rounded-lg border-2 border-dashed border-primary/30 bg-primary/5 p-3 hover:bg-primary/10 transition-colors cursor-pointer"
+            >
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                <Camera size={16} />
+              </div>
+              <span className="text-xs font-medium text-primary">
+                {capturedPhotos.length > 0
+                  ? "Capturar outra imagem"
+                  : "Capturar imagem"}
               </span>
-              <span className="text-[10px] text-slate-400">
-                Usar câmera ou galeria
-              </span>
-            </div>
+            </button>
           </div>
         );
 
       case "map":
         return (
-          <div className="flex items-center gap-3 rounded-lg border border-dashed border-slate-300 bg-slate-50 p-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white shadow-sm ring-1 ring-slate-200">
-              <MapPin size={18} className="text-slate-400" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xs font-semibold text-slate-600">
-                Localização GPS
-              </span>
-              <span className="text-[10px] text-slate-400">
-                Marcar coordenadas no mapa
-              </span>
-            </div>
+          <div className="space-y-3">
+            {markedLocation ? (
+              <div className="flex items-center gap-3 rounded-lg border border-slate-300 bg-slate-50 p-3 group">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white shadow-sm ring-1 ring-slate-200">
+                  <MapPin size={18} className="text-green-600" />
+                </div>
+                <div className="flex flex-col flex-1 min-w-0">
+                  <span className="text-xs font-semibold text-slate-600">
+                    Localização marcada
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-mono">
+                    {markedLocation.lat}, {markedLocation.lng}
+                  </span>
+                </div>
+                <button
+                  onClick={handleRemoveLocation}
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+                  aria-label="Remover localização"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={handleMarkLocation}
+                className="w-full flex items-center justify-center gap-2 rounded-lg border-2 border-dashed border-primary/30 bg-primary/5 p-3 hover:bg-primary/10 transition-colors cursor-pointer"
+              >
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                  <MapPin size={16} />
+                </div>
+                <span className="text-xs font-medium text-primary">
+                  Marcar localização
+                </span>
+              </button>
+            )}
           </div>
         );
 
       case "file":
         return (
-          <div className="flex items-center gap-3 rounded-lg border border-dashed border-slate-300 bg-slate-50 p-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white shadow-sm ring-1 ring-slate-200">
-              <UploadCloud size={18} className="text-slate-400" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xs font-semibold text-slate-600">
-                Upload de arquivo
+          <div className="space-y-3">
+            {uploadedFiles.map((file) => (
+              <div
+                key={file.id}
+                className="flex items-center gap-3 rounded-lg border border-slate-300 bg-slate-50 p-3 group"
+              >
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white shadow-sm ring-1 ring-slate-200">
+                  <UploadCloud size={18} className="text-slate-400" />
+                </div>
+                <div className="flex flex-col flex-1 min-w-0">
+                  <span className="text-xs font-semibold text-slate-600 truncate">
+                    {file.name}
+                  </span>
+                  <span className="text-[10px] text-slate-400">
+                    {file.size}
+                  </span>
+                </div>
+                <button
+                  onClick={() => handleRemoveFile(file.id)}
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+                  aria-label="Remover arquivo"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            ))}
+
+            <button
+              onClick={handleAddFile}
+              className="w-full flex items-center justify-center gap-2 rounded-lg border-2 border-dashed border-primary/30 bg-primary/5 p-3 hover:bg-primary/10 transition-colors cursor-pointer"
+            >
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                <Plus size={16} />
+              </div>
+              <span className="text-xs font-medium text-primary">
+                {uploadedFiles.length > 0
+                  ? "Adicionar outro arquivo"
+                  : "Adicionar arquivo"}
               </span>
-              <span className="text-[10px] text-slate-400">
-                Clique para selecionar
-              </span>
-            </div>
+            </button>
           </div>
         );
 

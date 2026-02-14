@@ -1,3 +1,25 @@
+# [1.0.0-beta.5](https://github.com/rennanmaia/sigas/compare/v1.0.0-beta.4...v1.0.0-beta.5) (2026-02-13)
+
+
+### Features
+
+* add editedAnswers and updatedAt fields to FormResponse interface ([a5d063d](https://github.com/rennanmaia/sigas/commit/a5d063dba90e1981ffb051b846c83e333f677495))
+* add handleUpdateResponse function for dynamic response updates in FormBuilder ([fd7b10c](https://github.com/rennanmaia/sigas/commit/fd7b10ca7ecfe5d5a5b00a8c16467abb07fbb944))
+* add jszip dependency for handling zip file operations ([54d8b32](https://github.com/rennanmaia/sigas/commit/54d8b3295862ae1a5fbc05fc3600dc797d51eb27))
+* add location marking functionality in QuestionPreviewMobile component ([93510bb](https://github.com/rennanmaia/sigas/commit/93510bb06f4e1d4bab18693ad96dd43fc316372f))
+* add photo capture functionality in QuestionPreviewMobile component ([5f4c80a](https://github.com/rennanmaia/sigas/commit/5f4c80af510e96e93b1a78956b2085125c598909))
+* add UserProfileDialog component to display user details ([5429ed2](https://github.com/rennanmaia/sigas/commit/5429ed25062d06821753a72e2d7ec52f7c664355))
+* enhance AnswerEditor with file download and zip functionality ([dd69140](https://github.com/rennanmaia/sigas/commit/dd691406429e8b1aaa881ee5eef8d50edbc8b402))
+* enhance file upload functionality in MobilePreviewDialog component ([b2ac60f](https://github.com/rennanmaia/sigas/commit/b2ac60f620ecdc38eadf1620090e4bf12290e080))
+* enhance ProjectAllocateDialog with search and filter functionality ([84f10f2](https://github.com/rennanmaia/sigas/commit/84f10f265202ac05b25be90b9361c1bbee6fb05d))
+* implement AnswerEditor component for dynamic answer editing ([836a103](https://github.com/rennanmaia/sigas/commit/836a103cde66758ef53a8f835729df37ede07058))
+* implement ResponsibleSelectDialog with search functionality for project managers ([1c1d667](https://github.com/rennanmaia/sigas/commit/1c1d6673e7ae83a155c8d0a6e61ee023a5a77b95))
+* integrate AnswerEditor for dynamic answer updates in ResponsesView ([93ea131](https://github.com/rennanmaia/sigas/commit/93ea1313f3613e04f66dc53d736c50c79d4eb40d))
+* integrate responsible selection dialog and update project manager options ([26c3e65](https://github.com/rennanmaia/sigas/commit/26c3e65a27b3852606479b1b68c00adc132920fb))
+* integrate user profile viewing and enhance team member allocation with role filters ([e2d0a92](https://github.com/rennanmaia/sigas/commit/e2d0a92c1bac3e57a686fd082e7b8786b746743a))
+* refactor project team mock data to dynamically generate members and responsible roles ([63c2e68](https://github.com/rennanmaia/sigas/commit/63c2e681562f00cb74b1ba0f7bd9c64b5deead29))
+* update photo, file, and audio fields to support multiple entries in form responses ([0008e19](https://github.com/rennanmaia/sigas/commit/0008e19e063083bb1e0349a7f20b07dc2d3baf47))
+
 # [1.0.0-beta.4](https://github.com/rennanmaia/sigas/compare/v1.0.0-beta.3...v1.0.0-beta.4) (2026-02-09)
 
 

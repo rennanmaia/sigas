@@ -4,17 +4,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable, type ColumnFiltersState, type SortingState } from "@tanstack/react-table";
 import { Filter, Search } from "lucide-react";
-import { passivosMock } from "../data/passives";
 import { columns } from "./passive-columns";
 import { useState } from "react";
+import { useLiabilitiesStore } from "@/stores/passives-store";
 
 export function PassivesTable() {
+    const { liabilities } = useLiabilitiesStore();
     const [sorting, setSorting] = useState<SortingState>([{ id: 'risco', desc: true }]);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [globalFilter, setGlobalFilter] = useState("");
 
     const table = useReactTable({
-        data: passivosMock,
+        data: liabilities,
         columns,
         state: { sorting, columnFilters, globalFilter },
         onSortingChange: setSorting,

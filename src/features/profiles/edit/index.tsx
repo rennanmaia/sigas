@@ -13,9 +13,6 @@ import ProfileForm from '@/features/profiles/components/profile-form'
 import type { FormValues } from '@/features/profiles/components/profile-form'
 import { Route } from '@/routes/_authenticated/profiles/edit/$id'
 
-
-
-
 function EditProfile() {
   const { id } = Route.useParams();
   const navigate = Route.useNavigate();

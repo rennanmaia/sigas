@@ -1,5 +1,5 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import type { Passivo } from "../data/schema";
+import type { Liability } from "../data/schema";
 import { CheckCircle2, Clock, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -9,7 +9,7 @@ export function PassiveCard({
     goToResolve,
     goToDetails
 }: {
-    item: Passivo;
+    item: Liability;
     goToResolve?: (id: string) => void;
     goToDetails?: (id: string) => void;
 }) {

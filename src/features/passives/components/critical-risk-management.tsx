@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { AlertTriangle } from "lucide-react";
-import { passivosMock } from "../data/passives";
 import { useCallback } from "react";
 import { getRouteApi } from "@tanstack/react-router";
 import { PassiveCard } from "./passives-card";
+import { useLiabilitiesStore } from "@/stores/passives-store";
 
 interface CriticalRisksViewProps {
   onBack?: () => void;
@@ -12,9 +12,10 @@ interface CriticalRisksViewProps {
 const route = getRouteApi('/_authenticated/passives/')
 
 export function CriticalRisksManagement({ onBack }: CriticalRisksViewProps) {
+  const { liabilities } = useLiabilitiesStore();
   const navigate = route.useNavigate()
   const goToResolve = useCallback((id: string) => navigate({ search: (prev) => ({ ...prev, /*view: PassiveView.RESOLVE,*/ selectedId: id }) }), []);
-  const criticalItems = passivosMock.filter(i => i.risco === 'Crítico');
+  const criticalItems = liabilities.filter(i => i.risco === 'Crítico');
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
