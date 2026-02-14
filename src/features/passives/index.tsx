@@ -73,8 +73,8 @@ export function Passives() {
         >
           <div className="w-full overflow-x-auto pb-2">
             <TabsList>
-              <TabsTrigger value={PassiveView.OVERVIEW}>{t("list.tabs.overview")}</TabsTrigger>
-              <TabsTrigger value={PassiveView.LIST}>{t("list.tabs.management")}</TabsTrigger>
+              <TabsTrigger value={LiabilityView.OVERVIEW}>{t("list.tabs.overview")}</TabsTrigger>
+              <TabsTrigger value={LiabilityView.LIST}>{t("list.tabs.management")}</TabsTrigger>
             </TabsList>
           </div>
           <TabsContent value={LiabilityView.OVERVIEW} className="space-y-4">

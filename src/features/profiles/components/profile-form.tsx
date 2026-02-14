@@ -69,16 +69,19 @@ export default function ProfileForm({ initialValues, submitLabel = 'Save', onSub
   }, [permQuery])
 
   const submit = (values: FormValues) => {
-      const enabledPermissions = values.permissions.filter((p) => {
-        const group = featureGroups.find((g) => p.startsWith(`${g.id}.`) || p.startsWith(`${g.id}`))
-        return group ? groupEnabled[group.id] : true
-      })
-      if (enabledPermissions.length === 0) {
-        form.setError('permissions', { message: i18next("profiles:create.form.permissions.validation.required") })
-        return
-      }
-      return onSubmit({ ...values, permissions: enabledPermissions })
-    }  const togglePermission = (perm: string) => {
+    const enabledPermissions = values.permissions.filter((p) => {
+      const group = featureGroups.find((g) => p.startsWith(`${g.id}.`) || p.startsWith(`${g.id}`))
+      return group ? groupEnabled[group.id] : true
+    })
+    if (enabledPermissions.length === 0) {
+      form.setError('permissions', { message: i18next("profiles:create.form.permissions.validation.required") })
+      return
+    }
+    return onSubmit({ ...values, permissions: enabledPermissions })
+  }  
+
+
+  const togglePermission = (perm: string) => {
     const current: string[] = form.getValues('permissions') || []
     if (current.includes(perm)) {
       form.setValue('permissions', current.filter((p) => p !== perm))
