@@ -1,3 +1,38 @@
+# [1.0.0-beta.6](https://github.com/rennanmaia/sigas/compare/v1.0.0-beta.5...v1.0.0-beta.6) (2026-02-14)
+
+
+### Bug Fixes
+
+* **build errors:** fix lint and import errors ([79f71f0](https://github.com/rennanmaia/sigas/commit/79f71f0e5149fd15cc0ec73acf7077623fec8c26))
+* **build:** remove unused imports and fix type comparators ([f6fe097](https://github.com/rennanmaia/sigas/commit/f6fe097dc01063c351439a911f187dfb88e5a8b7))
+* **deps:** fix lock dependecies ([4d5afd6](https://github.com/rennanmaia/sigas/commit/4d5afd61b8247b003ec5d1e54983a518aecb09e5))
+* fix i18nResourceMessage name ([5d126a6](https://github.com/rennanmaia/sigas/commit/5d126a65ccd71fa8170e68f880600855a132ffa9))
+
+
+### Features
+
+* add new translations for new resources ([30c1439](https://github.com/rennanmaia/sigas/commit/30c14394444c890a438ff7766e0c07febf2f9b08))
+* add src to include config ([45250d4](https://github.com/rennanmaia/sigas/commit/45250d4e5b8324de903ed124fada741b2ad95e54))
+* add the useTranslation hook  to the user columns def ([d1aa05c](https://github.com/rennanmaia/sigas/commit/d1aa05cad7321618a6b648e883024d5a8b74b921))
+* add the useTranslation hook to the dashboard page ([aa54763](https://github.com/rennanmaia/sigas/commit/aa547639555ceeddabb228dca38b2067210937e5))
+* add the useTranslation hook to the data table pagination component ([4d5fcd3](https://github.com/rennanmaia/sigas/commit/4d5fcd31b5e45030ff2a4c4a9518e18094fd10a8))
+* add the useTranslation hook to the data table view option component ([8f18e56](https://github.com/rennanmaia/sigas/commit/8f18e563727b3735d617d4d570ae8b0fb90b99c8))
+* add the useTranslation hook to the search component ([ed6869e](https://github.com/rennanmaia/sigas/commit/ed6869ee3d77ebb7bc87f4a85d74dab70130677a))
+* add the useTranslation hook to the table row actions component ([be479e7](https://github.com/rennanmaia/sigas/commit/be479e79441cd69e9585de03ee4518acb676471a))
+* add the useTranslation hook to the user form ([bd13bb4](https://github.com/rennanmaia/sigas/commit/bd13bb416ef2afc3f9f6815ef7389893052f27bf))
+* add the useTranslation hook to the users page ([509391c](https://github.com/rennanmaia/sigas/commit/509391c275f523cf8798a5afe2c673a58a191f17))
+* add user table useTranslation ([f14a6f3](https://github.com/rennanmaia/sigas/commit/f14a6f3634959175ce82db31ecdd48f747e2d30b))
+* add useTranslation to the add button ([5153b1d](https://github.com/rennanmaia/sigas/commit/5153b1d2d587ae382eddaa1f413562a57cbd244d))
+* Adding the first translation to the dashboard screen ([5b0eb4e](https://github.com/rennanmaia/sigas/commit/5b0eb4e8c0179c5d891610841373ed1b09752170))
+* create first i18n contract type ([c92f16f](https://github.com/rennanmaia/sigas/commit/c92f16fd919b04ce5b30f919500e9cd35d0a6ee2))
+* create first locale language ptBR ([eb4ed7d](https://github.com/rennanmaia/sigas/commit/eb4ed7dae270c40efd700600e698587862bab81c))
+* create i18n config ([2b36f70](https://github.com/rennanmaia/sigas/commit/2b36f70735ea3c52d7f6f5d66c17f68bca31504d))
+* create i18n namespace for typing ([5a8408a](https://github.com/rennanmaia/sigas/commit/5a8408aba1cf2abfc7c390f37337e30a92e43269))
+* **i18n:** create language switch component ([52b1917](https://github.com/rennanmaia/sigas/commit/52b1917c2c64b82e317d9a9cca68e32a8792049e))
+* improve i18n ressource type ([73a9af6](https://github.com/rennanmaia/sigas/commit/73a9af64c2fecac79bbc35ef29ddbe329a65e6c2))
+* init i18n in main app ([d4b64fa](https://github.com/rennanmaia/sigas/commit/d4b64faa5136b3668ab91e62ebea4867b5d7eaac))
+* install i18next ([ede4a2d](https://github.com/rennanmaia/sigas/commit/ede4a2d156d27235f16b219706c7dab72168954d))
+
 # [1.0.0-beta.5](https://github.com/rennanmaia/sigas/compare/v1.0.0-beta.4...v1.0.0-beta.5) (2026-02-13)
 
 
