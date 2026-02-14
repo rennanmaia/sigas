@@ -1,10 +1,12 @@
 import { Projects } from "@/features/projects";
+import { PROJECT_STATUS } from "@/features/projects/data/projects-mock";
 import { createFileRoute } from "@tanstack/react-router";
 import z from "zod";
+
 const projectsSearchSchema = z.object({
   filter: z.string().optional().catch(""),
   type: z
-    .enum(["all", "ativo", "pausado", "finalizado", "cancelado", "expirado"])
+    .enum(["all", ...Object.keys(PROJECT_STATUS)])
     .optional()
     .catch("all"),
   sort: z.enum(["asc", "desc"]).optional().catch("asc"),

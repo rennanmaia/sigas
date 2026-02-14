@@ -111,24 +111,53 @@ export type I18nResource = {
     create: {
       form_builder: {
         form: {
-          title: string;
-          description: string;
-          control: {
+          defaultValues: {
             title: string;
             description: string;
-            project: {
-              title: string;
-              placeholder: string;
-              empty: string;
-              preselected: string;
-              questions: {
-                alert: string;
-                empty: {
-                  title: string;
-                  description: string;
-                },
-              }
+          },
+          title: {
+            placeholder: string;
+            validation: {
+              minLength: string;
+              maxLength: string;
             }
+          },
+          description: {
+            placeholder: string;
+            validation: {
+              minLength: string;
+            }
+          },
+          project: {
+            title: string;
+            placeholder: string;
+            empty: string;
+            preselected: string;
+          },
+          questions: {
+            alert: string;
+            empty: {
+              title: string;
+              description: string;
+            },
+            label: {
+              validation: {
+                required: string;
+              }
+            },
+            validation: {
+              minLength: string;
+            },
+            options: {
+              label: {
+                validation: {
+                  required: string;
+                }
+              },
+              validation: {
+                minLength: string;
+              }
+            },
           }
         },
         dialog: {
@@ -297,8 +326,10 @@ export type I18nResource = {
   projects: {
     list: {
       title: string;
+      description: string;
       buttons: {
         new: string;
+        logs: string;
       },
       filters: {
         all: string;

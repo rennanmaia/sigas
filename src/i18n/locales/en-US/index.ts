@@ -113,22 +113,51 @@ export const enUS: I18nResource = {
         create: {
             form_builder: {
                 form: {
-                    title: "Untitled Form",
-                    description: "Form without description",
-                    control: {
-                        title: "Form Title",
-                        description: "Description or instructions...",
-                        project: {
-                            title: "Linked Project *",
-                            empty: "None (create as draft)",
-                            placeholder: "Select a project",
-                            preselected: "Pre-selected project and cannot be changed",
-                            questions: {
-                                alert: "Add at least one question to the form before saving it.",
-                                empty: {
-                                    title: "Your form is empty.",
-                                    description: "Select a question type to get started."
+                    defaultValues: {
+                        title: "Untitled Form",
+                        description: "Form without description",
+                    },
+                    title: {
+                        placeholder: "Form Title",
+                        validation: {
+                            maxLength: "Title must not exceed 100 characters",
+                            minLength: "Title must be at least 3 characters"
+                        }
+                    },
+                    description: {
+                        placeholder: "Description or instructions...",
+                        validation: {
+                            minLength: "Description must be at least 5 characters"
+                        }
+                    },
+                    project: {
+                        title: "Linked Project *",
+                        empty: "None (create as draft)",
+                        placeholder: "Select a project",
+                        preselected: "Pre-selected project and cannot be changed",
+                    },
+                    questions: {
+                        validation: {
+                            minLength: "The form must have at least one question"
+                        },
+                        label: {
+                            validation: {
+                                required: "Add at least one question to the form"
+                            }
+                        },
+                        alert: "Add at least one question to the form before saving it.",
+                        empty: {
+                            title: "Your form is empty.",
+                            description: "Select a question type to get started."
+                        },
+                        options: {
+                            label: {
+                                validation: {
+                                    required: "Add at least two options for this question"
                                 }
+                            },
+                            validation: {
+                                minLength: "Option must be at least 1 character",
                             }
                         }
                     }
@@ -198,6 +227,7 @@ export const enUS: I18nResource = {
         },
         create: {
             title: "Create New Profile",
+            description: "Create a new profile to organize your users and set their permissions.",
             form: {
                 name: {
                     label: "Profile Name",

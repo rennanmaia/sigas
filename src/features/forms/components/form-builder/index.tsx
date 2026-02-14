@@ -90,8 +90,8 @@ export const FormBuilder = forwardRef<
     resolver: zodResolver(createFormSchema),
     mode: "onChange",
     defaultValues: {
-      title: t("create.form_builder.form.title"),
-      description: t("create.form_builder.form.description"),
+      title: t("create.form_builder.form.defaultValues.title"),
+      description: t("create.form_builder.form.defaultValues.description"),
       status: "Rascunho" as const,
       owner: "Carlos Silva",
       projectId: "",
@@ -124,7 +124,7 @@ export const FormBuilder = forwardRef<
         setProjectId(existingForm.projectId || "__empty__");
         form.reset({
           title: existingForm.title,
-          description: existingForm.description || t("create.form_builder.form.description"),
+          description: existingForm.description || t("create.form_builder.form.defaultValues.description"),
           status: (existingForm.status as any) || "Rascunho",
           owner: existingForm.owner,
           projectId: existingForm.projectId || "",
@@ -140,7 +140,7 @@ export const FormBuilder = forwardRef<
   }, [title, form]);
 
   useEffect(() => {
-    form.setValue("description", description || t("create.form_builder.form.description"), {
+    form.setValue("description", description || t("create.form_builder.form.defaultValues.description"), {
       shouldValidate: true,
     });
   }, [description, form]);
@@ -302,7 +302,7 @@ export const FormBuilder = forwardRef<
                               <Input
                                 {...field}
                                 className="text-xl md:text-3xl font-bold border-none shadow-none focus-visible:ring-0 p-0 h-auto bg-transparent"
-                                placeholder={t("create.form_builder.form.control.title")}
+                                placeholder={t("create.form_builder.form.title.placeholder")}
                                 value={title}
                                 onChange={(e) => {
                                   setTitle(e.target.value);
@@ -328,7 +328,7 @@ export const FormBuilder = forwardRef<
                               <Input
                                 {...field}
                                 className="text-sm border-none shadow-none focus-visible:ring-0 p-0 h-auto bg-transparent text-muted-foreground"
-                                placeholder={t("create.form_builder.form.control.description")}
+                                placeholder={t("create.form_builder.form.description.placeholder")}
                                 value={description}
                                 onChange={(e) => {
                                   setDescription(e.target.value);
@@ -355,7 +355,7 @@ export const FormBuilder = forwardRef<
                               htmlFor="project-select"
                               className="text-sm font-medium"
                             >
-                              {t("create.form_builder.form.control.project.title")}
+                              {t("create.form_builder.form.project.title")}
                             </Label>
                             <FormControl>
                               <Select
@@ -374,12 +374,12 @@ export const FormBuilder = forwardRef<
                                     fieldState.error ? "border-destructive" : ""
                                   }
                                 >
-                                  <SelectValue placeholder={t("create.form_builder.form.control.project.placeholder")} />
+                                  <SelectValue placeholder={t("create.form_builder.form.project.placeholder")} />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {!initialId && (
                                     <SelectItem value="__empty__">
-                                      {t("create.form_builder.form.control.project.empty")}
+                                      {t("create.form_builder.form.project.empty")}
                                     </SelectItem>
                                   )}
                                   {projects.map((project) => (
@@ -404,7 +404,7 @@ export const FormBuilder = forwardRef<
                               projectId &&
                               !initialId && (
                                 <p className="text-xs text-muted-foreground">
-                                  {t("create.form_builder.form.control.project.preselected")}
+                                  {t("create.form_builder.form.project.preselected")}
                                 </p>
                               )}
                           </FormItem>
@@ -415,7 +415,7 @@ export const FormBuilder = forwardRef<
                         <Alert className="mt-4 border-amber-200 bg-amber-50">
                           <AlertCircle className="h-4 w-4 text-amber-600" />
                           <AlertDescription className="text-amber-800">
-                            {t("create.form_builder.form.control.project.questions.alert")}
+                            {t("create.form_builder.form.questions.alert")}
                           </AlertDescription>
                         </Alert>
                       )}
@@ -521,10 +521,10 @@ export const FormBuilder = forwardRef<
                       <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed rounded-xl text-muted-foreground bg-muted/5 px-6 text-center">
                         <Plus className="mb-4 opacity-20" size={48} />
                         <p className="text-base font-medium">
-                          {t("create.form_builder.form.control.project.questions.empty.title")}
+                          {t("create.form_builder.form.questions.empty.title")}
                         </p>
                         <p className="text-sm">
-                          {t("create.form_builder.form.control.project.questions.empty.description")}
+                          {t("create.form_builder.form.questions.empty.description")}
                         </p>
                       </div>
                     )}

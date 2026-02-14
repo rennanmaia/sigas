@@ -1,7 +1,14 @@
 import React from "react";
 import { Users, Bird } from "lucide-react";
 
-export type ProjectStatus = "ativo" | "cancelado" | "pausado" | "finalizado";
+export const PROJECT_STATUS = {
+  active: "active",
+  paused: "paused",
+  finished: "finished",
+  canceled: "canceled",
+  expired: "expired",
+}
+export type ProjectStatus = keyof typeof PROJECT_STATUS;
 export type ProjectCategory = "Ambiental" | "Social";
 
 export const projectTeam = [
@@ -72,7 +79,7 @@ export let projects: Project[] = [
     title: "Monitoramento de Fauna (BR-101)",
     company: "Empresa Exemplo LTDA",
     logo: <Bird className="text-emerald-600" size={20} />,
-    status: "ativo",
+    status: "active",
     description:
       "Coleta de dados sobre atropelamento e avistamento de animais silvestres no trecho sul.",
     category: "Ambiental",
@@ -94,7 +101,7 @@ export let projects: Project[] = [
     title: "Censo Socioeconômico - Vila Nova",
     company: "Empresa Exemplo LTDA",
     logo: <Users className="text-blue-600" size={20} />,
-    status: "finalizado",
+    status: "finished",
     description:
       "Levantamento demográfico e perfil de renda das famílias afetadas pela obra da barragem.",
     category: "Social",
@@ -116,7 +123,7 @@ export let projects: Project[] = [
     title: "Monitoramento de Qualidade da Água",
     company: "Empresa Exemplo LTDA",
     logo: <Bird className="text-cyan-600" size={20} />,
-    status: "pausado",
+    status: "paused",
     description:
       "Análise periódica da qualidade da água em pontos estratégicos da bacia hidrográfica.",
     category: "Ambiental",
@@ -138,7 +145,7 @@ export let projects: Project[] = [
     title: "Reassentamento Comunidade Ribeirinha",
     company: "Empresa Exemplo LTDA",
     logo: <Users className="text-purple-600" size={20} />,
-    status: "cancelado",
+    status: "canceled",
     description:
       "Projeto de reassentamento e acompanhamento social das famílias ribeirinhas afetadas.",
     category: "Social",
@@ -160,7 +167,7 @@ export let projects: Project[] = [
     title: "Inventário Florestal - Mata Atlântica",
     company: "Empresa Exemplo LTDA",
     logo: <Bird className="text-green-600" size={20} />,
-    status: "ativo",
+    status: "active",
     description:
       "Levantamento e catalogação de espécies arbóreas na área de preservação permanente.",
     category: "Ambiental",

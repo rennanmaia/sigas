@@ -4,7 +4,6 @@ import { initReactI18next } from "react-i18next";
 import { ptBR } from "./locales/pt-BR"
 import { enUS } from "./locales/en-US"
 
-// Get saved language from localStorage or use default
 const getSavedLanguage = () => {
   if (typeof window !== 'undefined') {
     return localStorage.getItem('i18nLanguage') || "pt-BR";
@@ -30,9 +29,14 @@ i18n
     }
   });
 
-// Save language to localStorage whenever it changes
+// Persist language preference to localStorage whenever it changes
 i18n.on('languageChanged', (lng) => {
-  localStorage.setItem('i18nLanguage', lng);
-});
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('i18nLanguage', lng);
+    // Update HTML lang attribute
+    document.documentElement.lang = lng;
 
+    window.dispatchEvent(new CustomEvent('i18nLanguageChanged', { detail: { language: lng } }));
+  }
+});
 export default i18n;

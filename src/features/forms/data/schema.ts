@@ -3,7 +3,7 @@ import { t as i18next } from "i18next";
 
 const optionSchema = z.object({
   id: z.string(),
-  label: z.string().min(1, i18next("forms:create.form_builder.options.label.validation.required")),
+  label: z.string().min(1, i18next("forms:create.form_builder.form.questions.options.label.validation.required")),
 });
 
 const validationSchema = z.object({
@@ -16,7 +16,7 @@ const questionSchema = z
   .object({
     id: z.string(),
     type: z.string(),
-    label: z.string().min(1, i18next("forms:create.form_builder.questions.label.validation.required")),
+    label: z.string().min(1, i18next("forms:create.form_builder.form.questions.label.validation.required")),
     required: z.boolean().default(false),
     options: z.array(optionSchema).optional(),
     validations: validationSchema.optional(),
@@ -30,7 +30,7 @@ const questionSchema = z
       return true;
     },
     {
-      message: i18next("forms:create.form_builder.questions.options.validation.minLength"),
+      message: i18next("forms:create.form_builder.form.questions.options.validation.minLength"),
       path: ["options"],
     },
   );
@@ -38,11 +38,11 @@ const questionSchema = z
 export const createFormSchema = z.object({
   title: z
     .string()
-    .min(3, i18next("forms:create.form_builder.title.validation.minLength"))
-    .max(100, i18next("forms:create.form_builder.title.validation.maxLength")),
+    .min(3, i18next("forms:create.form_builder.form.title.validation.minLength"))
+    .max(100, i18next("forms:create.form_builder.form.title.validation.maxLength")),
   description: z
     .string()
-    .min(5, i18next("forms:create.form_builder.description.validation.minLength")),
+    .min(5, i18next("forms:create.form_builder.form.description.validation.minLength")),
   status: z
     .enum(["Ativo", "Rascunho", "Arquivado", "Concluído"])
     .default("Rascunho"),
@@ -50,7 +50,7 @@ export const createFormSchema = z.object({
   projectId: z.string(),
   questions: z
     .array(questionSchema)
-    .min(1, i18next("forms:create.form_builder.questions.validation.minLength")),
+    .min(1, i18next("forms:create.form_builder.form.questions.validation.minLength")),
 });
 
 export type CreateFormValues = z.infer<typeof createFormSchema>;

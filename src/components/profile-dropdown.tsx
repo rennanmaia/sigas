@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { SignOutDialog } from '@/components/sign-out-dialog'
+import { LanguageSwitch } from '@/components/language-switch'
 
 export function ProfileDropdown() {
   const [open, setOpen] = useDialogState()
@@ -68,6 +69,11 @@ export function ProfileDropdown() {
               ⇧⌘Q
             </DropdownMenuShortcut>
           </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <div className='px-2 py-1.5'>
+            <div className='text-xs text-muted-foreground mb-2'>Language</div>
+            <LanguageSwitch />
+          </div>
         </DropdownMenuContent>
       </DropdownMenu>
 

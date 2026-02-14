@@ -113,22 +113,51 @@ export const ptBR: I18nResource = {
         create: {
             form_builder: {
                 form: {
-                    title: "Formulário sem título",
-                    description: "Formulário sem descrição",
-                    control: {
+                    defaultValues: {
                         title: "Título do Formulário",
                         description: "Descrição ou instruções...",
-                        project: {
-                            title: "Projeto vinculado *",
-                            empty: "Nenhum (criar como rascunho)",
-                            placeholder: "Selecione um projeto",
-                            preselected: "Projeto pré-selecionado e não pode ser alterado",
-                            questions: {
-                                alert: "Adicione pelo menos uma pergunta ao formulário antes de salvá-lo.",
-                                empty: {
-                                    title: "Seu formulário está vazio.",
-                                    description: "Selecione um tipo de questão para começar."
+                    },
+                    title: {
+                        placeholder: "Título do Formulário",
+                        validation: {
+                            minLength: "O título deve ter pelo menos 3 caracteres",
+                            maxLength: "O título não deve exceder 100 caracteres"
+                        }
+                    },
+                    description: {
+                        placeholder: "Descrição do Formulário",
+                        validation: {
+                            minLength: "A descrição deve ter pelo menos 5 caracteres"
+                        }
+                    },
+                    project: {
+                        title: "Projeto vinculado *",
+                        empty: "Nenhum (criar como rascunho)",
+                        placeholder: "Selecione um projeto",
+                        preselected: "Projeto pré-selecionado e não pode ser alterado",
+                    },
+                    questions: {
+                        label: {
+                            validation: {
+                                required: "O título da pergunta é obrigatório"
+                            }
+                        },
+                        validation: {
+                            minLength: "O formulário deve ter pelo menos uma pergunta"
+                        },
+                        alert: "Adicione pelo menos uma pergunta ao formulário antes de salvá-lo.",
+                        empty: {
+                            title: "Seu formulário está vazio.",
+                            description: "Selecione um tipo de questão para começar."
+                        },
+                        options: {
+                            label: {
+                                validation: {
+                                    required: "O texto da opção é obrigatório"
                                 }
+                            },
+                            validation: {
+                                minLength: "Deve ter pelo menos 2 opções"
                             }
                         }
                     }
@@ -198,6 +227,7 @@ export const ptBR: I18nResource = {
         },
         create: {
             title: "Criar novo Perfil",
+            description: "Crie um novo perfil para organizar seus usuários e definir suas permissões.",
             form: {
                 name: {
                     label: "Nome do Perfil",

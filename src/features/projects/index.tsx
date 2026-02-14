@@ -26,15 +26,9 @@ import { Search } from "@/components/search";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { LanguageSwitch } from "@/components/language-switch";
 import { ProjectsProvider, useProjects } from "./components/projects-provider";
+import { PROJECT_STATUS, type ProjectStatus } from "./data/projects-mock";
 
 const route = getRouteApi("/_authenticated/projects/");
-type ProjectType =
-  | "all"
-  | "ativo"
-  | "pausado"
-  | "finalizado"
-  | "cancelado"
-  | "expirado";
 
 function ProjectsList() {
   const { t } = useTranslation("projects");
@@ -47,7 +41,7 @@ function ProjectsList() {
   const navigate = route.useNavigate();
 
   const [sort, setSort] = useState(initSort);
-  const [projectType, setProjectType] = useState(type as ProjectType);
+  const [projectType, setProjectType] = useState(type as ProjectStatus | "all");
   const [searchTerm, setSearchTerm] = useState(filter);
 
   const filteredProjects = projectsData
@@ -58,9 +52,9 @@ function ProjectsList() {
     )
     .filter((project) => {
       if (projectType === "all") return true;
-      if (projectType === "expirado") {
+      if (projectType === "expired") {
         return (
-          project.status === "ativo" && new Date(project.endDate) < new Date()
+          project.status === "active" && new Date(project.endDate) < new Date()
         );
       }
       return project.status === projectType;
@@ -76,7 +70,7 @@ function ProjectsList() {
     });
   };
 
-  const handleTypeChange = (value: ProjectType) => {
+  const handleTypeChange = (value: ProjectStatus | "all") => {
     setProjectType(value);
     navigate({
       search: (prev) => ({
@@ -134,7 +128,7 @@ function ProjectsList() {
             />
             <Select
               value={projectType}
-              onValueChange={(v) => handleTypeChange(v as ProjectType)}
+              onValueChange={(v) => handleTypeChange(v as ProjectStatus | "all")}
             >
               <SelectTrigger className="w-36">
                 <SelectValue>{t(`list.filters.${projectType}`)}</SelectValue>
@@ -180,7 +174,7 @@ function ProjectsList() {
         <ul className="faded-bottom no-scrollbar grid gap-4 overflow-auto pt-4 pb-16 md:grid-cols-2 lg:grid-cols-3">
           {filteredProjects.map((project) => {
             const isExpired =
-              project.status === "ativo" &&
+              project.status === PROJECT_STATUS.active &&
               new Date(project.endDate) < new Date();
             return (
               <li key={project.id}>
@@ -199,26 +193,26 @@ function ProjectsList() {
                       className={
                         isExpired
                           ? "border-orange-300 bg-orange-50 text-orange-700"
-                          : project.status === "finalizado"
+                          : project.status === PROJECT_STATUS.finished
                             ? "border-green-300 bg-green-50 text-green-700"
-                            : project.status === "ativo"
+                            : project.status === PROJECT_STATUS.active
                               ? "border-blue-300 bg-blue-50 text-blue-700"
-                              : project.status === "pausado"
+                              : project.status === PROJECT_STATUS.paused
                                 ? "border-yellow-300 bg-yellow-50 text-yellow-700"
-                                : project.status === "cancelado"
+                                : project.status === PROJECT_STATUS.canceled
                                   ? "border-red-300 bg-red-50 text-red-700"
                                   : ""
                       }
                     >
                       {isExpired
                         ? "Expirado"
-                        : project.status === "finalizado"
+                        : project.status === PROJECT_STATUS.finished
                           ? "Finalizado"
-                          : project.status === "ativo"
+                          : project.status === PROJECT_STATUS.active
                             ? "Ativo"
-                            : project.status === "pausado"
+                            : project.status === PROJECT_STATUS.paused
                               ? "Pausado"
-                              : project.status === "cancelado"
+                              : project.status === PROJECT_STATUS.canceled
                                 ? "Cancelado"
                                 : project.status}
                     </Button>
