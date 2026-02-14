@@ -244,7 +244,7 @@ function ProjectDetailsContent() {
   const timeProgress = calculateTimeProgress();
 
   const isExpired =
-    project.status === "ativo" && new Date(project.endDate) < new Date();
+    project.status === "active" && new Date(project.endDate) < new Date();
 
   const responsibleMember = useMemo(() => {
     const user = users.find(
@@ -291,10 +291,11 @@ function ProjectDetailsContent() {
   };
 
   const statusLabels: Record<typeof project.status, string> = {
-    ativo: "Ativo",
-    pausado: "Pausado",
-    finalizado: "Finalizado",
-    cancelado: "Cancelado",
+    active: "Ativo",
+    paused: "Pausado",
+    finished: "Finalizado",
+    canceled: "Cancelado",
+    expired: "Expirado",
   };
 
   const handleStatusChange = (newStatus: typeof project.status) => {

@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useTranslation } from "react-i18next";
 import { t as i18next } from "i18next";
 import { Link } from "@tanstack/react-router";
 import { showSubmittedData } from "@/lib/show-submitted-data";
@@ -28,9 +27,9 @@ import { Textarea } from "@/components/ui/textarea";
 
 const profileFormSchema = z.object({
   username: z
-    .string(i18next("settings:profile.form.username.validation.required"))
-    .min(2, i18next("settings:profile.form.username.validation.invalid"))
-    .max(30, i18next("settings:profile.form.username.validation.maxLength")),
+    .string(i18next("settings:profile.form.name.validation.required"))
+    .min(2, i18next("settings:profile.form.name.validation.invalid"))
+    .max(30, i18next("settings:profile.form.name.validation.maxLength")),
   email: z.email({
     error: (iss) =>
       iss.input === undefined

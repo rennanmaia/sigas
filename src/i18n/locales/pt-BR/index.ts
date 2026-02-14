@@ -473,7 +473,9 @@ export const ptBR: I18nResource = {
                     label: "Nome",
                     placeholder: "Seu nome completo",
                     validation: {
-                        required: "Nome é obrigatório"
+                        required: "Nome é obrigatório",
+                        invalid: "O nome deve ter entre 2 e 30 caracteres",
+                        maxLength: "O nome deve ter entre 2 e 30 caracteres"
                     }
                 },
                 email: {

@@ -473,7 +473,9 @@ export const enUS: I18nResource = {
                     label: "Name",
                     placeholder: "Your full name",
                     validation: {
-                        required: "Name is required"
+                        required: "Name is required",
+                        invalid: "Name must be between 2 and 30 characters",
+                        maxLength: "Name must be between 2 and 30 characters"
                     }
                 },
                 email: {

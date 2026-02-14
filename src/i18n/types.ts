@@ -465,6 +465,8 @@ export type I18nResource = {
           placeholder: string;
           validation: {
             required: string;
+            invalid: string;
+            maxLength: string;
           }
         },
         email: {

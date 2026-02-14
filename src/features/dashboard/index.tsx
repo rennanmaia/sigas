@@ -18,7 +18,6 @@ import { LanguageSwitch } from "@/components/language-switch";
 import { Analytics } from "./components/analytics";
 import { Overview } from "./components/overview";
 import { RecentSales } from "./components/recent-sales";
-import { t as i18Next } from "i18next";
 import { useTranslation } from "react-i18next";
 
 

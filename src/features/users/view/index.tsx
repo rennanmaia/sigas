@@ -6,11 +6,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Clock, Fingerprint, Mail, Phone, ShieldCheck, User } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useTranslation } from "react-i18next";
 import UserStatusBadge from "../components/user-status-badge";
 
 export default function ViewUser({ id }: { id?: string }) {
-    const { t } = useTranslation("common");
     const {
         users
     } = useUsersStore();
@@ -20,9 +18,9 @@ export default function ViewUser({ id }: { id?: string }) {
         return (
             <Main className="flex items-center justify-center h-full">
             <div className="text-center">
-                <h2 className="text-lg font-semibold">User not found!</h2>
+                <h2 className="text-lg font-semibold">Usuário não encontrado!</h2>
                 <Link to="/users" className="text-primary hover:underline">
-                Back to list
+                Voltar para a lista
                 </Link>
             </div>
             </Main>
