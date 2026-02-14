@@ -1,5 +1,6 @@
 import { type ChangeEvent, useState } from "react";
 import { getRouteApi, Link } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 import {
   SlidersHorizontal,
   ArrowUpAZ,
@@ -23,27 +24,14 @@ import { Main } from "@/components/layout/main";
 import { ProfileDropdown } from "@/components/profile-dropdown";
 import { Search } from "@/components/search";
 import { ThemeSwitch } from "@/components/theme-switch";
+import { LanguageSwitch } from "@/components/language-switch";
 import { ProjectsProvider, useProjects } from "./components/projects-provider";
+import { PROJECT_STATUS, type ProjectStatus } from "./data/projects-mock";
 
 const route = getRouteApi("/_authenticated/projects/");
-type ProjectType =
-  | "all"
-  | "ativo"
-  | "pausado"
-  | "finalizado"
-  | "cancelado"
-  | "expirado";
-
-const projectText = new Map<ProjectType, string>([
-  ["all", "Todos os projetos"],
-  ["ativo", "Ativos"],
-  ["pausado", "Pausados"],
-  ["finalizado", "Finalizados"],
-  ["cancelado", "Cancelados"],
-  ["expirado", "Expirados"],
-]);
 
 function ProjectsList() {
+  const { t } = useTranslation("projects");
   const { projects: projectsData } = useProjects();
   const {
     filter = "",
@@ -53,7 +41,7 @@ function ProjectsList() {
   const navigate = route.useNavigate();
 
   const [sort, setSort] = useState(initSort);
-  const [projectType, setProjectType] = useState(type as ProjectType);
+  const [projectType, setProjectType] = useState(type as ProjectStatus | "all");
   const [searchTerm, setSearchTerm] = useState(filter);
 
   const filteredProjects = projectsData
@@ -64,9 +52,9 @@ function ProjectsList() {
     )
     .filter((project) => {
       if (projectType === "all") return true;
-      if (projectType === "expirado") {
+      if (projectType === "expired") {
         return (
-          project.status === "ativo" && new Date(project.endDate) < new Date()
+          project.status === "active" && new Date(project.endDate) < new Date()
         );
       }
       return project.status === projectType;
@@ -82,7 +70,7 @@ function ProjectsList() {
     });
   };
 
-  const handleTypeChange = (value: ProjectType) => {
+  const handleTypeChange = (value: ProjectStatus | "all") => {
     setProjectType(value);
     navigate({
       search: (prev) => ({
@@ -102,6 +90,7 @@ function ProjectsList() {
       <Header>
         <Search />
         <div className="ms-auto flex items-center gap-4">
+          <LanguageSwitch />
           <ThemeSwitch />
           <ConfigDrawer />
           <ProfileDropdown />
@@ -111,19 +100,19 @@ function ProjectsList() {
       <Main className="flex flex-1 flex-col gap-4 sm:gap-1">
         <div className="flex flex-wrap items-end justify-between gap-2">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Projetos</h1>
-            <p className="text-muted-foreground">Gerencie seus projetos</p>
+            <h1 className="text-2xl font-bold tracking-tight">{t("list.title")}</h1>
+            <p className="text-muted-foreground">{t("list.description")}</p>
           </div>
           <div className="flex gap-2">
             <Button variant="outline" className="space-x-0" asChild>
               <Link to="/projects/logs">
                 <History size={18} />
-                <span>Histórico</span>
+                <span>{t("list.buttons.logs")}</span>
               </Link>
             </Button>
             <Button className="space-x-1" asChild>
               <Link to="/projects/create">
-                <span>Criar projeto</span> <Folder size={18} />
+                <span>{t("list.buttons.new")}</span> <Folder size={18} />
               </Link>
             </Button>
           </div>
@@ -132,25 +121,25 @@ function ProjectsList() {
         <div className="my-4 flex items-end justify-between sm:my-0 sm:items-center">
           <div className="flex flex-col gap-4 sm:my-4 sm:flex-row">
             <Input
-              placeholder="Procurar projetos..."
+              placeholder={t("list.searchPlaceholder")}
               className="h-9 w-40 lg:w-[250px]"
               value={searchTerm}
               onChange={handleSearch}
             />
             <Select
               value={projectType}
-              onValueChange={(v) => handleTypeChange(v as ProjectType)}
+              onValueChange={(v) => handleTypeChange(v as ProjectStatus | "all")}
             >
               <SelectTrigger className="w-36">
-                <SelectValue>{projectText.get(projectType)}</SelectValue>
+                <SelectValue>{t(`list.filters.${projectType}`)}</SelectValue>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Todos os projetos</SelectItem>
-                <SelectItem value="ativo">Ativos</SelectItem>
-                <SelectItem value="pausado">Pausados</SelectItem>
-                <SelectItem value="finalizado">Finalizados</SelectItem>
-                <SelectItem value="cancelado">Cancelados</SelectItem>
-                <SelectItem value="expirado">Expirados</SelectItem>
+                <SelectItem value="all">{t("list.filters.all")}</SelectItem>
+                <SelectItem value="ativo">{t("list.filters.active")}</SelectItem>
+                <SelectItem value="pausado">{t("list.filters.paused")}</SelectItem>
+                <SelectItem value="finalizado">{t("list.filters.finished")}</SelectItem>
+                <SelectItem value="cancelado">{t("list.filters.canceled")}</SelectItem>
+                <SelectItem value="expirado">{t("list.filters.expired")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -185,7 +174,7 @@ function ProjectsList() {
         <ul className="faded-bottom no-scrollbar grid gap-4 overflow-auto pt-4 pb-16 md:grid-cols-2 lg:grid-cols-3">
           {filteredProjects.map((project) => {
             const isExpired =
-              project.status === "ativo" &&
+              project.status === PROJECT_STATUS.active &&
               new Date(project.endDate) < new Date();
             return (
               <li key={project.id}>
@@ -204,26 +193,26 @@ function ProjectsList() {
                       className={
                         isExpired
                           ? "border-orange-300 bg-orange-50 text-orange-700"
-                          : project.status === "finalizado"
+                          : project.status === PROJECT_STATUS.finished
                             ? "border-green-300 bg-green-50 text-green-700"
-                            : project.status === "ativo"
+                            : project.status === PROJECT_STATUS.active
                               ? "border-blue-300 bg-blue-50 text-blue-700"
-                              : project.status === "pausado"
+                              : project.status === PROJECT_STATUS.paused
                                 ? "border-yellow-300 bg-yellow-50 text-yellow-700"
-                                : project.status === "cancelado"
+                                : project.status === PROJECT_STATUS.canceled
                                   ? "border-red-300 bg-red-50 text-red-700"
                                   : ""
                       }
                     >
                       {isExpired
                         ? "Expirado"
-                        : project.status === "finalizado"
+                        : project.status === PROJECT_STATUS.finished
                           ? "Finalizado"
-                          : project.status === "ativo"
+                          : project.status === PROJECT_STATUS.active
                             ? "Ativo"
-                            : project.status === "pausado"
+                            : project.status === PROJECT_STATUS.paused
                               ? "Pausado"
-                              : project.status === "cancelado"
+                              : project.status === PROJECT_STATUS.canceled
                                 ? "Cancelado"
                                 : project.status}
                     </Button>

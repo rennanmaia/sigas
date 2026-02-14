@@ -14,11 +14,44 @@ import { TopNav } from "@/components/layout/top-nav";
 import { ProfileDropdown } from "@/components/profile-dropdown";
 import { Search } from "@/components/search";
 import { ThemeSwitch } from "@/components/theme-switch";
+import { LanguageSwitch } from "@/components/language-switch";
 import { Analytics } from "./components/analytics";
 import { Overview } from "./components/overview";
 import { RecentSales } from "./components/recent-sales";
+import { t as i18Next } from "i18next";
+import { useTranslation } from "react-i18next";
+
 
 export function Dashboard() {
+  const { t } = useTranslation("common")
+  const { t: tDashboard } = useTranslation("dashboard")
+
+  const topNav = [
+    {
+      title: tDashboard("tabs.nav.overview"),
+      href: "dashboard/overview",
+      isActive: true,
+      disabled: false,
+    },
+    {
+      title: tDashboard("tabs.nav.costumers"),
+      href: "dashboard/customers",
+      isActive: false,
+      disabled: true,
+    },
+    {
+      title: tDashboard("tabs.nav.products"),
+      href: "dashboard/products",
+      isActive: false,
+      disabled: true,
+    },
+    {
+      title: tDashboard("tabs.nav.settings"),
+      href: "dashboard/settings",
+      isActive: false,
+      disabled: true,
+    },
+  ];
   return (
     <>
       {/* ===== Top Heading ===== */}
@@ -26,6 +59,7 @@ export function Dashboard() {
         <TopNav links={topNav} />
         <div className="ms-auto flex items-center space-x-4">
           <Search />
+          <LanguageSwitch />
           <ThemeSwitch />
           <ConfigDrawer />
           <ProfileDropdown />
@@ -35,9 +69,9 @@ export function Dashboard() {
       {/* ===== Main ===== */}
       <Main>
         <div className="mb-2 flex items-center justify-between space-y-2">
-          <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+          <h1 className="text-2xl font-bold tracking-tight">{tDashboard("title")}</h1>
           <div className="flex items-center space-x-2">
-            <Button>Download</Button>
+            <Button>{t("buttons.download")}</Button>
           </div>
         </div>
         <Tabs
@@ -47,13 +81,13 @@ export function Dashboard() {
         >
           <div className="w-full overflow-x-auto pb-2">
             <TabsList>
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="analytics">Analytics</TabsTrigger>
+              <TabsTrigger value="overview">{tDashboard("tabs.overview")}</TabsTrigger>
+              <TabsTrigger value="analytics">{tDashboard("tabs.analytics")}</TabsTrigger>
               <TabsTrigger value="reports" disabled>
-                Reports
+                {tDashboard("tabs.reports")}
               </TabsTrigger>
               <TabsTrigger value="notifications" disabled>
-                Notifications
+                {tDashboard("tabs.notifications")}
               </TabsTrigger>
             </TabsList>
           </div>
@@ -191,30 +225,3 @@ export function Dashboard() {
     </>
   );
 }
-
-const topNav = [
-  {
-    title: "Overview",
-    href: "dashboard/overview",
-    isActive: true,
-    disabled: false,
-  },
-  {
-    title: "Customers",
-    href: "dashboard/customers",
-    isActive: false,
-    disabled: true,
-  },
-  {
-    title: "Products",
-    href: "dashboard/products",
-    isActive: false,
-    disabled: true,
-  },
-  {
-    title: "Settings",
-    href: "dashboard/settings",
-    isActive: false,
-    disabled: true,
-  },
-];

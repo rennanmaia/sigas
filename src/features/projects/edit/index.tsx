@@ -1,5 +1,6 @@
 import { useParams, useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Main } from "@/components/layout/main";
 import { Header } from "@/components/layout/header";
@@ -9,13 +10,14 @@ import { projectTeam } from "../data/projects-mock";
 import type { ProjectForm as ProjectFormValues } from "../data/schema";
 
 export default function EditProject() {
+  const { t } = useTranslation("projects");
   const navigate = useNavigate();
   const { projectId } = useParams({
     from: "/_authenticated/projects/$projectId/edit",
   });
   const { projects, setProjects, addLog } = useProjects();
   const project = projects.find((p) => p.id === projectId);
-  if (!project) return <div>Projeto não encontrado</div>;
+  if (!project) return <div>Project not found</div>;
   const onUpdate = (values: ProjectFormValues) => {
     const projectIndex = projects.findIndex((p) => p.id === projectId);
 
@@ -95,16 +97,16 @@ export default function EditProject() {
   return (
     <>
       <Header fixed>
-        <h1 className="text-sm font-medium">Editar Projeto</h1>
+        <h1 className="text-sm font-medium">{t("edit.title")}</h1>
       </Header>
       <Main>
         <Card>
           <CardHeader>
-            <CardTitle>Editar: {project.title}</CardTitle>
+            <CardTitle>Edit: {project.title}</CardTitle>
           </CardHeader>
           <CardContent>
             <ProjectForm
-              submitLabel="Salvar Alterações"
+              submitLabel="Save Changes"
               initialData={project}
               onSubmit={onUpdate}
             />

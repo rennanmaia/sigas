@@ -1,8 +1,9 @@
 import { z } from "zod";
+import { t as i18next } from "i18next";
 
 const optionSchema = z.object({
   id: z.string(),
-  label: z.string().min(1, "A opção não pode estar vazia"),
+  label: z.string().min(1, i18next("forms:create.form_builder.form.questions.options.label.validation.required")),
 });
 
 const validationSchema = z.object({
@@ -15,7 +16,7 @@ const questionSchema = z
   .object({
     id: z.string(),
     type: z.string(),
-    label: z.string().min(1, "A pergunta não pode estar vazia"),
+    label: z.string().min(1, i18next("forms:create.form_builder.form.questions.label.validation.required")),
     required: z.boolean().default(false),
     options: z.array(optionSchema).optional(),
     validations: validationSchema.optional(),
@@ -29,7 +30,7 @@ const questionSchema = z
       return true;
     },
     {
-      message: "Deve ter pelo menos 2 opções",
+      message: i18next("forms:create.form_builder.form.questions.options.validation.minLength"),
       path: ["options"],
     },
   );
@@ -37,11 +38,11 @@ const questionSchema = z
 export const createFormSchema = z.object({
   title: z
     .string()
-    .min(3, "O título deve ter pelo menos 3 caracteres")
-    .max(100),
+    .min(3, i18next("forms:create.form_builder.form.title.validation.minLength"))
+    .max(100, i18next("forms:create.form_builder.form.title.validation.maxLength")),
   description: z
     .string()
-    .min(5, "A descrição deve ter pelo menos 5 caracteres"),
+    .min(5, i18next("forms:create.form_builder.form.description.validation.minLength")),
   status: z
     .enum(["Ativo", "Rascunho", "Arquivado", "Concluído"])
     .default("Rascunho"),
@@ -49,7 +50,7 @@ export const createFormSchema = z.object({
   projectId: z.string(),
   questions: z
     .array(questionSchema)
-    .min(1, "O formulário deve ter pelo menos uma pergunta"),
+    .min(1, i18next("forms:create.form_builder.form.questions.validation.minLength")),
 });
 
 export type CreateFormValues = z.infer<typeof createFormSchema>;

@@ -7,6 +7,7 @@ import { LongText } from '@/components/long-text'
 import { roles } from '../data/data'
 import type { Profile } from '../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
+import { useTranslation } from 'react-i18next'
 
 export const profilesColumns: ColumnDef<Profile>[] = [
     {
@@ -38,10 +39,13 @@ export const profilesColumns: ColumnDef<Profile>[] = [
     },
     {
         accessorKey: 'label',
-        header: ({ column }) => <DataTableColumnHeader column={column} title='Role' />,
+        header: ({ column }) => {
+            const { t } = useTranslation("profiles")
+            return (<DataTableColumnHeader column={column} title={t("list.table.headers.role")} />)
+        },
         cell: ({ row }) => {
         const val = row.getValue('label') as string
-        const role = roles.find((r) => r.value === row.getValue('value'))
+        const role = roles.find((r) => r.value === val)
         const Icon = role?.icon
         return (
             <div className='flex items-center gap-x-2'>
@@ -54,16 +58,18 @@ export const profilesColumns: ColumnDef<Profile>[] = [
     },
     {
         accessorKey: 'description',
-        header: ({ column }) => (
-        <DataTableColumnHeader column={column} title='Description' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation("profiles")
+            return (<DataTableColumnHeader column={column} title={t("list.table.headers.description")} />)
+        },
         cell: ({ row }) => <LongText className='max-w-xl'>{row.getValue('description')}</LongText>,
     },
     {
         accessorKey: 'permissions',
-        header: ({ column }) => (
-        <DataTableColumnHeader column={column} title='Permissions' />
-        ),
+        header: ({ column }) => {
+            const { t } = useTranslation("profiles")
+            return (<DataTableColumnHeader column={column} title={t("list.table.headers.permissions")} />)
+        },
         cell: ({ row }) => {
         const perms = (row.getValue('permissions') || []) as string[]
         return <Badge variant='outline'>{perms.length}</Badge>

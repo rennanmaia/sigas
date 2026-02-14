@@ -7,6 +7,7 @@ import { type User } from "../data/schema";
 import { DataTableRowActions } from "./data-table-row-actions";
 import UserRolesBadge from "./user-roles-badge";
 import UserStatusBadge from "./user-status-badge";
+import { useTranslation } from 'react-i18next'
 
 export const usersColumns: ColumnDef<User>[] = [
   {
@@ -42,9 +43,10 @@ export const usersColumns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "username",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Username" />
-    ),
+    header: ({ column }) => {
+      const { t } = useTranslation("users")
+      return <DataTableColumnHeader column={column} title={t("list.table.headers.username")} />
+    },
     cell: ({ row }) => (
       <LongText className="max-w-36 ps-3">{row.getValue("username")}</LongText>
     ),
@@ -58,14 +60,18 @@ export const usersColumns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "cpf",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="CPF" />,
+    header: ({ column }) => {
+      const { t } = useTranslation("users")
+      return <DataTableColumnHeader column={column} title={t("list.table.headers.cpf")} />
+    },
     cell: ({ row }) => <div className="text-sm">{row.getValue('cpf')}</div>,
   },
   {
     id: "fullName",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Name" />
-    ),
+    header: ({ column }) => {
+      const { t } = useTranslation("users")
+      return <DataTableColumnHeader column={column} title={t("list.table.headers.fullName")} />
+    },
     cell: ({ row }) => {
       const { firstName, lastName } = row.original;
       const fullName = `${firstName} ${lastName}`;
@@ -75,18 +81,20 @@ export const usersColumns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "email",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Email" />
-    ),
+    header: ({ column }) => {
+      const { t } = useTranslation("users")
+      return <DataTableColumnHeader column={column} title={t("list.table.headers.email")} />
+    },
     cell: ({ row }) => (
       <div className="w-fit ps-2 text-nowrap">{row.getValue("email")}</div>
     ),
   },
   {
     accessorKey: "status",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Status" />
-    ),
+    header: ({ column }) => {
+      const { t } = useTranslation("users")
+      return <DataTableColumnHeader column={column} title={t("list.table.headers.status")} />
+    },
     cell: ({ row }) => {
       const { status } = row.original;
       return <UserStatusBadge status={status} />;
@@ -99,9 +107,10 @@ export const usersColumns: ColumnDef<User>[] = [
   },
   {
     accessorKey: "roles",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Profile" />
-    ),
+    header: ({ column }) => {
+      const { t } = useTranslation("users")
+      return <DataTableColumnHeader column={column} title={t("list.table.headers.roles")} />
+    },
     cell: ({ row }) => {
       const userRoles = (row.original.roles || []) as string[];
       return <UserRolesBadge userRoles={userRoles}/>

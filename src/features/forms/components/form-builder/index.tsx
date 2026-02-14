@@ -44,6 +44,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Trans, useTranslation } from "react-i18next";
 
 export interface FormBuilderRef {
   getFormData: () => {
@@ -72,6 +73,7 @@ export const FormBuilder = forwardRef<
     ...methods
   } = useFormBuilder();
   const { forms } = useForms();
+  const { t } = useTranslation("forms");
   const [isLoaded, setIsLoaded] = useState(!initialId);
   const [showingResponses, setShowingResponses] = useState(false);
   const [filteredResponses, setFilteredResponses] = useState<
@@ -88,8 +90,8 @@ export const FormBuilder = forwardRef<
     resolver: zodResolver(createFormSchema),
     mode: "onChange",
     defaultValues: {
-      title: "Formulário sem título",
-      description: "Formulário sem descrição",
+      title: t("create.form_builder.form.defaultValues.title"),
+      description: t("create.form_builder.form.defaultValues.description"),
       status: "Rascunho" as const,
       owner: "Carlos Silva",
       projectId: "",
@@ -122,7 +124,7 @@ export const FormBuilder = forwardRef<
         setProjectId(existingForm.projectId || "__empty__");
         form.reset({
           title: existingForm.title,
-          description: existingForm.description || "Formulário sem descrição",
+          description: existingForm.description || t("create.form_builder.form.defaultValues.description"),
           status: (existingForm.status as any) || "Rascunho",
           owner: existingForm.owner,
           projectId: existingForm.projectId || "",
@@ -138,7 +140,7 @@ export const FormBuilder = forwardRef<
   }, [title, form]);
 
   useEffect(() => {
-    form.setValue("description", description || "Formulário sem descrição", {
+    form.setValue("description", description || t("create.form_builder.form.defaultValues.description"), {
       shouldValidate: true,
     });
   }, [description, form]);
@@ -328,7 +330,7 @@ export const FormBuilder = forwardRef<
                               <Input
                                 {...field}
                                 className="text-xl md:text-3xl font-bold border-none shadow-none focus-visible:ring-0 p-0 h-auto bg-transparent"
-                                placeholder="Título do Formulário"
+                                placeholder={t("create.form_builder.form.title.placeholder")}
                                 value={title}
                                 onChange={(e) => {
                                   setTitle(e.target.value);
@@ -354,7 +356,7 @@ export const FormBuilder = forwardRef<
                               <Input
                                 {...field}
                                 className="text-sm border-none shadow-none focus-visible:ring-0 p-0 h-auto bg-transparent text-muted-foreground"
-                                placeholder="Descrição ou instruções..."
+                                placeholder={t("create.form_builder.form.description.placeholder")}
                                 value={description}
                                 onChange={(e) => {
                                   setDescription(e.target.value);
@@ -381,7 +383,7 @@ export const FormBuilder = forwardRef<
                               htmlFor="project-select"
                               className="text-sm font-medium"
                             >
-                              Projeto vinculado *
+                              {t("create.form_builder.form.project.title")}
                             </Label>
                             <FormControl>
                               <Select
@@ -400,12 +402,12 @@ export const FormBuilder = forwardRef<
                                     fieldState.error ? "border-destructive" : ""
                                   }
                                 >
-                                  <SelectValue placeholder="Selecione um projeto" />
+                                  <SelectValue placeholder={t("create.form_builder.form.project.placeholder")} />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {!initialId && (
                                     <SelectItem value="__empty__">
-                                      Nenhum (criar como rascunho)
+                                      {t("create.form_builder.form.project.empty")}
                                     </SelectItem>
                                   )}
                                   {projects.map((project) => (
@@ -430,8 +432,7 @@ export const FormBuilder = forwardRef<
                               projectId &&
                               !initialId && (
                                 <p className="text-xs text-muted-foreground">
-                                  Projeto pré-selecionado e não pode ser
-                                  alterado
+                                  {t("create.form_builder.form.project.preselected")}
                                 </p>
                               )}
                           </FormItem>
@@ -442,8 +443,7 @@ export const FormBuilder = forwardRef<
                         <Alert className="mt-4 border-amber-200 bg-amber-50">
                           <AlertCircle className="h-4 w-4 text-amber-600" />
                           <AlertDescription className="text-amber-800">
-                            Adicione pelo menos uma pergunta ao formulário antes
-                            de salvá-lo.
+                            {t("create.form_builder.form.questions.alert")}
                           </AlertDescription>
                         </Alert>
                       )}
@@ -549,10 +549,10 @@ export const FormBuilder = forwardRef<
                       <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed rounded-xl text-muted-foreground bg-muted/5 px-6 text-center">
                         <Plus className="mb-4 opacity-20" size={48} />
                         <p className="text-base font-medium">
-                          Seu formulário está vazio.
+                          {t("create.form_builder.form.questions.empty.title")}
                         </p>
                         <p className="text-sm">
-                          Selecione um tipo de questão para começar.
+                          {t("create.form_builder.form.questions.empty.description")}
                         </p>
                       </div>
                     )}
@@ -594,30 +594,21 @@ export const FormBuilder = forwardRef<
         open={showConfirmDialog}
         onOpenChange={setShowConfirmDialog}
         handleConfirm={handleConfirmSaveWithoutProject}
-        title="Salvar sem projeto vinculado?"
+        title={t("create.form_builder.dialog.confirm.title")}
         desc={
-          <div className="space-y-2">
-            <p>
-              Este formulário será criado <strong>SEM projeto vinculado</strong>
-              .
-            </p>
-            <div className="space-y-1 text-sm">
-              <p>Isso significa que:</p>
-              <ul className="list-disc list-inside space-y-1 ml-2">
-                <li>
-                  Ele será salvo como <strong>RASCUNHO</strong>
-                </li>
-                <li>
-                  <strong>NÃO</strong> poderá ser respondido
-                </li>
-                <li>Para ativá-lo, você precisará vinculá-lo a um projeto</li>
-              </ul>
-            </div>
-            <p className="mt-3">Deseja continuar mesmo assim?</p>
-          </div>
+          <Trans
+            i18nKey={"forms:create.form_builder.dialog.confirm.description" as any}
+            components={[
+              <p />,
+              <strong />,
+              <p className="text-sm font-medium" />,
+              <ul className="list-disc list-inside space-y-1 ml-2 text-sm" />,
+              <p className="mt-3" />,
+            ]}
+          />
         }
-        confirmText="Sim, salvar como rascunho"
-        cancelBtnText="Cancelar"
+        confirmText={t("create.form_builder.dialog.confirm.confirm")}
+        cancelBtnText={t("create.form_builder.dialog.confirm.cancel")}
       />
     </>
   );

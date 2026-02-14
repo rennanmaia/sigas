@@ -7,6 +7,7 @@ import { Header } from '@/components/layout/header'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { ThemeSwitch } from '@/components/theme-switch'
+import { LanguageSwitch } from '@/components/language-switch'
 import { featureGroups } from '@/features/features/data/features'
 import { profiles } from '@/features/profiles/data/profiles'
 
@@ -33,6 +34,7 @@ export default function ViewProfile({ profileId }: { profileId?: string }) {
           </Link>
         </div>
         <div className='ms-auto flex items-center space-x-4'>
+          <LanguageSwitch />
           <ThemeSwitch />
           <ConfigDrawer />
           <ProfileDropdown />

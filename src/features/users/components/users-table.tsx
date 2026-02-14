@@ -27,10 +27,12 @@ import { DataTableBulkActions } from './data-table-bulk-actions'
 import { usersColumns as columns } from './users-columns'
 import { getRouteApi } from '@tanstack/react-router'
 import { useUsersStore } from '@/stores/users-store'
+import { useTranslation } from 'react-i18next'
 
 const viewUserRoute = getRouteApi('/_authenticated/users/$id/');
 
 export function UsersTable({ search, navigate }: { search: Record<string, unknown>; navigate: NavigateFn }) {
+  const { t } = useTranslation("users")
   const { users: data } = useUsersStore()
   // Local UI-only states
   const [rowSelection, setRowSelection] = useState({})
@@ -56,7 +58,6 @@ export function UsersTable({ search, navigate }: { search: Record<string, unknow
     pagination: { defaultPage: 1, defaultPageSize: 10 },
     globalFilter: { enabled: false },
       columnFilters: [
-      // username per-column text filter
       { columnId: 'username', searchKey: 'username', type: 'string' },
       { columnId: 'status', searchKey: 'status', type: 'array' },
       { columnId: 'roles', searchKey: 'role', type: 'array' },
@@ -101,23 +102,22 @@ export function UsersTable({ search, navigate }: { search: Record<string, unknow
     >
       <DataTableToolbar
         table={table}
-        searchPlaceholder='Filter by name...'
+        searchPlaceholder={t("list.table.searchPlaceholder")}
         searchKey='username'
         filters={[
           {
             columnId: 'username',
-            title: 'Name',
-            // text filter is represented by searchKey; keeping here for discoverability
+            title: t("list.table.filters.name"),
             options: [],
           },
           {
             columnId: 'roles',
-            title: 'Profile',
+            title: t("list.table.filters.roles"),
             options: roles.map((role) => ({ label: role.label, value: role.value })),
           },
           {
             columnId: 'status',
-            title: 'Status',
+            title: t("list.table.filters.status"),
             options: [
               { label: 'Active', value: 'active' },
               { label: 'Inactive', value: 'inactive' },
@@ -187,7 +187,7 @@ export function UsersTable({ search, navigate }: { search: Record<string, unknow
                   colSpan={columns.length}
                   className='h-24 text-center'
                 >
-                  No results.
+                  {t("list.table.noResults")}
                 </TableCell>
               </TableRow>
             )}

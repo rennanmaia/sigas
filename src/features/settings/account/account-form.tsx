@@ -2,6 +2,8 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslation } from "react-i18next";
+import { t as i18next } from "i18next";
 import { showSubmittedData } from "@/lib/show-submitted-data";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -45,11 +47,11 @@ const languages = [
 const accountFormSchema = z.object({
   name: z
     .string()
-    .min(1, "POr favor insira seu nome")
-    .min(2, "O nome deve conter pelo menos 2 caracteres")
-    .max(30, "O nome não deve conter mais de 30 caracteres"),
-  dob: z.date("Please select your date of birth."),
-  language: z.string("Please select a language."),
+    .min(1, i18next("settings:account.form.name.validation.required"))
+    .min(2, i18next("settings:account.form.name.validation.minLength"))
+    .max(30, i18next("settings:account.form.name.validation.maxLength")),
+  dob: z.date(),
+  language: z.string(),
 });
 
 type AccountFormValues = z.infer<typeof accountFormSchema>;

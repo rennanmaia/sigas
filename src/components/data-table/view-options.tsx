@@ -8,7 +8,8 @@ import {
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu'
+import { useTranslation } from 'react-i18next'
 
 type DataTableViewOptionsProps<TData> = {
   table: Table<TData>;
@@ -17,6 +18,7 @@ type DataTableViewOptionsProps<TData> = {
 export function DataTableViewOptions<TData>({
   table,
 }: DataTableViewOptionsProps<TData>) {
+  const { t } = useTranslation("common")
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
@@ -25,12 +27,12 @@ export function DataTableViewOptions<TData>({
           size="sm"
           className="ms-auto hidden h-8 lg:flex"
         >
-          <MixerHorizontalIcon className="size-4" />
-          Visualizar
+          <MixerHorizontalIcon className='size-4' />
+          {t("table.viewOptions.title")}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-[150px]">
-        <DropdownMenuLabel>Alternar colunas</DropdownMenuLabel>
+      <DropdownMenuContent align='end' className='w-[150px]'>
+        <DropdownMenuLabel>{t("table.viewOptions.menuTitle")}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table
           .getAllColumns()
