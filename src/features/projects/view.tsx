@@ -104,6 +104,7 @@ function ProjectDetailsContent() {
   const [openUserProfile, setOpenUserProfile] = useState(false);
   const [availableForms, setAvailableForms] =
     useState<FormItem[]>(allAvailableForms);
+
   const { projectId } = useParams({
     from: "/_authenticated/projects/$projectId/",
   });
@@ -146,7 +147,44 @@ function ProjectDetailsContent() {
 
   const project = projectsData.find((p) => p.id === projectId);
 
-  if (!project)
+  const responsibleMember = useMemo(() => {
+    if (!project) return null;
+    const user = users.find(
+      (u) => `${u.firstName} ${u.lastName}` === project.responsible,
+    );
+    if (user) {
+      return {
+        id: user.id,
+        name: `${user.firstName} ${user.lastName}`,
+        role: user.roles.map((r) => getRoleLabel(r)).join(", "),
+        initial: getInitials(user.firstName, user.lastName),
+      };
+    }
+    return null;
+  }, [project?.responsible]);
+
+  const otherMembers = useMemo(() => {
+    if (!project) return [];
+    return users
+      .filter(
+        (u) =>
+          project.members?.includes(u.id) &&
+          `${u.firstName} ${u.lastName}` !== project.responsible,
+      )
+      .map((u) => ({
+        id: u.id,
+        name: `${u.firstName} ${u.lastName}`,
+        role: u.roles.map((r) => getRoleLabel(r)).join(", "),
+        initial: getInitials(u.firstName, u.lastName),
+      }));
+  }, [project?.members, project?.responsible]);
+
+  const selectedUser = useMemo(() => {
+    if (!selectedUserId) return null;
+    return users.find((u) => u.id === selectedUserId) || null;
+  }, [selectedUserId]);
+
+  if (!project) {
     return (
       <Main className="flex items-center justify-center h-full">
         <div className="text-center">
@@ -157,6 +195,8 @@ function ProjectDetailsContent() {
         </div>
       </Main>
     );
+  }
+
   const updateProjectData = (newData: Partial<Project>) => {
     setProjects((prev) => {
       const newList = prev.map((p) =>
@@ -169,6 +209,7 @@ function ProjectDetailsContent() {
       return newList;
     });
   };
+
   const handleConfirmForms = (selectedIds: string[]) => {
     const savedForms = localStorage.getItem("local-forms");
     if (savedForms) {
@@ -246,44 +287,9 @@ function ProjectDetailsContent() {
   const isExpired =
     project.status === "active" && new Date(project.endDate) < new Date();
 
-  const responsibleMember = useMemo(() => {
-    const user = users.find(
-      (u) => `${u.firstName} ${u.lastName}` === project.responsible,
-    );
-    if (user) {
-      return {
-        id: user.id,
-        name: `${user.firstName} ${user.lastName}`,
-        role: user.roles.map((r) => getRoleLabel(r)).join(", "),
-        initial: getInitials(user.firstName, user.lastName),
-      };
-    }
-    return null;
-  }, [project.responsible]);
-
-  const otherMembers = useMemo(() => {
-    return users
-      .filter(
-        (u) =>
-          project.members?.includes(u.id) &&
-          `${u.firstName} ${u.lastName}` !== project.responsible,
-      )
-      .map((u) => ({
-        id: u.id,
-        name: `${u.firstName} ${u.lastName}`,
-        role: u.roles.map((r) => getRoleLabel(r)).join(", "),
-        initial: getInitials(u.firstName, u.lastName),
-      }));
-  }, [project.members, project.responsible]);
-
   const currentProjectTeam = responsibleMember
     ? [responsibleMember, ...otherMembers]
     : otherMembers;
-
-  const selectedUser = useMemo(() => {
-    if (!selectedUserId) return null;
-    return users.find((u) => u.id === selectedUserId) || null;
-  }, [selectedUserId]);
 
   const handleViewProfile = (userId: string) => {
     setSelectedUserId(userId);
