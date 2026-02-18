@@ -364,22 +364,22 @@ function ProjectDetailsContent() {
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ativo">
+                <SelectItem value="active">
                   <div className="flex items-center gap-2">
                     <Clock size={14} /> Ativo
                   </div>
                 </SelectItem>
-                <SelectItem value="pausado">
+                <SelectItem value="paused">
                   <div className="flex items-center gap-2">
                     <Clock size={14} /> Pausado
                   </div>
                 </SelectItem>
-                <SelectItem value="finalizado">
+                <SelectItem value="finished">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 size={14} /> Finalizado
                   </div>
                 </SelectItem>
-                <SelectItem value="cancelado">
+                <SelectItem value="canceled">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 size={14} /> Cancelado
                   </div>
