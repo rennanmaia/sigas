@@ -30,7 +30,6 @@ import { RecentActivity } from "./components/recent-activity";
 import { ProjectStatusDistribution } from "./components/project-status-distribution";
 import { PassivesSummary } from "./components/passives-summary";
 import { FormsPendingList } from "./components/forms-pending-list";
-import { useMemo } from "react";
 import { projects } from "@/features/projects/data/projects-mock";
 import { forms } from "@/features/forms/data/forms-mock";
 import { useLiabilitiesStore } from "@/stores/passives-store";
