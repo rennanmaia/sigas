@@ -1,3 +1,26 @@
+# [1.0.0-beta.7](https://github.com/rennanmaia/sigas/compare/v1.0.0-beta.6...v1.0.0-beta.7) (2026-02-18)
+
+
+### Bug Fixes
+
+* add missing 'common' namespace to translation for cancel button ([c5d7d14](https://github.com/rennanmaia/sigas/commit/c5d7d1472f8560d227ab5ca233ac83c7f38b4fde))
+* refactor ProjectDetailsContent to fix hook order to prevent crash on project deletion ([cb45456](https://github.com/rennanmaia/sigas/commit/cb4545626d35b441eee939eb15c4ab4c626a103c))
+* **styles:** add scrollbar-gutter property for better layout stability ([5c6967a](https://github.com/rennanmaia/sigas/commit/5c6967af3c616c3c678f30b810bd2beb029176fd))
+* update project status values to use English terms ([c6d971e](https://github.com/rennanmaia/sigas/commit/c6d971e0be69102948c936a24d54eec62200f499))
+
+
+### Features
+
+* add FormsPendingList component to display pending forms with status and details ([0accbea](https://github.com/rennanmaia/sigas/commit/0accbeaede0f48c6a752f7fe70cf27d3b98ff977))
+* add PassivesChart component to visualize liabilities data by month ([9efab4c](https://github.com/rennanmaia/sigas/commit/9efab4c98508d5ee69d02264fa8fda34027d1b3c))
+* add PassivesSummary component to display summarized liabilities data ([e0ad1e0](https://github.com/rennanmaia/sigas/commit/e0ad1e0f865730fc66df5726b90c5e46a16b2481))
+* add ProjectsOverview component to visualize project creation and completion data ([a31c384](https://github.com/rennanmaia/sigas/commit/a31c3843614ba9e7f94c4e899a7707d6bba3e505))
+* add ProjectStatusDistribution component to visualize project status distribution ([24324a7](https://github.com/rennanmaia/sigas/commit/24324a7f05f283d920051ebe9213c931b5bc9144))
+* add RecentActivity component to display recent user activities with projects and forms ([f3a0013](https://github.com/rennanmaia/sigas/commit/f3a001367e9aed1dec48554b24c10fde7cee57a9))
+* enhance dashboard with new components and metrics ([14cdbd2](https://github.com/rennanmaia/sigas/commit/14cdbd21644d45ffc2b16a44315d280badca6996))
+* remove unused analytics components from dashboard ([1d3bd22](https://github.com/rennanmaia/sigas/commit/1d3bd22bb498f2b30a98574fa19a6b71d5121ea4))
+* remove unused useMemo import from dashboard component ([064cb59](https://github.com/rennanmaia/sigas/commit/064cb59d0e74935e2ca45546f227d522fff2728b))
+
 # [1.0.0-beta.6](https://github.com/rennanmaia/sigas/compare/v1.0.0-beta.5...v1.0.0-beta.6) (2026-02-14)
 
 
