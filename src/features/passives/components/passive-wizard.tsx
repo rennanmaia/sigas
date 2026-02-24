@@ -100,7 +100,9 @@ export function PassiveWizard({ onSubmit, isLoading = false, initialData }: Liab
       </div>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(handleFormSubmit, (errors) => {
+            console.log("form errors", errors)
+          })} className="space-y-6">
             {currentStep === 1 && <BasicInfoStep control={form.control} />}
             {currentStep === 2 && <AssessmentStep control={form.control} />}
             {currentStep === 3 && <ActionPlanStep control={form.control} watch={form.watch} />}

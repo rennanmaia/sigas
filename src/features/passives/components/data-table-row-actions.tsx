@@ -9,13 +9,15 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { useLiabilities } from './passives-provider'
+import type { Liability } from '../data/schema'
 
-type DataTableRowActionsProps<T> = {
-  row: Row<T>
+type DataTableRowActionsProps = {
+  row: Row<Liability>
 }
 
-export function DataTableRowActions<T>({ }: DataTableRowActionsProps<T>) {
-//   const { setOpen, setCurrentRow } = useUsers()
+export function DataTableRowActions({ row }: DataTableRowActionsProps) {
+  const { setOpen, setCurrentRow } = useLiabilities()
   return (
     <div className='z-100'>
       <DropdownMenu modal={false}>
@@ -34,8 +36,8 @@ export function DataTableRowActions<T>({ }: DataTableRowActionsProps<T>) {
           <DropdownMenuItem
             onClick={(e) => {
               e.stopPropagation()
-            //   setCurrentRow(row.original)
-              // setOpen('delete')
+              setCurrentRow(row.original)
+              setOpen('delete')
             }}
             onMouseDown={(e) => e.stopPropagation()}
             className='text-red-500!'

@@ -3,13 +3,12 @@ import { columns } from "../components/passive-columns";
 import { useEffect, useState } from "react"
 import { useTableUrlState, type NavigateFn } from "@/hooks/use-table-url-state";
 import { RISKS, STATUS_PLANS } from "../data/passives";
-import { DataTableBulkActions, DataTablePagination, DataTableToolbar } from "@/components/data-table";
+import { DataTablePagination, DataTableToolbar } from "@/components/data-table";
 import { cn } from "@/lib/utils";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
 import { useLiabilitiesStore } from "@/stores/passives-store";
+import { DataTableBulkActions } from "@/components/data-table-bulk-actions";
+import { LiabilitiesMultiDeleteDialog } from "./passives-multi-delete-dialog";
 
 type DataTableProps = {
   search: Record<string, unknown>
@@ -19,6 +18,7 @@ type DataTableProps = {
 export function PassivesTable({ search, navigate }: DataTableProps) {
     const { liabilities } = useLiabilitiesStore();
     const [rowSelection, setRowSelection] = useState({})
+    const [showMultiDelete, setShowMultiDelete] = useState(false);
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
       diasAbertoCategoria: false,
@@ -163,26 +163,19 @@ export function PassivesTable({ search, navigate }: DataTableProps) {
                 </Table>
             </div>
             <DataTablePagination table={table} className='mt-auto' />
-            <DataTableBulkActions table={table} entityName="passives" >
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                    <Button
-                        variant='destructive'
-                        size='icon'
-                        // onClick={() => setShowDeleteConfirm(true)}
-                        className='size-8'
-                        aria-label='Delete selected'
-                        title='Delete selected'
-                    >
-                        <Trash2 />
-                        <span className='sr-only'>Deletar seleção</span>
-                    </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                    <p>Deletar seleção</p>
-                    </TooltipContent>
-                </Tooltip>
-            </DataTableBulkActions>
+            <DataTableBulkActions 
+                table={table} 
+                entityName="passives"
+                content="Deletar passivos selecionados"
+                message="Deletar passivos selecionados"
+                title="Deletar passivos selecionados"
+                setShowDeleteConfirm={setShowMultiDelete}
+            />
+            <LiabilitiesMultiDeleteDialog 
+                open={showMultiDelete} 
+                onOpenChange={setShowMultiDelete} 
+                table={table}
+            />
         </div>
     )
 }

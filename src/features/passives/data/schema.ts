@@ -14,7 +14,7 @@ export const StatusPlanEnum = z.enum([
 export const Tendencia = z.enum(["subindo", "descendo", "estavel"]);      
 
 export const LiabilitySchema = z.object({
-  id: z.string(),
+  id: z.string().optional(),
   codigo: z.string().min(1, "Código identificador é obrigatório")
     .regex(/^PAS-(ENV|SOC)-\d+$/, "Formato de código inválido (Ex: PAS-ENV-001)"),
   nome: z.string().min(5, "O nome deve ter pelo menos 5 caracteres")
