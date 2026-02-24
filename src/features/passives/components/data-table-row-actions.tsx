@@ -6,7 +6,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
@@ -34,25 +33,14 @@ export function DataTableRowActions<T>({ }: DataTableRowActionsProps<T>) {
         <DropdownMenuContent align='end' className='w-[160px]'>
           <DropdownMenuItem
             onClick={(e) => {
-              e.stopPropagation();
-            //   setCurrentRow(row.original)
-            //   setOpen('view')
-            }}
-            onMouseDown={(e) => e.stopPropagation()}
-          >
-            View
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={(e) => {
               e.stopPropagation()
             //   setCurrentRow(row.original)
-            //   setOpen('delete')
+              // setOpen('delete')
             }}
             onMouseDown={(e) => e.stopPropagation()}
             className='text-red-500!'
           >
-            Delete
+            Deletar
             <DropdownMenuShortcut>
               <Trash2 size={16} />
             </DropdownMenuShortcut>

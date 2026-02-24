@@ -108,7 +108,7 @@ export function ViewLiability() {
         <>
         <Header fixed>
             <Button variant="ghost" size="icon" asChild>
-            <Link to="/projects">
+            <Link to="/passives" search={{ tabs: LiabilityView.LIST, view: LiabilityView.OVERVIEW }}>
                 <ArrowLeft size={18} />
             </Link>
             </Button>

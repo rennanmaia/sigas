@@ -76,7 +76,7 @@ export function PassivesTable({ search, navigate }: DataTableProps) {
             >
               <DataTableToolbar
                 table={table}
-                searchPlaceholder='Filter passives...'
+                searchPlaceholder='Filtrar passivos...'
                 searchKey='nome'
                 filters={[
                     {columnId: 'risco', options: RISKS.map(risco => ({ label: risco, value: risco })), title: 'Risco'},
@@ -155,7 +155,7 @@ export function PassivesTable({ search, navigate }: DataTableProps) {
                             colSpan={columns.length}
                             className='h-24 text-center'
                         >
-                            No results.
+                            Sem resultados.
                         </TableCell>
                         </TableRow>
                     )}
@@ -175,11 +175,11 @@ export function PassivesTable({ search, navigate }: DataTableProps) {
                         title='Delete selected'
                     >
                         <Trash2 />
-                        <span className='sr-only'>Delete selected</span>
+                        <span className='sr-only'>Deletar seleção</span>
                     </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                    <p>Delete selected</p>
+                    <p>Deletar seleção</p>
                     </TooltipContent>
                 </Tooltip>
             </DataTableBulkActions>
