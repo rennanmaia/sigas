@@ -56,6 +56,7 @@ export const ptBR: I18nResource = {
             globalSearch: "Buscar",
             continue: "Continuar",
             cancel: "Cancelar",
+            back: "Voltar"
         },
         pagination: {
             pageOf: "Página {{current}} de {{total}}",
@@ -243,12 +244,28 @@ export const ptBR: I18nResource = {
                     label: "Permissões",
                     validation: {
                         required: "Selecione no mínimo uma permissão"
+                    },
+                    search: {
+                        collapse: "Fechar tudo",
+                        expand: "Expandir tudo",
+                        placeholder: "Buscar permissões"
+                    },
+                    featureGroup: {
+                        selected: "Selecionado(s)"
                     }
                 }
             },
             actions: {
+                creationSubmitLabel: "Criar perfil",
                 save: "Salvar",
                 cancel: "Cancelar"
+            }
+        },
+        logs: {
+            title: "Logs de perfis",
+            empty: "Nada criado",
+            permissions: {
+                label: "Permissões"
             }
         }
     },

@@ -54,6 +54,7 @@ export type I18nResource = {
       globalSearch: string;
       continue: string;
       cancel: string;
+      back: string;
     },
     pagination: {
       pageOf: string;
@@ -234,12 +235,28 @@ export type I18nResource = {
           label: string;
           validation: {
             required: string;
+          },
+          search: {
+            placeholder: string;
+            expand: string;
+            collapse: string;
+          },
+          featureGroup: {
+            selected: string;
           }
         }
       },
       actions: {
+        creationSubmitLabel: string;
         save: string;
         cancel: string;
+      },
+    },
+    logs: {
+      title: string;
+      empty: string;
+      permissions: {
+        label: string;
       }
     }
   },

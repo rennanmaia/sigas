@@ -8,7 +8,7 @@ import { ProfileDropdown } from '@/components/profile-dropdown'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { LanguageSwitch } from '@/components/language-switch'
-import { featureGroups } from '@/features/features/data/features'
+import { FEATURE_GROUPS } from '@/features/features/data/features'
 import { profiles } from '@/features/profiles/data/profiles'
 
 export default function ViewProfile({ profileId }: { profileId?: string }) {
@@ -20,7 +20,7 @@ export default function ViewProfile({ profileId }: { profileId?: string }) {
     )
   }
 
-  const permsByGroup = featureGroups.map((g) => ({
+  const permsByGroup = FEATURE_GROUPS.map((g) => ({
     group: g,
     perms: g.children.filter((c) => profile.permissions.includes(c.id)),
   })).filter((g) => g.perms.length > 0)
