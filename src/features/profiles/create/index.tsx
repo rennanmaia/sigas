@@ -34,6 +34,7 @@ export function CreateProfile() {
 		const logEntry = { id: newProfile.id, when: new Date().toISOString(), name: values.name, permissions: values.permissions }
 		setLogs((s) => [logEntry, ...s])
 		toast.success('Profile created')
+		navigate({ to: '/profiles' })
 	}
 
 	return (
