@@ -14,12 +14,14 @@ import { type Profile } from '../data/schema'
 import { useProfiles } from './profiles-provider'
 import { Link } from '@tanstack/react-router'
 import { Eye } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 type DataTableRowActionsProps = {
   row: Row<Profile>
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
+  const { t } = useTranslation('profiles')
   const { setOpen, setCurrentRow } = useProfiles()
   return (
     <div className='z-100'>
@@ -45,7 +47,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
             <Link to={`/profiles/$profileId`} params={{ profileId: row.original.id }}>
             <span className="no-underline flex items-center">
               <Eye className="mr-2 h-4 w-4" />
-              View
+              {t('list.table.columns.actions.view')}
             </span>
             </Link>
           </DropdownMenuItem>
@@ -53,7 +55,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
             <Link to={'/profiles/edit/$id'} params={{ id: row.original.id }}>
               <span className="no-underline flex items-center">
                 <Pen className="mr-2 h-4 w-4" />
-                Edit
+                {t('list.table.columns.actions.edit')}
               </span>
             </Link>
           </DropdownMenuItem>
@@ -65,7 +67,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
             }}
             className='text-red-500!'
           >
-            Delete
+            {t('list.table.columns.actions.delete')}
             <DropdownMenuShortcut>
               <Trash2 size={16} />
             </DropdownMenuShortcut>

@@ -22,26 +22,26 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import type { Profile } from '../data/schema'
 import { DataTableBulkActions } from './data-table-bulk-actions'
 import { profilesColumns as columns } from './profiles-columns'
 import { getRouteApi } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
+import { useProfilesStore } from '@/stores/profiles-store'
 
 type DataTableProps = {
-  data: Profile[]
   search: Record<string, unknown>
   navigate: NavigateFn
 }
 
 const route = getRouteApi('/_authenticated/profiles/$profileId/')
 
-export function ProfilesTable({ data, search, navigate }: DataTableProps) {
+export function ProfilesTable({ search, navigate }: DataTableProps) {
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [sorting, setSorting] = useState<SortingState>([])
   const navigateToView = route.useNavigate()
   const { t } = useTranslation("profiles")
+  const { profiles } = useProfilesStore();
 
   const {
     columnFilters,
@@ -62,7 +62,7 @@ export function ProfilesTable({ data, search, navigate }: DataTableProps) {
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
-    data,
+    data: profiles,
     columns,
     state: {
       sorting,

@@ -8,16 +8,17 @@ import { Link } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
 import { toast } from 'sonner'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { profiles } from '@/features/profiles/data/profiles'
 import ProfileForm from '@/features/profiles/components/profile-form'
 import type { FormValues } from '@/features/profiles/components/profile-form'
 import { Route } from '@/routes/_authenticated/profiles/edit/$id'
+import { useProfilesStore } from '@/stores/profiles-store'
 
 function EditProfile() {
   const { id } = Route.useParams();
   const navigate = Route.useNavigate();
+  const { getProfileById, updateProfile } = useProfilesStore()
 
-  const profile = profiles.find((p) => p.id === id)
+  const profile = getProfileById(id)
 
   if (!profile) {
     return (
@@ -39,13 +40,13 @@ function EditProfile() {
   }
 
   const onSubmit = (values: FormValues) => {
-    // mutate in-memory profile
-    const idx = profiles.findIndex((p) => p.id === profile.id)
-    if (idx !== -1) {
-      profiles[idx] = { ...profiles[idx], label: values.name, description: values.description, permissions: values.permissions }
-      toast.success('Profile updated')
-      navigate({ to: '/profiles' })
-    }
+    updateProfile(profile.id, {
+      label: values.name,
+      description: values.description,
+      permissions: values.permissions
+    })
+    toast.success('Profile updated')
+    navigate({ to: '/profiles' })
   }
 
   return (

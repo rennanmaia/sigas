@@ -93,6 +93,28 @@ export const enUS: I18nResource = {
         team: {
             label: "Teams",
             addTeam: "Add team"
+        },
+        deleteDialog: {
+            single: {
+                title: "Delete Item",
+                description: "Are you sure you want to delete \"{{label}}\"? This action will permanently remove the item and cannot be undone."
+            },
+            multi: {
+                title: "Delete {{count}} items",
+                description: "Are you sure you want to delete the {{count}} selected items? This action cannot be undone.",
+                deafultConfirmWord: "DELETE"
+            },
+            confirm: {
+                label: "Confirm by typing the item name",
+                placeholder: "Type the item name \"{{label}}\" to confirm deletion",
+                keyword: "Confirm by typing \"{{label}}\"",
+                keywordPlaceholder: "Type \"{{label}}\" to confirm"
+            },
+            warning: {
+                title: "Warning!",
+                description: "Please be careful, this operation cannot be rolled back."
+            },
+            confirmButton: "Delete"
         }
     },
     dashboard: {
@@ -202,6 +224,15 @@ export const enUS: I18nResource = {
         }
     },
     profiles: {
+        view: {
+            buttons: {
+                edit: "Edit"
+            },
+            notFound: {
+                message: "Profile not found!"
+            },
+            title: "View Profile"
+        },
         list: {
             buttons: {
                 add: "Add New Profile",

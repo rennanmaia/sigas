@@ -93,6 +93,28 @@ export const ptBR: I18nResource = {
         team: {
             label: "Times",
             addTeam: "Adicionar time"
+        },
+        deleteDialog: {
+            single: {
+                title: "Excluir Item",
+                description: "Tem certeza que deseja excluir \"{{label}}\"? Esta ação removerá permanentemente o item e não pode ser desfeita."
+            },
+            multi: {
+                title: "Excluir {{count}} itens",
+                description: "Tem certeza que deseja excluir os {{count}} itens selecionados? Esta ação não pode ser desfeita.",
+                deafultConfirmWord: "EXCLUIR"
+            },
+            confirm: {
+                label: "Confirme digitando o nome do item",
+                placeholder: "Digite o nome do item \"{{label}}\" para confirmar a exclusão",
+                keyword: "Confirme digitando \"{{label}}\"",
+                keywordPlaceholder: "Digite \"{{label}}\" para confirmar"
+            },
+            warning: {
+                title: "Atenção!",
+                description: "Por favor, tenha cuidado. Esta operação não pode ser revertida."
+            },
+            confirmButton: "Excluir"
         }
     },
     dashboard: {
@@ -202,6 +224,15 @@ export const ptBR: I18nResource = {
         }
     },
     profiles: {
+        view: {
+            title: "Visualizar perfil",
+            notFound: {
+                message: "Não foi encontrado!"
+            },
+            buttons: {
+                edit: "Editar"
+            }
+        },
         list: {
             buttons: {
                 add: "Adicionar Novo Perfil",

@@ -1,12 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { AlertTriangle } from "lucide-react";
-import { toast } from 'sonner'
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { ConfirmDialog } from "@/components/confirm-dialog";
+import { toast } from "sonner";
+import { DeleteDialog, type DeleteDialogConfig } from "@/components/delete-dialog";
 import { type User } from "../data/schema";
 import { useUsersStore } from "@/stores/users-store";
 
@@ -21,63 +16,27 @@ export function UsersDeleteDialog({
   onOpenChange,
   currentRow,
 }: UserDeleteDialogProps) {
-  const [value, setValue] = useState("");
-  const { deleteUser } = useUsersStore()
+  const { deleteUser } = useUsersStore();
 
-  const handleDelete = () => {
-    if (value.trim() !== currentRow.username) return;
-
-    // remove user from provider state
-    deleteUser(currentRow.id);
-    onOpenChange(false);
-    toast.success('User deleted')
+  const config: DeleteDialogConfig = {
+    mode: "single",
+    item: {
+      id: currentRow.id,
+      label: currentRow.username,
+    },
+    namespace: "users",
+    confirmStrategy: "typed",
+    onDelete: (id) => {
+      deleteUser(id as string);
+      toast.success("User deleted successfully");
+    },
   };
 
   return (
-    <ConfirmDialog
+    <DeleteDialog
       open={open}
       onOpenChange={onOpenChange}
-      handleConfirm={handleDelete}
-      disabled={value.trim() !== currentRow.username}
-      title={
-        <span className="text-destructive">
-          <AlertTriangle
-            className="stroke-destructive me-1 inline-block"
-            size={18}
-          />{" "}
-          Delete User
-        </span>
-      }
-      desc={
-        <div className="space-y-4">
-          <p className="mb-2">
-            Are you sure you want to delete{" "}
-            <span className="font-bold">{currentRow.username}</span>?
-            <br />
-            This action will permanently remove the user with the role(s) of{' '}
-            <span className="font-bold">{(currentRow.roles || []).join(', ').toUpperCase()}</span>{' '}
-            from the system. This cannot be undone.
-          </p>
-
-          <Label className="my-2">
-            Username:
-            <Input
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              placeholder="Enter username to confirm deletion."
-            />
-          </Label>
-
-          <Alert variant="destructive">
-            <AlertTitle>Warning!</AlertTitle>
-            <AlertDescription>
-              Please be careful, this operation can not be rolled back.
-            </AlertDescription>
-          </Alert>
-        </div>
-      }
-      confirmText="Delete"
-      destructive
+      config={config}
     />
   );
 }

@@ -9,14 +9,18 @@ import { ConfigDrawer } from '@/components/config-drawer'
 import { ThemeSwitch } from '@/components/theme-switch'
 import { LanguageSwitch } from '@/components/language-switch'
 import { FEATURE_GROUPS } from '@/features/features/data/features'
-import { profiles } from '@/features/profiles/data/profiles'
+import { useProfilesStore } from '@/stores/profiles-store'
+import { useTranslation } from 'react-i18next'
 
 export default function ViewProfile({ profileId }: { profileId?: string }) {
-  const profile = profiles.find((p) => p.id === profileId)
+  const { t } = useTranslation('profiles');
+  const { t: tCommon } = useTranslation('common');
+  const { getProfileById } = useProfilesStore()
+  const profile = getProfileById(profileId || '')
 
   if (!profile) {
     return (
-      <div className='p-6'>Profile not found.</div>
+      <div className='p-6'>{t('view.notFound.message')}</div>
     )
   }
 
@@ -30,7 +34,7 @@ export default function ViewProfile({ profileId }: { profileId?: string }) {
       <Header fixed>
         <div className='flex items-center gap-2'>
           <Link to='/profiles' className='inline-flex items-center gap-2'>
-            <ArrowLeft /> Back
+            <ArrowLeft /> {tCommon('buttons.back')}
           </Link>
         </div>
         <div className='ms-auto flex items-center space-x-4'>
@@ -68,7 +72,7 @@ export default function ViewProfile({ profileId }: { profileId?: string }) {
 
                 <div className='mt-6 flex gap-2'>
                   <Link to={`/profiles/edit/$id`} params={{ id: profile.id }}>
-                    <Button variant='secondary'><UserPen size={16} className='me-2' />Edit</Button>
+                    <Button variant='secondary'><UserPen size={16} className='me-2' />{t('view.buttons.edit')}</Button>
                   </Link>
                 </div>
               </CardContent>

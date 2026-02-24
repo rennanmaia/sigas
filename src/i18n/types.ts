@@ -91,6 +91,28 @@ export type I18nResource = {
     team: {
       label: string;
       addTeam: string;
+    },
+    deleteDialog: {
+      single: {
+        title: string;
+        description: string;
+      },
+      multi: {
+        title: string;
+        description: string;
+        deafultConfirmWord: string;
+      },
+      confirm: {
+        label: string;
+        placeholder: string;
+        keyword: string;
+        keywordPlaceholder: string;
+      },
+      warning: {
+        title: string;
+        description: string;
+      },
+      confirmButton: string;
     }
   };
   dashboard: {
@@ -192,6 +214,15 @@ export type I18nResource = {
     }
   },
   profiles: {
+    view: {
+      title: string;
+      notFound: {
+        message: string;
+      },
+      buttons: {
+        edit: string;
+      }
+    },
     list: {
       title: string;
       description: string;
