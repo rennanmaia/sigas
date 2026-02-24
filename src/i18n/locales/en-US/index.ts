@@ -56,6 +56,7 @@ export const enUS: I18nResource = {
             globalSearch: "Search",
             continue: "Continue",
             cancel: "Cancel",
+            back: "Back"
         },
         pagination: {
             pageOf: "Page {{current}} of {{total}}",
@@ -243,12 +244,28 @@ export const enUS: I18nResource = {
                     label: "Permissions",
                     validation: {
                         required: "Select at least one permission"
+                    },
+                    featureGroup: {
+                        selected: "Selected"
+                    },
+                    search: {
+                        collapse: "Collapse All",
+                        expand: "Expand All",
+                        placeholder: "Search features"
                     }
                 }
             },
             actions: {
+                creationSubmitLabel: "Create Profile",
                 save: "Save",
                 cancel: "Cancel"
+            }
+        },
+        logs: {
+            empty: "Not created",
+            title: "Profile logs",
+            permissions: {
+                label: "Permissions"
             }
         }
     },
