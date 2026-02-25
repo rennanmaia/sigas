@@ -19,6 +19,7 @@ import {
   useRef,
   forwardRef,
   useImperativeHandle,
+  useMemo,
 } from "react";
 import { useForms } from "../forms-provider";
 import { ResponsesView } from "../responses-view";
@@ -45,12 +46,14 @@ import {
 } from "@/components/ui/form";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Trans, useTranslation } from "react-i18next";
+import { users } from "@/features/users/data/users";
 
 export interface FormBuilderRef {
   getFormData: () => {
     title: string;
     description: string;
     questions: Question[];
+    collectors?: string[];
   };
 }
 
@@ -96,15 +99,41 @@ export const FormBuilder = forwardRef<
       owner: "Carlos Silva",
       projectId: "",
       questions: [],
+      collectors: [],
     },
   });
+  const availableCollectors = useMemo(() => {
+    if (!projectId || projectId === "__empty__") return [];
+
+    const project = projects.find((p) => p.id === projectId);
+    if (!project || !project.members) return [];
+
+    return users
+      .filter((u) => {
+        const projectSpecificRole = project.memberRoles?.[u.id];
+        const displayRole = projectSpecificRole
+          ? projectSpecificRole
+          : u.roles[0];
+
+        return project.members?.includes(u.id) && displayRole === "collector";
+      })
+      .map((u) => ({
+        id: u.id,
+        name: `${u.firstName} ${u.lastName}`,
+      }));
+  }, [projectId]);
 
   useImperativeHandle(
     ref,
     () => ({
-      getFormData: () => ({ title, description, questions }),
+      getFormData: () => ({
+        title,
+        description,
+        questions,
+        collectors: form.getValues("collectors"),
+      }),
     }),
-    [title, description, questions],
+    [title, description, questions, form],
   );
 
   const currentForm = forms.find((f) => f.id === initialId);
@@ -124,11 +153,14 @@ export const FormBuilder = forwardRef<
         setProjectId(existingForm.projectId || "__empty__");
         form.reset({
           title: existingForm.title,
-          description: existingForm.description || t("create.form_builder.form.defaultValues.description"),
+          description:
+            existingForm.description ||
+            t("create.form_builder.form.defaultValues.description"),
           status: (existingForm.status as any) || "Rascunho",
           owner: existingForm.owner,
           projectId: existingForm.projectId || "",
           questions: existingForm.questions,
+          collectors: existingForm.collectors || [],
         });
         setIsLoaded(true);
       }
@@ -140,9 +172,13 @@ export const FormBuilder = forwardRef<
   }, [title, form]);
 
   useEffect(() => {
-    form.setValue("description", description || t("create.form_builder.form.defaultValues.description"), {
-      shouldValidate: true,
-    });
+    form.setValue(
+      "description",
+      description || t("create.form_builder.form.defaultValues.description"),
+      {
+        shouldValidate: true,
+      },
+    );
   }, [description, form]);
 
   useEffect(() => {
@@ -303,6 +339,16 @@ export const FormBuilder = forwardRef<
               responsesCount={responsesCount}
               formId={initialId}
               showingResponses={showingResponses}
+              availableCollectors={availableCollectors}
+              selectedCollectors={form.watch("collectors") || []}
+              onCollectorsChange={(newCollectors: string[]) => {
+                form.setValue("collectors", newCollectors, {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                  shouldTouch: true,
+                });
+              }}
+              projectId={projectId}
             />
 
             {showingResponses && initialId ? (
@@ -330,7 +376,9 @@ export const FormBuilder = forwardRef<
                               <Input
                                 {...field}
                                 className="text-xl md:text-3xl font-bold border-none shadow-none focus-visible:ring-0 p-0 h-auto bg-transparent"
-                                placeholder={t("create.form_builder.form.title.placeholder")}
+                                placeholder={t(
+                                  "create.form_builder.form.title.placeholder",
+                                )}
                                 value={title}
                                 onChange={(e) => {
                                   setTitle(e.target.value);
@@ -356,7 +404,9 @@ export const FormBuilder = forwardRef<
                               <Input
                                 {...field}
                                 className="text-sm border-none shadow-none focus-visible:ring-0 p-0 h-auto bg-transparent text-muted-foreground"
-                                placeholder={t("create.form_builder.form.description.placeholder")}
+                                placeholder={t(
+                                  "create.form_builder.form.description.placeholder",
+                                )}
                                 value={description}
                                 onChange={(e) => {
                                   setDescription(e.target.value);
@@ -393,6 +443,10 @@ export const FormBuilder = forwardRef<
                                     value === "__empty__" ? "" : value;
                                   setProjectId(newValue);
                                   field.onChange(newValue);
+                                  form.setValue("collectors", [], {
+                                    shouldValidate: true,
+                                    shouldDirty: true,
+                                  });
                                 }}
                                 disabled={!!initialProjectId && !initialId}
                               >
@@ -402,12 +456,18 @@ export const FormBuilder = forwardRef<
                                     fieldState.error ? "border-destructive" : ""
                                   }
                                 >
-                                  <SelectValue placeholder={t("create.form_builder.form.project.placeholder")} />
+                                  <SelectValue
+                                    placeholder={t(
+                                      "create.form_builder.form.project.placeholder",
+                                    )}
+                                  />
                                 </SelectTrigger>
                                 <SelectContent>
                                   {!initialId && (
                                     <SelectItem value="__empty__">
-                                      {t("create.form_builder.form.project.empty")}
+                                      {t(
+                                        "create.form_builder.form.project.empty",
+                                      )}
                                     </SelectItem>
                                   )}
                                   {projects.map((project) => (
@@ -432,7 +492,9 @@ export const FormBuilder = forwardRef<
                               projectId &&
                               !initialId && (
                                 <p className="text-xs text-muted-foreground">
-                                  {t("create.form_builder.form.project.preselected")}
+                                  {t(
+                                    "create.form_builder.form.project.preselected",
+                                  )}
                                 </p>
                               )}
                           </FormItem>
@@ -552,7 +614,9 @@ export const FormBuilder = forwardRef<
                           {t("create.form_builder.form.questions.empty.title")}
                         </p>
                         <p className="text-sm">
-                          {t("create.form_builder.form.questions.empty.description")}
+                          {t(
+                            "create.form_builder.form.questions.empty.description",
+                          )}
                         </p>
                       </div>
                     )}
@@ -597,7 +661,9 @@ export const FormBuilder = forwardRef<
         title={t("create.form_builder.dialog.confirm.title")}
         desc={
           <Trans
-            i18nKey={"forms:create.form_builder.dialog.confirm.description" as any}
+            i18nKey={
+              "forms:create.form_builder.dialog.confirm.description" as any
+            }
             components={[
               <p />,
               <strong />,
