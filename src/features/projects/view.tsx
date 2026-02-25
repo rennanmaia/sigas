@@ -746,7 +746,7 @@ function ProjectDetailsContent() {
       <ProjectAllocateDialog
         open={openMemberDialog}
         onOpenChange={setOpenMemberDialog}
-        title="Alocar Equipe"
+        title="Alocar Membro"
         description="Selecione os profissionais para atuar neste projeto. Use a busca e os filtros para encontrar membros específicos."
         items={mapUsersToAllocateItems(users, true, true)}
         alreadySelected={project.members || []}
