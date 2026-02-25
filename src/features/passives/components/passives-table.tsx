@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useLiabilitiesStore } from "@/stores/passives-store";
 import { DataTableBulkActions } from "@/components/data-table-bulk-actions";
 import { LiabilitiesMultiDeleteDialog } from "./passives-multi-delete-dialog";
+import { LiabilityDialogs } from "./passives-dialog";
 
 type DataTableProps = {
   search: Record<string, unknown>
@@ -176,6 +177,7 @@ export function PassivesTable({ search, navigate }: DataTableProps) {
                 onOpenChange={setShowMultiDelete} 
                 table={table}
             />
+            <LiabilityDialogs />
         </div>
     )
 }
