@@ -8,7 +8,7 @@ export const PROJECT_STATUS = {
   finished: "finished",
   canceled: "canceled",
   expired: "expired",
-}
+};
 export type ProjectStatus = keyof typeof PROJECT_STATUS;
 export type ProjectCategory = "Ambiental" | "Social";
 
@@ -70,6 +70,7 @@ export type Project = {
   stats: ProjectStats;
   forms: string[];
   members: string[];
+  memberRoles?: Record<string, string>;
   company: string;
   customFields?: { label: string; value: string }[];
 };
