@@ -11,6 +11,7 @@ import {
   Clock,
   List,
   Trash2,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -270,6 +271,23 @@ function ProjectDetailsContent() {
       memberRoles: updatedMemberRoles,
       stats: { ...project.stats, collectorsCount: updatedMembers.length },
     });
+  };
+
+  const handleRemoveMember = (memberId: string) => {
+    const updatedMembers = (project.members || []).filter(
+      (id) => id !== memberId,
+    );
+
+    const { [memberId]: _removed, ...updatedMemberRoles } =
+      project.memberRoles || {};
+
+    updateProjectData({
+      members: updatedMembers,
+      memberRoles: updatedMemberRoles,
+      stats: { ...project.stats, collectorsCount: updatedMembers.length },
+    });
+
+    toast.success("Membro removido do projeto!");
   };
 
   const currentProjectForms = availableForms.filter(
@@ -595,65 +613,108 @@ function ProjectDetailsContent() {
               {currentProjectTeam.length > 6 ? (
                 <ScrollArea className="h-[350px] pr-4">
                   <div className="space-y-5">
-                    {currentProjectTeam.map((member) => (
-                      <div
-                        key={member.id}
-                        className="flex items-center justify-between"
-                      >
-                        <div className="flex items-center gap-3">
-                          <Avatar className="h-9 w-9">
-                            <AvatarFallback>{member.initial}</AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="text-sm font-medium leading-none">
-                              {member.name}
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              {member.role}
-                            </p>
+                    {currentProjectTeam.map((member) => {
+                      const isResponsible = project.responsible === member.name;
+                      return (
+                        <div
+                          key={member.id}
+                          className="flex items-center justify-between group"
+                        >
+                          <div className="flex items-center gap-3">
+                            <Avatar className="h-9 w-9">
+                              <AvatarFallback>{member.initial}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="text-sm font-medium leading-none">
+                                {member.name}
+                              </p>
+                              <p className="text-xs text-muted-foreground mt-1">
+                                {member.role}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center">
+                            <Badge
+                              variant="secondary"
+                              className="text-[10px] cursor-pointer"
+                              onClick={() => handleViewProfile(member.id)}
+                            >
+                              Ver Perfil
+                            </Badge>
+                            {!isResponsible ? (
+                              <div className="flex justify-end w-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out group-hover:w-8 group-hover:opacity-100">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-6 w-6 shrink-0 text-destructive hover:bg-destructive/10"
+                                  onClick={() => handleRemoveMember(member.id)}
+                                  title="Remover membro"
+                                >
+                                  <X size={14} />
+                                </Button>
+                              </div>
+                            ) : (
+                              <div className="w-0 overflow-hidden" />
+                            )}
                           </div>
                         </div>
-                        <Badge
-                          variant="secondary"
-                          className="text-[10px] cursor-pointer"
-                          onClick={() => handleViewProfile(member.id)}
-                        >
-                          Ver Perfil
-                        </Badge>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </ScrollArea>
               ) : (
                 <div className="space-y-5">
                   {currentProjectTeam.length > 0 ? (
-                    currentProjectTeam.map((member) => (
-                      <div
-                        key={member.id}
-                        className="flex items-center justify-between"
-                      >
-                        <div className="flex items-center gap-3">
-                          <Avatar className="h-9 w-9">
-                            <AvatarFallback>{member.initial}</AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="text-sm font-medium leading-none">
-                              {member.name}
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              {member.role}
-                            </p>
+                    currentProjectTeam.map((member) => {
+                      const isResponsible = project.responsible === member.name;
+
+                      return (
+                        <div
+                          key={member.id}
+                          className="flex items-center justify-between group"
+                        >
+                          <div className="flex items-center gap-3">
+                            <Avatar className="h-9 w-9">
+                              <AvatarFallback>{member.initial}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="text-sm font-medium leading-none">
+                                {member.name}
+                              </p>
+                              <p className="text-xs text-muted-foreground mt-1">
+                                {member.role}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <Badge
+                              variant="secondary"
+                              className="text-[10px] cursor-pointer"
+                              onClick={() => handleViewProfile(member.id)}
+                            >
+                              Ver Perfil
+                            </Badge>
+                            {!isResponsible ? (
+                              <div className="flex justify-end w-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out group-hover:w-8 group-hover:opacity-100">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-6 w-6 shrink-0 text-destructive hover:bg-destructive/10"
+                                  onClick={() => handleRemoveMember(member.id)}
+                                  title="Remover membro"
+                                >
+                                  <X size={14} />
+                                </Button>
+                              </div>
+                            ) : (
+                              <div className="w-0 overflow-hidden" />
+                            )}
                           </div>
                         </div>
-                        <Badge
-                          variant="secondary"
-                          className="text-[10px] cursor-pointer"
-                          onClick={() => handleViewProfile(member.id)}
-                        >
-                          Ver Perfil
-                        </Badge>
-                      </div>
-                    ))
+                      );
+                    })
                   ) : (
                     <p className="text-sm text-muted-foreground italic">
                       Nenhum membro alocado.
