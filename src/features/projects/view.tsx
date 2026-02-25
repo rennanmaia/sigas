@@ -171,13 +171,20 @@ function ProjectDetailsContent() {
           project.members?.includes(u.id) &&
           `${u.firstName} ${u.lastName}` !== project.responsible,
       )
-      .map((u) => ({
-        id: u.id,
-        name: `${u.firstName} ${u.lastName}`,
-        role: u.roles.map((r) => getRoleLabel(r)).join(", "),
-        initial: getInitials(u.firstName, u.lastName),
-      }));
-  }, [project?.members, project?.responsible]);
+      .map((u) => {
+        const projectSpecificRole = project.memberRoles?.[u.id];
+        const displayRole = projectSpecificRole
+          ? projectSpecificRole
+          : u.roles[0];
+
+        return {
+          id: u.id,
+          name: `${u.firstName} ${u.lastName}`,
+          role: getRoleLabel(displayRole),
+          initial: getInitials(u.firstName, u.lastName),
+        };
+      });
+  }, [project?.members, project?.memberRoles, project?.responsible]);
 
   const selectedUser = useMemo(() => {
     if (!selectedUserId) return null;
@@ -247,10 +254,20 @@ function ProjectDetailsContent() {
     });
   };
 
-  const handleConfirmMembers = (selectedIds: string[]) => {
-    const updatedMembers = [...(project.members || []), ...selectedIds];
+  const handleConfirmMembers = (
+    selectedItems: { id: string; role: string }[],
+  ) => {
+    const newMemberIds = selectedItems.map((item) => item.id);
+    const updatedMembers = [...(project.members || []), ...newMemberIds];
+
+    const updatedMemberRoles = { ...(project.memberRoles || {}) };
+    selectedItems.forEach((item) => {
+      updatedMemberRoles[item.id] = item.role;
+    });
+
     updateProjectData({
       members: updatedMembers,
+      memberRoles: updatedMemberRoles,
       stats: { ...project.stats, collectorsCount: updatedMembers.length },
     });
   };
@@ -661,7 +678,7 @@ function ProjectDetailsContent() {
             sublabel: f.status,
           }))}
         alreadySelected={project.forms || []}
-        onConfirm={handleConfirmForms}
+        onConfirm={handleConfirmForms as any}
         projectId={projectId}
       />
 
@@ -672,10 +689,15 @@ function ProjectDetailsContent() {
         description="Selecione os profissionais para atuar neste projeto. Use a busca e os filtros para encontrar membros específicos."
         items={mapUsersToAllocateItems(users, true, true)}
         alreadySelected={project.members || []}
-        onConfirm={handleConfirmMembers}
+        onConfirm={handleConfirmMembers as any}
         showSearch={true}
         roleFilters={roleFilterOptions.filter(
           (r) => r.value !== "project_administrator",
+        )}
+        assignableRoles={roleFilterOptions.filter(
+          (r) =>
+            r.value !== "project_administrator" &&
+            r.value !== "general_administrator",
         )}
       />
       <ProjectsDeleteDialog
