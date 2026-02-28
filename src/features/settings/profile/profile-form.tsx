@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { t as i18next } from "i18next";
 import { Link } from "@tanstack/react-router";
 import { showSubmittedData } from "@/lib/show-submitted-data";
 import { cn } from "@/lib/utils";
@@ -26,20 +27,20 @@ import { Textarea } from "@/components/ui/textarea";
 
 const profileFormSchema = z.object({
   username: z
-    .string("POr favor insira seu nome de usuário")
-    .min(2, "O nome de usuário deve conter pelo menos 2 caracteres")
-    .max(30, "O nome de usuário não deve conter mais de 30m caracteres"),
+    .string(i18next("settings:profile.form.name.validation.required"))
+    .min(2, i18next("settings:profile.form.name.validation.invalid"))
+    .max(30, i18next("settings:profile.form.name.validation.maxLength")),
   email: z.email({
     error: (iss) =>
       iss.input === undefined
-        ? "Por favor selecione um email para mostrar."
+        ? i18next("settings:profile.form.email.validation.invalid")
         : undefined,
   }),
-  bio: z.string().max(160).min(4),
+  bio: z.string().max(160).min(4, i18next("settings:profile.form.bio.validation.minLength")),
   urls: z
     .array(
       z.object({
-        value: z.url("Por favor insira uma URL válida"),
+        value: z.string().url(i18next("settings:profile.form.urls.validation.invalid")),
       })
     )
     .optional(),

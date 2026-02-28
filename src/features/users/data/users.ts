@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker'
+import { roles } from './data'
 
 // Set a fixed seed for consistent data generation
 faker.seed(67890)
@@ -15,18 +16,11 @@ export const users = Array.from({ length: 500 }, () => {
       .toLocaleLowerCase(),
     email: faker.internet.email({ firstName }).toLocaleLowerCase(),
     phoneNumber: faker.phone.number({ style: 'international' }),
-    status: faker.helpers.arrayElement([
-      'active',
-      'inactive',
-      'invited',
-      'suspended',
-    ]),
-    role: faker.helpers.arrayElement([
-      'superadmin',
-      'admin',
-      'cashier',
-      'manager',
-    ]),
+    cpf: faker.string.numeric(11),
+    status: faker.helpers.arrayElement(['active', 'inactive']),
+    roles: [
+      faker.helpers.arrayElement(roles.map((r) => r.value)),
+    ],
     createdAt: faker.date.past(),
     updatedAt: faker.date.recent(),
   }

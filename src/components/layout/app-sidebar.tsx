@@ -8,12 +8,28 @@ import {
 } from "@/components/ui/sidebar";
 // import { AppTitle } from './app-title'
 import { sidebarData } from "./data/sidebar-data";
+import { useAuthStore } from '@/stores/auth-store'
 import { NavGroup } from "./nav-group";
 import { NavUser } from "./nav-user";
 import { TeamSwitcher } from "./team-switcher";
 
 export function AppSidebar() {
   const { collapsible, variant } = useLayout();
+  const { auth } = useAuthStore()
+  const roles = auth.user?.role ?? []
+
+  // filter nav items based on role - only general_administrator can see /users
+  const filteredNavGroups = sidebarData.navGroups.map((group) => ({
+    ...group,
+    items: group.items.filter((item) => {
+      if (item.allowedRoles && item.allowedRoles.length > 0) {
+        return item.allowedRoles.some(role => roles.includes(role))
+      }
+      return true
+    }),
+  }));
+
+
   return (
     <Sidebar collapsible={collapsible} variant={variant}>
       <SidebarHeader>
@@ -24,7 +40,7 @@ export function AppSidebar() {
         {/* <AppTitle /> */}
       </SidebarHeader>
       <SidebarContent>
-        {sidebarData.navGroups.map((props) => (
+        {filteredNavGroups.map((props) => (
           <NavGroup key={props.title} {...props} />
         ))}
       </SidebarContent>

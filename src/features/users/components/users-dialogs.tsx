@@ -1,31 +1,30 @@
-import { UsersActionDialog } from './users-action-dialog'
 import { UsersDeleteDialog } from './users-delete-dialog'
 import { UsersInviteDialog } from './users-invite-dialog'
+import { UsersToggleStatusDialog } from './users-toggle-status-dialog'
 import { useUsers } from './users-provider'
+import { useAuthStore } from '@/stores/auth-store'
 
 export function UsersDialogs() {
   const { open, setOpen, currentRow, setCurrentRow } = useUsers()
+  const { auth } = useAuthStore()
+  const roles = auth.user?.role ?? []
   return (
     <>
-      <UsersActionDialog
-        key='user-add'
-        open={open === 'add'}
-        onOpenChange={() => setOpen('add')}
-      />
-
-      <UsersInviteDialog
-        key='user-invite'
-        open={open === 'invite'}
-        onOpenChange={() => setOpen('invite')}
-      />
+      {(roles.includes('general_administrator') || roles.includes('project_administrator')) && (
+        <UsersInviteDialog
+          key='user-invite'
+          open={open === 'invite'}
+          onOpenChange={() => setOpen('invite')}
+        />
+      )}
 
       {currentRow && (
         <>
-          <UsersActionDialog
-            key={`user-edit-${currentRow.id}`}
-            open={open === 'edit'}
+          <UsersDeleteDialog
+            key={`user-delete-${currentRow.id}`}
+            open={open === 'delete'}
             onOpenChange={() => {
-              setOpen('edit')
+              setOpen('delete')
               setTimeout(() => {
                 setCurrentRow(null)
               }, 500)
@@ -33,11 +32,11 @@ export function UsersDialogs() {
             currentRow={currentRow}
           />
 
-          <UsersDeleteDialog
-            key={`user-delete-${currentRow.id}`}
-            open={open === 'delete'}
+          <UsersToggleStatusDialog
+            key={`user-toggle-${currentRow.id}`}
+            open={open === 'toggleStatus'}
             onOpenChange={() => {
-              setOpen('delete')
+              setOpen('toggleStatus')
               setTimeout(() => {
                 setCurrentRow(null)
               }, 500)

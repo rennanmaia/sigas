@@ -25,6 +25,7 @@ import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authen
 import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
 import { Route as AuthenticatedProjectsIndexRouteImport } from './routes/_authenticated/projects/index'
+import { Route as AuthenticatedProfilesIndexRouteImport } from './routes/_authenticated/profiles/index'
 import { Route as AuthenticatedPassivesIndexRouteImport } from './routes/_authenticated/passives/index'
 import { Route as AuthenticatedHelpCenterIndexRouteImport } from './routes/_authenticated/help-center/index'
 import { Route as AuthenticatedFormsIndexRouteImport } from './routes/_authenticated/forms/index'
@@ -33,7 +34,20 @@ import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes
 import { Route as AuthenticatedSettingsDisplayRouteImport } from './routes/_authenticated/settings/display'
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedSettingsAccountRouteImport } from './routes/_authenticated/settings/account'
+import { Route as AuthenticatedProjectsLogsRouteImport } from './routes/_authenticated/projects/logs'
+import { Route as AuthenticatedProjectsCreateRouteImport } from './routes/_authenticated/projects/create'
 import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
+import { Route as AuthenticatedUsersIdIndexRouteImport } from './routes/_authenticated/users/$id/index'
+import { Route as AuthenticatedProjectsProjectIdIndexRouteImport } from './routes/_authenticated/projects/$projectId/index'
+import { Route as AuthenticatedProfilesCreateIndexRouteImport } from './routes/_authenticated/profiles/create/index'
+import { Route as AuthenticatedProfilesProfileIdIndexRouteImport } from './routes/_authenticated/profiles/$profileId/index'
+import { Route as AuthenticatedPassivesCreateIndexRouteImport } from './routes/_authenticated/passives/create/index'
+import { Route as AuthenticatedPassivesPassiveIdIndexRouteImport } from './routes/_authenticated/passives/$passiveId/index'
+import { Route as AuthenticatedFormsCreateIndexRouteImport } from './routes/_authenticated/forms/create/index'
+import { Route as AuthenticatedProjectsProjectIdEditRouteImport } from './routes/_authenticated/projects/$projectId/edit'
+import { Route as AuthenticatedPassivesPassiveIdEditRouteImport } from './routes/_authenticated/passives/$passiveId/edit'
+import { Route as AuthenticatedFormsEditIdRouteImport } from './routes/_authenticated/forms/edit/$id'
+import { Route as AuthenticatedProfilesEditIdIndexRouteImport } from './routes/_authenticated/profiles/edit/$id/index'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
@@ -117,6 +131,12 @@ const AuthenticatedProjectsIndexRoute =
     path: '/projects/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedProfilesIndexRoute =
+  AuthenticatedProfilesIndexRouteImport.update({
+    id: '/profiles/',
+    path: '/profiles/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedPassivesIndexRoute =
   AuthenticatedPassivesIndexRouteImport.update({
     id: '/passives/',
@@ -163,10 +183,88 @@ const AuthenticatedSettingsAccountRoute =
     path: '/account',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any)
+const AuthenticatedProjectsLogsRoute =
+  AuthenticatedProjectsLogsRouteImport.update({
+    id: '/projects/logs',
+    path: '/projects/logs',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedProjectsCreateRoute =
+  AuthenticatedProjectsCreateRouteImport.update({
+    id: '/projects/create',
+    path: '/projects/create',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedErrorsErrorRoute =
   AuthenticatedErrorsErrorRouteImport.update({
     id: '/errors/$error',
     path: '/errors/$error',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedUsersIdIndexRoute =
+  AuthenticatedUsersIdIndexRouteImport.update({
+    id: '/users/$id/',
+    path: '/users/$id/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedProjectsProjectIdIndexRoute =
+  AuthenticatedProjectsProjectIdIndexRouteImport.update({
+    id: '/projects/$projectId/',
+    path: '/projects/$projectId/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedProfilesCreateIndexRoute =
+  AuthenticatedProfilesCreateIndexRouteImport.update({
+    id: '/profiles/create/',
+    path: '/profiles/create/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedProfilesProfileIdIndexRoute =
+  AuthenticatedProfilesProfileIdIndexRouteImport.update({
+    id: '/profiles/$profileId/',
+    path: '/profiles/$profileId/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedPassivesCreateIndexRoute =
+  AuthenticatedPassivesCreateIndexRouteImport.update({
+    id: '/passives/create/',
+    path: '/passives/create/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedPassivesPassiveIdIndexRoute =
+  AuthenticatedPassivesPassiveIdIndexRouteImport.update({
+    id: '/passives/$passiveId/',
+    path: '/passives/$passiveId/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedFormsCreateIndexRoute =
+  AuthenticatedFormsCreateIndexRouteImport.update({
+    id: '/forms/create/',
+    path: '/forms/create/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedProjectsProjectIdEditRoute =
+  AuthenticatedProjectsProjectIdEditRouteImport.update({
+    id: '/projects/$projectId/edit',
+    path: '/projects/$projectId/edit',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedPassivesPassiveIdEditRoute =
+  AuthenticatedPassivesPassiveIdEditRouteImport.update({
+    id: '/passives/$passiveId/edit',
+    path: '/passives/$passiveId/edit',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedFormsEditIdRoute =
+  AuthenticatedFormsEditIdRouteImport.update({
+    id: '/forms/edit/$id',
+    path: '/forms/edit/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedProfilesEditIdIndexRoute =
+  AuthenticatedProfilesEditIdIndexRouteImport.update({
+    id: '/profiles/edit/$id/',
+    path: '/profiles/edit/$id/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 
@@ -184,6 +282,8 @@ export interface FileRoutesByFullPath {
   '/503': typeof errors503Route
   '/': typeof AuthenticatedIndexRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
+  '/projects/create': typeof AuthenticatedProjectsCreateRoute
+  '/projects/logs': typeof AuthenticatedProjectsLogsRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
@@ -192,9 +292,21 @@ export interface FileRoutesByFullPath {
   '/forms': typeof AuthenticatedFormsIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
   '/passives': typeof AuthenticatedPassivesIndexRoute
+  '/profiles': typeof AuthenticatedProfilesIndexRoute
   '/projects': typeof AuthenticatedProjectsIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
+  '/forms/edit/$id': typeof AuthenticatedFormsEditIdRoute
+  '/passives/$passiveId/edit': typeof AuthenticatedPassivesPassiveIdEditRoute
+  '/projects/$projectId/edit': typeof AuthenticatedProjectsProjectIdEditRoute
+  '/forms/create': typeof AuthenticatedFormsCreateIndexRoute
+  '/passives/$passiveId': typeof AuthenticatedPassivesPassiveIdIndexRoute
+  '/passives/create': typeof AuthenticatedPassivesCreateIndexRoute
+  '/profiles/$profileId': typeof AuthenticatedProfilesProfileIdIndexRoute
+  '/profiles/create': typeof AuthenticatedProfilesCreateIndexRoute
+  '/projects/$projectId': typeof AuthenticatedProjectsProjectIdIndexRoute
+  '/users/$id': typeof AuthenticatedUsersIdIndexRoute
+  '/profiles/edit/$id': typeof AuthenticatedProfilesEditIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/forgot-password': typeof authForgotPasswordRoute
@@ -209,6 +321,8 @@ export interface FileRoutesByTo {
   '/503': typeof errors503Route
   '/': typeof AuthenticatedIndexRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
+  '/projects/create': typeof AuthenticatedProjectsCreateRoute
+  '/projects/logs': typeof AuthenticatedProjectsLogsRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
@@ -217,9 +331,21 @@ export interface FileRoutesByTo {
   '/forms': typeof AuthenticatedFormsIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
   '/passives': typeof AuthenticatedPassivesIndexRoute
+  '/profiles': typeof AuthenticatedProfilesIndexRoute
   '/projects': typeof AuthenticatedProjectsIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
+  '/forms/edit/$id': typeof AuthenticatedFormsEditIdRoute
+  '/passives/$passiveId/edit': typeof AuthenticatedPassivesPassiveIdEditRoute
+  '/projects/$projectId/edit': typeof AuthenticatedProjectsProjectIdEditRoute
+  '/forms/create': typeof AuthenticatedFormsCreateIndexRoute
+  '/passives/$passiveId': typeof AuthenticatedPassivesPassiveIdIndexRoute
+  '/passives/create': typeof AuthenticatedPassivesCreateIndexRoute
+  '/profiles/$profileId': typeof AuthenticatedProfilesProfileIdIndexRoute
+  '/profiles/create': typeof AuthenticatedProfilesCreateIndexRoute
+  '/projects/$projectId': typeof AuthenticatedProjectsProjectIdIndexRoute
+  '/users/$id': typeof AuthenticatedUsersIdIndexRoute
+  '/profiles/edit/$id': typeof AuthenticatedProfilesEditIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -237,6 +363,8 @@ export interface FileRoutesById {
   '/(errors)/503': typeof errors503Route
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/errors/$error': typeof AuthenticatedErrorsErrorRoute
+  '/_authenticated/projects/create': typeof AuthenticatedProjectsCreateRoute
+  '/_authenticated/projects/logs': typeof AuthenticatedProjectsLogsRoute
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/_authenticated/settings/display': typeof AuthenticatedSettingsDisplayRoute
@@ -245,9 +373,21 @@ export interface FileRoutesById {
   '/_authenticated/forms/': typeof AuthenticatedFormsIndexRoute
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexRoute
   '/_authenticated/passives/': typeof AuthenticatedPassivesIndexRoute
+  '/_authenticated/profiles/': typeof AuthenticatedProfilesIndexRoute
   '/_authenticated/projects/': typeof AuthenticatedProjectsIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
+  '/_authenticated/forms/edit/$id': typeof AuthenticatedFormsEditIdRoute
+  '/_authenticated/passives/$passiveId/edit': typeof AuthenticatedPassivesPassiveIdEditRoute
+  '/_authenticated/projects/$projectId/edit': typeof AuthenticatedProjectsProjectIdEditRoute
+  '/_authenticated/forms/create/': typeof AuthenticatedFormsCreateIndexRoute
+  '/_authenticated/passives/$passiveId/': typeof AuthenticatedPassivesPassiveIdIndexRoute
+  '/_authenticated/passives/create/': typeof AuthenticatedPassivesCreateIndexRoute
+  '/_authenticated/profiles/$profileId/': typeof AuthenticatedProfilesProfileIdIndexRoute
+  '/_authenticated/profiles/create/': typeof AuthenticatedProfilesCreateIndexRoute
+  '/_authenticated/projects/$projectId/': typeof AuthenticatedProjectsProjectIdIndexRoute
+  '/_authenticated/users/$id/': typeof AuthenticatedUsersIdIndexRoute
+  '/_authenticated/profiles/edit/$id/': typeof AuthenticatedProfilesEditIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -265,6 +405,8 @@ export interface FileRouteTypes {
     | '/503'
     | '/'
     | '/errors/$error'
+    | '/projects/create'
+    | '/projects/logs'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
@@ -273,9 +415,21 @@ export interface FileRouteTypes {
     | '/forms'
     | '/help-center'
     | '/passives'
+    | '/profiles'
     | '/projects'
     | '/settings/'
     | '/users'
+    | '/forms/edit/$id'
+    | '/passives/$passiveId/edit'
+    | '/projects/$projectId/edit'
+    | '/forms/create'
+    | '/passives/$passiveId'
+    | '/passives/create'
+    | '/profiles/$profileId'
+    | '/profiles/create'
+    | '/projects/$projectId'
+    | '/users/$id'
+    | '/profiles/edit/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/forgot-password'
@@ -290,6 +444,8 @@ export interface FileRouteTypes {
     | '/503'
     | '/'
     | '/errors/$error'
+    | '/projects/create'
+    | '/projects/logs'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
@@ -298,9 +454,21 @@ export interface FileRouteTypes {
     | '/forms'
     | '/help-center'
     | '/passives'
+    | '/profiles'
     | '/projects'
     | '/settings'
     | '/users'
+    | '/forms/edit/$id'
+    | '/passives/$passiveId/edit'
+    | '/projects/$projectId/edit'
+    | '/forms/create'
+    | '/passives/$passiveId'
+    | '/passives/create'
+    | '/profiles/$profileId'
+    | '/profiles/create'
+    | '/projects/$projectId'
+    | '/users/$id'
+    | '/profiles/edit/$id'
   id:
     | '__root__'
     | '/_authenticated'
@@ -317,6 +485,8 @@ export interface FileRouteTypes {
     | '/(errors)/503'
     | '/_authenticated/'
     | '/_authenticated/errors/$error'
+    | '/_authenticated/projects/create'
+    | '/_authenticated/projects/logs'
     | '/_authenticated/settings/account'
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/display'
@@ -325,9 +495,21 @@ export interface FileRouteTypes {
     | '/_authenticated/forms/'
     | '/_authenticated/help-center/'
     | '/_authenticated/passives/'
+    | '/_authenticated/profiles/'
     | '/_authenticated/projects/'
     | '/_authenticated/settings/'
     | '/_authenticated/users/'
+    | '/_authenticated/forms/edit/$id'
+    | '/_authenticated/passives/$passiveId/edit'
+    | '/_authenticated/projects/$projectId/edit'
+    | '/_authenticated/forms/create/'
+    | '/_authenticated/passives/$passiveId/'
+    | '/_authenticated/passives/create/'
+    | '/_authenticated/profiles/$profileId/'
+    | '/_authenticated/profiles/create/'
+    | '/_authenticated/projects/$projectId/'
+    | '/_authenticated/users/$id/'
+    | '/_authenticated/profiles/edit/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -458,6 +640,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProjectsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/profiles/': {
+      id: '/_authenticated/profiles/'
+      path: '/profiles'
+      fullPath: '/profiles'
+      preLoaderRoute: typeof AuthenticatedProfilesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/passives/': {
       id: '/_authenticated/passives/'
       path: '/passives'
@@ -514,11 +703,102 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsAccountRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
+    '/_authenticated/projects/logs': {
+      id: '/_authenticated/projects/logs'
+      path: '/projects/logs'
+      fullPath: '/projects/logs'
+      preLoaderRoute: typeof AuthenticatedProjectsLogsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/projects/create': {
+      id: '/_authenticated/projects/create'
+      path: '/projects/create'
+      fullPath: '/projects/create'
+      preLoaderRoute: typeof AuthenticatedProjectsCreateRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/errors/$error': {
       id: '/_authenticated/errors/$error'
       path: '/errors/$error'
       fullPath: '/errors/$error'
       preLoaderRoute: typeof AuthenticatedErrorsErrorRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/users/$id/': {
+      id: '/_authenticated/users/$id/'
+      path: '/users/$id'
+      fullPath: '/users/$id'
+      preLoaderRoute: typeof AuthenticatedUsersIdIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/projects/$projectId/': {
+      id: '/_authenticated/projects/$projectId/'
+      path: '/projects/$projectId'
+      fullPath: '/projects/$projectId'
+      preLoaderRoute: typeof AuthenticatedProjectsProjectIdIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/profiles/create/': {
+      id: '/_authenticated/profiles/create/'
+      path: '/profiles/create'
+      fullPath: '/profiles/create'
+      preLoaderRoute: typeof AuthenticatedProfilesCreateIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/profiles/$profileId/': {
+      id: '/_authenticated/profiles/$profileId/'
+      path: '/profiles/$profileId'
+      fullPath: '/profiles/$profileId'
+      preLoaderRoute: typeof AuthenticatedProfilesProfileIdIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/passives/create/': {
+      id: '/_authenticated/passives/create/'
+      path: '/passives/create'
+      fullPath: '/passives/create'
+      preLoaderRoute: typeof AuthenticatedPassivesCreateIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/passives/$passiveId/': {
+      id: '/_authenticated/passives/$passiveId/'
+      path: '/passives/$passiveId'
+      fullPath: '/passives/$passiveId'
+      preLoaderRoute: typeof AuthenticatedPassivesPassiveIdIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/forms/create/': {
+      id: '/_authenticated/forms/create/'
+      path: '/forms/create'
+      fullPath: '/forms/create'
+      preLoaderRoute: typeof AuthenticatedFormsCreateIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/projects/$projectId/edit': {
+      id: '/_authenticated/projects/$projectId/edit'
+      path: '/projects/$projectId/edit'
+      fullPath: '/projects/$projectId/edit'
+      preLoaderRoute: typeof AuthenticatedProjectsProjectIdEditRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/passives/$passiveId/edit': {
+      id: '/_authenticated/passives/$passiveId/edit'
+      path: '/passives/$passiveId/edit'
+      fullPath: '/passives/$passiveId/edit'
+      preLoaderRoute: typeof AuthenticatedPassivesPassiveIdEditRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/forms/edit/$id': {
+      id: '/_authenticated/forms/edit/$id'
+      path: '/forms/edit/$id'
+      fullPath: '/forms/edit/$id'
+      preLoaderRoute: typeof AuthenticatedFormsEditIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/profiles/edit/$id/': {
+      id: '/_authenticated/profiles/edit/$id/'
+      path: '/profiles/edit/$id'
+      fullPath: '/profiles/edit/$id'
+      preLoaderRoute: typeof AuthenticatedProfilesEditIdIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
   }
@@ -551,24 +831,57 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRouteRoute: typeof AuthenticatedSettingsRouteRouteWithChildren
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedErrorsErrorRoute: typeof AuthenticatedErrorsErrorRoute
+  AuthenticatedProjectsCreateRoute: typeof AuthenticatedProjectsCreateRoute
+  AuthenticatedProjectsLogsRoute: typeof AuthenticatedProjectsLogsRoute
   AuthenticatedChatsIndexRoute: typeof AuthenticatedChatsIndexRoute
   AuthenticatedFormsIndexRoute: typeof AuthenticatedFormsIndexRoute
   AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
   AuthenticatedPassivesIndexRoute: typeof AuthenticatedPassivesIndexRoute
+  AuthenticatedProfilesIndexRoute: typeof AuthenticatedProfilesIndexRoute
   AuthenticatedProjectsIndexRoute: typeof AuthenticatedProjectsIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
+  AuthenticatedFormsEditIdRoute: typeof AuthenticatedFormsEditIdRoute
+  AuthenticatedPassivesPassiveIdEditRoute: typeof AuthenticatedPassivesPassiveIdEditRoute
+  AuthenticatedProjectsProjectIdEditRoute: typeof AuthenticatedProjectsProjectIdEditRoute
+  AuthenticatedFormsCreateIndexRoute: typeof AuthenticatedFormsCreateIndexRoute
+  AuthenticatedPassivesPassiveIdIndexRoute: typeof AuthenticatedPassivesPassiveIdIndexRoute
+  AuthenticatedPassivesCreateIndexRoute: typeof AuthenticatedPassivesCreateIndexRoute
+  AuthenticatedProfilesProfileIdIndexRoute: typeof AuthenticatedProfilesProfileIdIndexRoute
+  AuthenticatedProfilesCreateIndexRoute: typeof AuthenticatedProfilesCreateIndexRoute
+  AuthenticatedProjectsProjectIdIndexRoute: typeof AuthenticatedProjectsProjectIdIndexRoute
+  AuthenticatedUsersIdIndexRoute: typeof AuthenticatedUsersIdIndexRoute
+  AuthenticatedProfilesEditIdIndexRoute: typeof AuthenticatedProfilesEditIdIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRouteRoute: AuthenticatedSettingsRouteRouteWithChildren,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedErrorsErrorRoute: AuthenticatedErrorsErrorRoute,
+  AuthenticatedProjectsCreateRoute: AuthenticatedProjectsCreateRoute,
+  AuthenticatedProjectsLogsRoute: AuthenticatedProjectsLogsRoute,
   AuthenticatedChatsIndexRoute: AuthenticatedChatsIndexRoute,
   AuthenticatedFormsIndexRoute: AuthenticatedFormsIndexRoute,
   AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
   AuthenticatedPassivesIndexRoute: AuthenticatedPassivesIndexRoute,
+  AuthenticatedProfilesIndexRoute: AuthenticatedProfilesIndexRoute,
   AuthenticatedProjectsIndexRoute: AuthenticatedProjectsIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
+  AuthenticatedFormsEditIdRoute: AuthenticatedFormsEditIdRoute,
+  AuthenticatedPassivesPassiveIdEditRoute:
+    AuthenticatedPassivesPassiveIdEditRoute,
+  AuthenticatedProjectsProjectIdEditRoute:
+    AuthenticatedProjectsProjectIdEditRoute,
+  AuthenticatedFormsCreateIndexRoute: AuthenticatedFormsCreateIndexRoute,
+  AuthenticatedPassivesPassiveIdIndexRoute:
+    AuthenticatedPassivesPassiveIdIndexRoute,
+  AuthenticatedPassivesCreateIndexRoute: AuthenticatedPassivesCreateIndexRoute,
+  AuthenticatedProfilesProfileIdIndexRoute:
+    AuthenticatedProfilesProfileIdIndexRoute,
+  AuthenticatedProfilesCreateIndexRoute: AuthenticatedProfilesCreateIndexRoute,
+  AuthenticatedProjectsProjectIdIndexRoute:
+    AuthenticatedProjectsProjectIdIndexRoute,
+  AuthenticatedUsersIdIndexRoute: AuthenticatedUsersIdIndexRoute,
+  AuthenticatedProfilesEditIdIndexRoute: AuthenticatedProfilesEditIdIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

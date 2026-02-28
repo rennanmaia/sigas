@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils'
+import { cn } from "@/lib/utils";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -7,25 +7,27 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { useTranslation } from "react-i18next";
 
 type ConfirmDialogProps = {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  title: React.ReactNode
-  disabled?: boolean
-  desc: React.JSX.Element | string
-  cancelBtnText?: string
-  confirmText?: React.ReactNode
-  destructive?: boolean
-  handleConfirm: () => void
-  isLoading?: boolean
-  className?: string
-  children?: React.ReactNode
-}
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  title: React.ReactNode;
+  disabled?: boolean;
+  desc: React.JSX.Element | string;
+  cancelBtnText?: string;
+  confirmText?: React.ReactNode;
+  destructive?: boolean;
+  handleConfirm: () => void;
+  isLoading?: boolean;
+  className?: string;
+  children?: React.ReactNode;
+};
 
 export function ConfirmDialog(props: ConfirmDialogProps) {
+  const { t } = useTranslation("common");
   const {
     title,
     desc,
@@ -38,11 +40,12 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
     disabled = false,
     handleConfirm,
     ...actions
-  } = props
+  } = props;
+
   return (
     <AlertDialog {...actions}>
       <AlertDialogContent className={cn(className && className)}>
-        <AlertDialogHeader className='text-start'>
+        <AlertDialogHeader className="text-start">
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription asChild>
             <div>{desc}</div>
@@ -51,17 +54,17 @@ export function ConfirmDialog(props: ConfirmDialogProps) {
         {children}
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isLoading}>
-            {cancelBtnText ?? 'Cancel'}
+            {cancelBtnText ?? t("buttons.cancel")}
           </AlertDialogCancel>
           <Button
-            variant={destructive ? 'destructive' : 'default'}
+            variant={destructive ? "destructive" : "default"}
             onClick={handleConfirm}
             disabled={disabled || isLoading}
           >
-            {confirmText ?? 'Continue'}
+            {confirmText ?? t("buttons.continue")}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
+  );
 }
