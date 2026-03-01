@@ -20,7 +20,7 @@ export const profilesColumns: ColumnDef<Profile>[] = [
             }
             onCheckedChange={(value: any) => table.toggleAllPageRowsSelected(!!value)}
             aria-label='Select all'
-            className='translate-y-[2px]'
+            className='translate-y-0.5'
         />
         ),
         meta: { className: cn('max-md:sticky start-0 z-10 rounded-tl-[inherit]') },
@@ -29,7 +29,7 @@ export const profilesColumns: ColumnDef<Profile>[] = [
             checked={row.getIsSelected()}
             onCheckedChange={(value: any) => row.toggleSelected(!!value)}
             aria-label='Select row'
-            className='translate-y-[2px]'
+            className='translate-y-0.5'
             onClick={(e) => e.stopPropagation()}
             onMouseDown={(e) => e.stopPropagation()}
         />
