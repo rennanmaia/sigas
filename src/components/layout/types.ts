@@ -5,13 +5,6 @@ type User = {
   email: string
   avatar: string
 }
-
-type Team = {
-  name: string
-  logo: React.ElementType
-  plan: string
-}
-
 type BaseNavItem = {
   title: I18nKey<'common'>
   badge?: string
