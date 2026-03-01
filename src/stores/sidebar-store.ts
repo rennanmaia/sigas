@@ -8,9 +8,6 @@ import {
   UserCog,
   Users,
   MessagesSquare,
-  AudioWaveform,
-  Command,
-  GalleryVerticalEnd,
   BriefcaseBusiness,
   ClipboardList,
   Banknote,
@@ -21,7 +18,6 @@ import type { SidebarData } from "@/components/layout/types";
 interface SidebarsStore {
   sidebarData: SidebarData;
   getSidebarData: () => SidebarData;
-  getTeams: () => SidebarData['teams'];
   getUser: () => SidebarData['user'];
   getNavGroups: (roles: string[]) => SidebarData['navGroups'];
   setUser: (user: SidebarData['user']) => void;
@@ -34,23 +30,6 @@ export const useSidebarStore = create<SidebarsStore>((set, get) => ({
             email: "usuario@sigas.com",
             avatar: "/avatars/shadcn.jpg",
         },
-        teams: [
-            {
-                name: "Projeto 1",
-                logo: Command,
-                plan: "",
-            },
-            {
-                name: "Projeto 2",
-                logo: GalleryVerticalEnd,
-                plan: " ",
-            },
-            {
-                name: "Projeto 3",
-                logo: AudioWaveform,
-                plan: " ",
-            },
-        ],
         navGroups: [
             {
             title: "sidebar.groups.title",
@@ -142,7 +121,6 @@ export const useSidebarStore = create<SidebarsStore>((set, get) => ({
             }),
         }));
     },
-    getTeams: () => get().sidebarData.teams,
     getUser: () => get().sidebarData.user,
     setUser: (user) => set((state) => ({
         sidebarData: {
