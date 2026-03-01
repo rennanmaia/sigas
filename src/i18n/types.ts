@@ -607,5 +607,4 @@ type Leaves<T> = T extends object
     }[keyof T]
   : never;
 
-type I18nKey = Leaves<I18nResource>;
-export const i18nResourceMessage = <T extends I18nKey>(key: T) => key;
+export type I18nKey<T extends keyof I18nResource> = Leaves<I18nResource[T]>;
