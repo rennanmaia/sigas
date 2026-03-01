@@ -14,6 +14,7 @@ export interface FormItem {
   owner: string;
   projectId: string;
   questions: Question[];
+  collectors?: [];
 }
 
 export const forms: FormItem[] = [
