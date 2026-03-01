@@ -11,6 +11,7 @@ import {
   Clock,
   List,
   Trash2,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -171,13 +172,20 @@ function ProjectDetailsContent() {
           project.members?.includes(u.id) &&
           `${u.firstName} ${u.lastName}` !== project.responsible,
       )
-      .map((u) => ({
-        id: u.id,
-        name: `${u.firstName} ${u.lastName}`,
-        role: u.roles.map((r) => getRoleLabel(r)).join(", "),
-        initial: getInitials(u.firstName, u.lastName),
-      }));
-  }, [project?.members, project?.responsible]);
+      .map((u) => {
+        const projectSpecificRole = project.memberRoles?.[u.id];
+        const displayRole = projectSpecificRole
+          ? projectSpecificRole
+          : u.roles[0];
+
+        return {
+          id: u.id,
+          name: `${u.firstName} ${u.lastName}`,
+          role: getRoleLabel(displayRole),
+          initial: getInitials(u.firstName, u.lastName),
+        };
+      });
+  }, [project?.members, project?.memberRoles, project?.responsible]);
 
   const selectedUser = useMemo(() => {
     if (!selectedUserId) return null;
@@ -247,12 +255,39 @@ function ProjectDetailsContent() {
     });
   };
 
-  const handleConfirmMembers = (selectedIds: string[]) => {
-    const updatedMembers = [...(project.members || []), ...selectedIds];
+  const handleConfirmMembers = (
+    selectedItems: { id: string; role: string }[],
+  ) => {
+    const newMemberIds = selectedItems.map((item) => item.id);
+    const updatedMembers = [...(project.members || []), ...newMemberIds];
+
+    const updatedMemberRoles = { ...(project.memberRoles || {}) };
+    selectedItems.forEach((item) => {
+      updatedMemberRoles[item.id] = item.role;
+    });
+
     updateProjectData({
       members: updatedMembers,
+      memberRoles: updatedMemberRoles,
       stats: { ...project.stats, collectorsCount: updatedMembers.length },
     });
+  };
+
+  const handleRemoveMember = (memberId: string) => {
+    const updatedMembers = (project.members || []).filter(
+      (id) => id !== memberId,
+    );
+
+    const { [memberId]: _removed, ...updatedMemberRoles } =
+      project.memberRoles || {};
+
+    updateProjectData({
+      members: updatedMembers,
+      memberRoles: updatedMemberRoles,
+      stats: { ...project.stats, collectorsCount: updatedMembers.length },
+    });
+
+    toast.success("Membro removido do projeto!");
   };
 
   const currentProjectForms = availableForms.filter(
@@ -578,65 +613,108 @@ function ProjectDetailsContent() {
               {currentProjectTeam.length > 6 ? (
                 <ScrollArea className="h-[350px] pr-4">
                   <div className="space-y-5">
-                    {currentProjectTeam.map((member) => (
-                      <div
-                        key={member.id}
-                        className="flex items-center justify-between"
-                      >
-                        <div className="flex items-center gap-3">
-                          <Avatar className="h-9 w-9">
-                            <AvatarFallback>{member.initial}</AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="text-sm font-medium leading-none">
-                              {member.name}
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              {member.role}
-                            </p>
+                    {currentProjectTeam.map((member) => {
+                      const isResponsible = project.responsible === member.name;
+                      return (
+                        <div
+                          key={member.id}
+                          className="flex items-center justify-between group"
+                        >
+                          <div className="flex items-center gap-3">
+                            <Avatar className="h-9 w-9">
+                              <AvatarFallback>{member.initial}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="text-sm font-medium leading-none">
+                                {member.name}
+                              </p>
+                              <p className="text-xs text-muted-foreground mt-1">
+                                {member.role}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center">
+                            <Badge
+                              variant="secondary"
+                              className="text-[10px] cursor-pointer"
+                              onClick={() => handleViewProfile(member.id)}
+                            >
+                              Ver Perfil
+                            </Badge>
+                            {!isResponsible ? (
+                              <div className="flex justify-end w-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out group-hover:w-8 group-hover:opacity-100">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-6 w-6 shrink-0 text-destructive hover:bg-destructive/10"
+                                  onClick={() => handleRemoveMember(member.id)}
+                                  title="Remover membro"
+                                >
+                                  <X size={14} />
+                                </Button>
+                              </div>
+                            ) : (
+                              <div className="w-0 overflow-hidden" />
+                            )}
                           </div>
                         </div>
-                        <Badge
-                          variant="secondary"
-                          className="text-[10px] cursor-pointer"
-                          onClick={() => handleViewProfile(member.id)}
-                        >
-                          Ver Perfil
-                        </Badge>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </ScrollArea>
               ) : (
                 <div className="space-y-5">
                   {currentProjectTeam.length > 0 ? (
-                    currentProjectTeam.map((member) => (
-                      <div
-                        key={member.id}
-                        className="flex items-center justify-between"
-                      >
-                        <div className="flex items-center gap-3">
-                          <Avatar className="h-9 w-9">
-                            <AvatarFallback>{member.initial}</AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="text-sm font-medium leading-none">
-                              {member.name}
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-1">
-                              {member.role}
-                            </p>
+                    currentProjectTeam.map((member) => {
+                      const isResponsible = project.responsible === member.name;
+
+                      return (
+                        <div
+                          key={member.id}
+                          className="flex items-center justify-between group"
+                        >
+                          <div className="flex items-center gap-3">
+                            <Avatar className="h-9 w-9">
+                              <AvatarFallback>{member.initial}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <p className="text-sm font-medium leading-none">
+                                {member.name}
+                              </p>
+                              <p className="text-xs text-muted-foreground mt-1">
+                                {member.role}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <Badge
+                              variant="secondary"
+                              className="text-[10px] cursor-pointer"
+                              onClick={() => handleViewProfile(member.id)}
+                            >
+                              Ver Perfil
+                            </Badge>
+                            {!isResponsible ? (
+                              <div className="flex justify-end w-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out group-hover:w-8 group-hover:opacity-100">
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-6 w-6 shrink-0 text-destructive hover:bg-destructive/10"
+                                  onClick={() => handleRemoveMember(member.id)}
+                                  title="Remover membro"
+                                >
+                                  <X size={14} />
+                                </Button>
+                              </div>
+                            ) : (
+                              <div className="w-0 overflow-hidden" />
+                            )}
                           </div>
                         </div>
-                        <Badge
-                          variant="secondary"
-                          className="text-[10px] cursor-pointer"
-                          onClick={() => handleViewProfile(member.id)}
-                        >
-                          Ver Perfil
-                        </Badge>
-                      </div>
-                    ))
+                      );
+                    })
                   ) : (
                     <p className="text-sm text-muted-foreground italic">
                       Nenhum membro alocado.
@@ -661,21 +739,26 @@ function ProjectDetailsContent() {
             sublabel: f.status,
           }))}
         alreadySelected={project.forms || []}
-        onConfirm={handleConfirmForms}
+        onConfirm={handleConfirmForms as any}
         projectId={projectId}
       />
 
       <ProjectAllocateDialog
         open={openMemberDialog}
         onOpenChange={setOpenMemberDialog}
-        title="Alocar Equipe"
+        title="Alocar Membro"
         description="Selecione os profissionais para atuar neste projeto. Use a busca e os filtros para encontrar membros específicos."
         items={mapUsersToAllocateItems(users, true, true)}
         alreadySelected={project.members || []}
-        onConfirm={handleConfirmMembers}
+        onConfirm={handleConfirmMembers as any}
         showSearch={true}
         roleFilters={roleFilterOptions.filter(
           (r) => r.value !== "project_administrator",
+        )}
+        assignableRoles={roleFilterOptions.filter(
+          (r) =>
+            r.value !== "project_administrator" &&
+            r.value !== "general_administrator",
         )}
       />
       <ProjectsDeleteDialog

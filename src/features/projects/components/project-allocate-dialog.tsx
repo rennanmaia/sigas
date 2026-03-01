@@ -32,6 +32,10 @@ export interface FilterOption {
   value: string;
   label: string;
 }
+export interface SelectedMemberRole {
+  id: string;
+  role: string;
+}
 
 interface ProjectAllocateDialogProps {
   open: boolean;
@@ -40,11 +44,12 @@ interface ProjectAllocateDialogProps {
   description: string;
   items: AllocateItem[];
   alreadySelected: string[];
-  onConfirm: (selectedIds: string[]) => void;
+  onConfirm: (selectedItems: string[] | SelectedMemberRole[]) => void;
   projectId?: string;
   showSearch?: boolean;
   roleFilters?: FilterOption[];
   statusFilters?: FilterOption[];
+  assignableRoles?: FilterOption[];
 }
 
 export function ProjectAllocateDialog({
@@ -59,15 +64,16 @@ export function ProjectAllocateDialog({
   showSearch = false,
   roleFilters,
   statusFilters,
+  assignableRoles,
 }: ProjectAllocateDialogProps) {
-  const [selected, setSelected] = useState<string[]>([]);
+  const [selected, setSelected] = useState<Record<string, string>>({});
   const [searchQuery, setSearchQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
   const handleOpenChange = (isOpen: boolean) => {
     if (isOpen) {
-      setSelected([]);
+      setSelected({});
       setSearchQuery("");
       setRoleFilter("all");
       setStatusFilter("all");
@@ -76,9 +82,21 @@ export function ProjectAllocateDialog({
   };
 
   const toggleItem = (id: string) => {
-    setSelected((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id],
-    );
+    setSelected((prev) => {
+      const newSelected = { ...prev };
+      if (newSelected[id]) {
+        delete newSelected[id];
+      } else {
+        newSelected[id] = assignableRoles?.[0]?.value || "collector";
+      }
+      return newSelected;
+    });
+  };
+  const updateItemRole = (id: string, role: string) => {
+    setSelected((prev) => ({
+      ...prev,
+      [id]: role,
+    }));
   };
 
   const availableItems = items.filter(
@@ -203,31 +221,56 @@ export function ProjectAllocateDialog({
           </div>
         )}
 
-        <ScrollArea className="h-[300px] pr-4">
+        <ScrollArea className="h-[300px] pr-4 mt-4">
           <div className="space-y-2">
             {filteredItems.length > 0 ? (
-              filteredItems.map((item) => (
-                <div
-                  key={item.id}
-                  onClick={() => toggleItem(item.id)}
-                  className={cn(
-                    "flex cursor-pointer items-center justify-between rounded-lg border p-3 transition-colors hover:bg-muted",
-                    selected.includes(item.id) && "border-primary bg-primary/5",
-                  )}
-                >
-                  <div className="flex flex-col">
-                    <span className="text-sm font-medium">{item.label}</span>
-                    {item.sublabel && (
-                      <span className="text-xs text-muted-foreground">
-                        {item.sublabel}
-                      </span>
+              filteredItems.map((item) => {
+                const isSelected = !!selected[item.id];
+                return (
+                  <div
+                    key={item.id}
+                    onClick={() => toggleItem(item.id)}
+                    className={cn(
+                      "flex cursor-pointer items-center justify-between rounded-lg border p-3 transition-colors hover:bg-muted",
+                      isSelected && "border-primary bg-primary/5",
                     )}
+                  >
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium">{item.label}</span>
+                      {item.sublabel && (
+                        <span className="text-xs text-muted-foreground">
+                          {item.sublabel}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      {isSelected && assignableRoles && (
+                        <div onClick={(e) => e.stopPropagation()}>
+                          <Select
+                            value={selected[item.id]}
+                            onValueChange={(val) =>
+                              updateItemRole(item.id, val)
+                            }
+                          >
+                            <SelectTrigger className="h-8 w-[140px] text-xs bg-background">
+                              <SelectValue placeholder="Selecione a role" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {assignableRoles.map((role) => (
+                                <SelectItem key={role.value} value={role.value}>
+                                  {role.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+                      {isSelected && <Check className="h-4 w-4 text-primary" />}
+                    </div>
                   </div>
-                  {selected.includes(item.id) && (
-                    <Check className="h-4 w-4 text-primary" />
-                  )}
-                </div>
-              ))
+                );
+              })
             ) : (
               <p className="py-4 text-center text-sm text-muted-foreground italic">
                 {hasActiveFilters
@@ -242,9 +285,16 @@ export function ProjectAllocateDialog({
             Cancelar
           </Button>
           <Button
-            disabled={selected.length === 0}
+            disabled={Object.keys(selected).length === 0}
             onClick={() => {
-              onConfirm(selected);
+              if (assignableRoles) {
+                const selectedWithRoles = Object.entries(selected).map(
+                  ([id, role]) => ({ id, role }),
+                );
+                onConfirm(selectedWithRoles);
+              } else {
+                onConfirm(Object.keys(selected));
+              }
               handleOpenChange(false);
             }}
           >

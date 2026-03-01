@@ -32,7 +32,7 @@ export function CreatePassive() {
       toast.success('Passivo criado com sucesso!');
 
       setTimeout(() => {
-        navigate({ to: '/passives', search: { tabs: LiabilityView.OVERVIEW, view: LiabilityView.OVERVIEW } });
+        navigate({ to: '/passives', search: { tabs: LiabilityView.LIST, view: LiabilityView.OVERVIEW } });
       }, 1500);
     } catch (error) {
       toast.error('Erro ao criar passivo');

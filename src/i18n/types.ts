@@ -54,6 +54,7 @@ export type I18nResource = {
       globalSearch: string;
       continue: string;
       cancel: string;
+      back: string;
     },
     pagination: {
       pageOf: string;
@@ -90,6 +91,28 @@ export type I18nResource = {
     team: {
       label: string;
       addTeam: string;
+    },
+    deleteDialog: {
+      single: {
+        title: string;
+        description: string;
+      },
+      multi: {
+        title: string;
+        description: string;
+        deafultConfirmWord: string;
+      },
+      confirm: {
+        label: string;
+        placeholder: string;
+        keyword: string;
+        keywordPlaceholder: string;
+      },
+      warning: {
+        title: string;
+        description: string;
+      },
+      confirmButton: string;
     }
   };
   dashboard: {
@@ -191,6 +214,15 @@ export type I18nResource = {
     }
   },
   profiles: {
+    view: {
+      title: string;
+      notFound: {
+        message: string;
+      },
+      buttons: {
+        edit: string;
+      }
+    },
     list: {
       title: string;
       description: string;
@@ -234,12 +266,28 @@ export type I18nResource = {
           label: string;
           validation: {
             required: string;
+          },
+          search: {
+            placeholder: string;
+            expand: string;
+            collapse: string;
+          },
+          featureGroup: {
+            selected: string;
           }
         }
       },
       actions: {
+        creationSubmitLabel: string;
         save: string;
         cancel: string;
+      },
+    },
+    logs: {
+      title: string;
+      empty: string;
+      permissions: {
+        label: string;
       }
     }
   },
@@ -559,5 +607,4 @@ type Leaves<T> = T extends object
     }[keyof T]
   : never;
 
-type I18nKey = Leaves<I18nResource>;
-export const i18nResourceMessage = <T extends I18nKey>(key: T) => key;
+export type I18nKey<T extends keyof I18nResource> = Leaves<I18nResource[T]>;

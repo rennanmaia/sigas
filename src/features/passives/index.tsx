@@ -15,6 +15,7 @@ import { CriticalRisksManagement } from "./components/critical-risk-management";
 import { useEffect } from "react";
 import { LiabilityView, type LiabilitySearch } from "@/routes/_authenticated/passives";
 import { Link } from "@tanstack/react-router";
+import { LiabilitiesProvider } from "./components/passives-provider";
 
 const route = getRouteApi('/_authenticated/passives/')
 
@@ -35,7 +36,7 @@ export function Passives() {
   }, [view])
 
   return (
-    <>
+    <LiabilitiesProvider>
       <Header fixed>
         <Search />
         <div className='ms-auto flex items-center space-x-4'>
@@ -86,6 +87,6 @@ export function Passives() {
           </TabsContent>
         </Tabs>
       </Main>
-    </>
+    </LiabilitiesProvider>
   );
 }

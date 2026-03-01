@@ -6,17 +6,18 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { useLiabilities } from './passives-provider'
+import type { Liability } from '../data/schema'
 
-type DataTableRowActionsProps<T> = {
-  row: Row<T>
+type DataTableRowActionsProps = {
+  row: Row<Liability>
 }
 
-export function DataTableRowActions<T>({ }: DataTableRowActionsProps<T>) {
-//   const { setOpen, setCurrentRow } = useUsers()
+export function DataTableRowActions({ row }: DataTableRowActionsProps) {
+  const { setOpen, setCurrentRow } = useLiabilities()
   return (
     <div className='z-100'>
       <DropdownMenu modal={false}>
@@ -31,28 +32,17 @@ export function DataTableRowActions<T>({ }: DataTableRowActionsProps<T>) {
             <span className='sr-only'>Open menu</span>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align='end' className='w-[160px]'>
-          <DropdownMenuItem
-            onClick={(e) => {
-              e.stopPropagation();
-            //   setCurrentRow(row.original)
-            //   setOpen('view')
-            }}
-            onMouseDown={(e) => e.stopPropagation()}
-          >
-            View
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
+        <DropdownMenuContent align='end' className='w-40'>
           <DropdownMenuItem
             onClick={(e) => {
               e.stopPropagation()
-            //   setCurrentRow(row.original)
-            //   setOpen('delete')
+              setCurrentRow(row.original)
+              setOpen('delete')
             }}
             onMouseDown={(e) => e.stopPropagation()}
             className='text-red-500!'
           >
-            Delete
+            Deletar
             <DropdownMenuShortcut>
               <Trash2 size={16} />
             </DropdownMenuShortcut>

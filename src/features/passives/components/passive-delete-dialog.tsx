@@ -3,33 +3,33 @@
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { DeleteDialog, type DeleteDialogConfig } from "@/components/delete-dialog";
-import { useProfilesStore } from "@/stores/profiles-store";
-import type { Profile } from "../data/schema";
+import type { Liability } from "../data/schema";
+import { useLiabilitiesStore } from "@/stores/passives-store";
 
 type ProfileDeleteDialogProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  currentRow: Profile;
+  currentRow: Liability;
 };
 
-export function ProfilesDeleteDialog({
+export function LiabilityDeleteDialog({
   open,
   onOpenChange,
   currentRow,
 }: ProfileDeleteDialogProps) {
   const { t } = useTranslation("common");
-  const { deleteProfile } = useProfilesStore();
+  const { deleteLiability } = useLiabilitiesStore();
 
   const config: DeleteDialogConfig = {
     mode: "single",
     item: {
-      id: currentRow.id,
-      label: currentRow.label,
+      id: currentRow.id ?? '',
+      label: currentRow.nome,
     },
-    namespace: "profiles",
+    namespace: "liability",
     confirmStrategy: "typed",
     onDelete: (id) => {
-      deleteProfile(id as string);
+      deleteLiability(id as string);
       toast.success(t("deleteDialog.confirmButton"));
     },
   };
