@@ -1,3 +1,33 @@
+# [1.1.0](https://github.com/rennanmaia/sigas/compare/v1.0.0...v1.1.0) (2026-03-01)
+
+
+### Bug Fixes
+
+* add member removal functionality in project details ([0aca7bc](https://github.com/rennanmaia/sigas/commit/0aca7bc1737955cd3563ef696045f3326f991675))
+* add optional collectors field to FormItem interface ([7d624f7](https://github.com/rennanmaia/sigas/commit/7d624f75d09542a49ff41f20779f1936b3f6be5c))
+* correct syntax error in PROJECT_STATUS and add optional memberRoles field to Project type ([c6dbfaa](https://github.com/rennanmaia/sigas/commit/c6dbfaa09069cecd7e38c557aa759820d04f833d))
+* enhance form builder to manage collectors and update form data handling ([dbd3482](https://github.com/rennanmaia/sigas/commit/dbd3482dd2f8eec590638d5e161a34e91d451ecc))
+* enhance member role assignment and update member roles management in project details ([d4c2aeb](https://github.com/rennanmaia/sigas/commit/d4c2aebd489fe8420820e840cbfe88a35f7adae2))
+* enhance sidebar component to manage authorized collectors and improve project selection handling ([383875d](https://github.com/rennanmaia/sigas/commit/383875d77cf7e407fec72b3272f39029f98fa712))
+* **Forms:** fix mobile preview theme colors ([788709a](https://github.com/rennanmaia/sigas/commit/788709a9db26651e96bf347bf3258522f3dc9ab3))
+* **Liabilities:** add delete dialog to table component ([76ebc04](https://github.com/rennanmaia/sigas/commit/76ebc045c527a8af87adf764e6dc9a78d4965c8b))
+* **Liabilities:** Fix navigation ([815ed23](https://github.com/rennanmaia/sigas/commit/815ed2358a4a3f1a9005618cc559aadbbff77af9))
+* **Profiles:** fix navigation and translation ([a16c927](https://github.com/rennanmaia/sigas/commit/a16c927c58420905bbb7f59d2c8f99f03f8ee050))
+* **Profiles:** return to list after create a new profile ([bc5f7ce](https://github.com/rennanmaia/sigas/commit/bc5f7ce61e7256bf0cfcf25298e159259455bab4))
+* remove unused imports and fix function deps ([a74cea2](https://github.com/rennanmaia/sigas/commit/a74cea207c67b22604ab97b8cf3de40b95d8f5e6))
+* **sidebar:** fix i18n translation using stores and using i18n resource keys ([a332db1](https://github.com/rennanmaia/sigas/commit/a332db17fb578ba8714c25e3f439969aa3d01137))
+* **theme:** fix liability card theme colors ([05a46b6](https://github.com/rennanmaia/sigas/commit/05a46b6ea57923bb4d6bd23f22afce5fb4f73fab))
+* update dialog title for member allocation in project details ([2c1c762](https://github.com/rennanmaia/sigas/commit/2c1c7620d6af09c206ad254b72c960f5b78a8140))
+* update ProjectAllocateDialog to support role assignment and change selected state management ([11a1b21](https://github.com/rennanmaia/sigas/commit/11a1b21634df31db302e96bc9e013a11e35f0d89))
+
+
+### Features
+
+* **en-US:** add last updated translations ([87cf3a5](https://github.com/rennanmaia/sigas/commit/87cf3a543cac272df972a1878ab0a89aea05d0f6))
+* **Liabilities:** Create deletion dialogs and bulk actions ([88a837c](https://github.com/rennanmaia/sigas/commit/88a837c9b9b9eae26d7a10bb1a06e7bcc7861b42))
+* **Profiles:** Create profile store ([699d1fc](https://github.com/rennanmaia/sigas/commit/699d1fcd04f753b5e6c96423b1b84b4607763ec2))
+* wrap AuthenticatedLayout in ThemeProvider for theme support ([406822c](https://github.com/rennanmaia/sigas/commit/406822c924dc914dee3e4d916d57b36973581f7d))
+
 # 1.0.0 (2026-02-28)
 
 
