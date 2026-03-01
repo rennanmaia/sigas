@@ -11,21 +11,21 @@ export function SummaryCard({ title, value, sub, icon, alert, onReview }: {
   onReview?: () => void;
 }) {
   return (
-      <Card className={`relative overflow-hidden border-none shadow-sm transition-all duration-300 group ${
-      alert ? 'bg-red-50/50 hover:bg-red-100/80' : 'bg-white hover:bg-slate-50'
+      <Card className={`relative cursor-pointer overflow-hidden border-none shadow-sm transition-all duration-300 group ${
+      alert ? '' : ''
     }`}>
       <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-        <CardTitle className="text-[11px] font-bold uppercase text-slate-500 tracking-wider">{title}</CardTitle>
+        <CardTitle className="text-[11px] font-bold uppercase tracking-wider">{title}</CardTitle>
         <div className="transition-transform duration-300 group-hover:scale-110">
           {icon}
         </div>
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold tracking-tight">{value}</div>
-        <p className="text-[10px] text-slate-400 mt-1 font-medium">{sub}</p>
+        <p className="text-[10px] mt-1 text-muted-foreground font-medium">{sub}</p>
         
         {/* Botão de Revisão que aparece no Hover */}
-        <div className="absolute inset-x-0 bottom-0 p-2 translate-y-full transition-transform duration-300 group-hover:translate-y-0 bg-gradient-to-t from-white/80 to-transparent">
+        <div className="absolute inset-x-0 bottom-0 p-2 translate-y-full transition-transform duration-300 group-hover:translate-y-0 to-transparent">
           {onReview && (
               <Button 
               variant={alert ? "destructive" : "secondary"} 

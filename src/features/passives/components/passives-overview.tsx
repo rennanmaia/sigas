@@ -28,13 +28,13 @@ export function PassivesOverview() {
     <div className="flex flex-col gap-8">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Visão Geral de Passivos</h1>
-          <p className="text-slate-500 text-sm">Monitoramento de conformidade e exposição de risco ESG.</p>
+          <h1 className="text-2xl font-bold tracking-tight">Visão Geral de Passivos</h1>
+          <p className="text-sm text-muted-foreground">Monitoramento de conformidade e exposição de risco ESG.</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <SummaryCard title="Total de Passivos" value={stats.total} sub={`100% da carteira`} icon={<History className="h-4 w-4 text-slate-400" />} />
+        <SummaryCard title="Total de Passivos" value={stats.total} sub={`100% da carteira`} icon={<History className="h-4 w-4" />} />
         <SummaryCard 
           title="Riscos Críticos" 
           value={stats.criticos} 
@@ -119,7 +119,7 @@ export function PassivesOverview() {
         </Card>
 
         {stats.semPlano > 0 && (
-          <Alert variant="destructive" className="bg-white border-red-200">
+          <Alert variant="destructive" className="">
             <ShieldAlert className="h-4 w-4" />
             <AlertTitle>Atenção</AlertTitle>
             <AlertDescription className="text-xs">
