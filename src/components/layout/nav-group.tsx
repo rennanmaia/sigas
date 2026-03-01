@@ -33,7 +33,6 @@ import {
   type NavGroup as NavGroupProps,
 } from './types'
 import { useTranslation } from 'react-i18next'
-import { t } from 'i18next'
 
 export function NavGroup({ title, items }: NavGroupProps) {
   const { state, isMobile } = useSidebar()

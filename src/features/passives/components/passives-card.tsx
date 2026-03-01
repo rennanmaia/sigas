@@ -38,13 +38,13 @@ export function PassiveCard({
                 {goToResolve && (
                     <Button 
                         className="flex-1 h-8 text-xs gap-2"
-                        onClick={() => goToResolve(item.id)}
+                        onClick={() => goToResolve(item.id ?? '')}
                     >
                         <CheckCircle2 size={14} /> Resolver
                     </Button>
                 )}
                 {goToDetails && (
-                    <Button onClick={() => goToDetails(item.id)} variant="outline" className="h-8 text-xs">
+                    <Button onClick={() => goToDetails(item.id ?? '')} variant="outline" className="h-8 text-xs">
                         Detalhes
                     </Button>
                 )}   
