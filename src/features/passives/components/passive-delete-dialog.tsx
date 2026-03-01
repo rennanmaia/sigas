@@ -3,7 +3,6 @@
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
 import { DeleteDialog, type DeleteDialogConfig } from "@/components/delete-dialog";
-import { useProfilesStore } from "@/stores/profiles-store";
 import type { Liability } from "../data/schema";
 import { useLiabilitiesStore } from "@/stores/passives-store";
 
