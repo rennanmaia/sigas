@@ -39,20 +39,16 @@ export function MobilePreviewDialog({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex-1 flex items-center justify-center p-4 bg-slate-100">
-          <div className="relative w-full max-w-[375px] h-full">
-            <div className="absolute inset-2 rounded-3xl bg-white overflow-hidden">
+        <div className="flex-1 flex items-center justify-center p-4 bg-muted">
+          <div className="relative w-full max-w-[375px] h-full bg-background">
+            <div className="light absolute inset-2 rounded-3xl text-foreground overflow-hidden">
               <ScrollArea className="h-full">
                 <div className="p-4 space-y-4">
                   <div className="space-y-2 pb-4 border-b-4 border-b-primary/20">
-                    <h1 className="text-xl font-bold text-foreground">
+                    <h1 className="text-xl font-bold">
                       {title || "Título do Formulário"}
                     </h1>
-                    {description && (
-                      <p className="text-sm text-muted-foreground">
-                        {description}
-                      </p>
-                    )}
+                    {description && <p className="text-sm ">{description}</p>}
                   </div>
 
                   {questions.length > 0 ? (
@@ -71,9 +67,7 @@ export function MobilePreviewDialog({
                     </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center py-12 text-center">
-                      <p className="text-sm text-muted-foreground">
-                        Nenhuma questão adicionada
-                      </p>
+                      <p className="text-sm ">Nenhuma questão adicionada</p>
                     </div>
                   )}
                 </div>

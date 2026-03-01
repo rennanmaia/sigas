@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { Link } from "@tanstack/react-router";
 import {
   AlignLeft,
   CheckSquare,
@@ -11,6 +12,8 @@ import {
   Camera,
   BarChart3,
   X,
+  Check,
+  Users,
 } from "lucide-react";
 import type { QuestionType } from "../types/question";
 
@@ -20,6 +23,10 @@ interface SidebarProps {
   responsesCount?: number;
   formId?: string;
   showingResponses?: boolean;
+  availableCollectors?: { id: string; name: string }[];
+  selectedCollectors?: string[];
+  onCollectorsChange?: (newCollectors: string[]) => void;
+  projectId?: string;
 }
 
 const MENU_ITEMS = [
@@ -45,8 +52,24 @@ export function Sidebar({
   responsesCount = 0,
   formId,
   showingResponses = false,
+  availableCollectors = [],
+  selectedCollectors = [],
+  onCollectorsChange,
+  projectId,
 }: SidebarProps) {
   const hasResponses = responsesCount > 0 && formId;
+
+  const toggleCollector = (collectorId: string) => {
+    if (!onCollectorsChange) return;
+
+    if (selectedCollectors.includes(collectorId)) {
+      onCollectorsChange(selectedCollectors.filter((id) => id !== collectorId));
+    } else {
+      onCollectorsChange([...selectedCollectors, collectorId]);
+    }
+  };
+
+  const hasSelectedProject = projectId && projectId !== "__empty__";
 
   return (
     <aside className="w-full md:w-64 md:h-full shrink-0 border-b md:border-b-0 md:border-r bg-muted/20">
@@ -90,24 +113,98 @@ export function Sidebar({
 
           {!showingResponses && (
             <>
-              <h3 className="font-semibold text-[10px] uppercase tracking-wider text-muted-foreground mb-4 hidden md:block">
-                Tipos de Questão
-              </h3>
+              <div className="mb-6">
+                <h3 className="font-semibold text-[10px] uppercase tracking-wider text-muted-foreground mb-4 hidden md:block">
+                  Tipos de Questão
+                </h3>
 
-              <div className="flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-x-visible no-scrollbar pb-2 md:pb-0">
-                {MENU_ITEMS.map((item) => (
-                  <Button
-                    key={item.id}
-                    variant="outline"
-                    className="justify-start h-9 md:h-10 px-3 text-xs shrink-0 md:shrink"
-                    onClick={() => onAdd(item.id as QuestionType)}
-                  >
-                    <span className="mr-2 font-bold opacity-70 shrink-0">
-                      {item.icon}
-                    </span>
-                    <span className="whitespace-nowrap">{item.label}</span>
-                  </Button>
-                ))}
+                <div className="flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-x-visible no-scrollbar pb-2 md:pb-0">
+                  {MENU_ITEMS.map((item) => (
+                    <Button
+                      key={item.id}
+                      variant="outline"
+                      className="justify-start h-9 md:h-10 px-3 text-xs shrink-0 md:shrink"
+                      onClick={() => onAdd(item.id as QuestionType)}
+                    >
+                      <span className="mr-2 font-bold opacity-70 shrink-0">
+                        {item.icon}
+                      </span>
+                      <span className="whitespace-nowrap">{item.label}</span>
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-4 md:mt-8">
+                <Separator className="mb-4 hidden md:block" />
+                <h3 className="font-semibold text-[10px] uppercase tracking-wider text-muted-foreground mb-4 hidden md:flex items-center gap-1.5">
+                  <Users size={12} />
+                  Coletores Autorizados
+                </h3>
+
+                <div className="flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-x-visible no-scrollbar pb-2 md:pb-0">
+                  {availableCollectors.length === 0 ? (
+                    <div className="hidden md:flex flex-col px-1 gap-1">
+                      {!hasSelectedProject ? (
+                        <p className="text-xs text-muted-foreground italic">
+                          Selecione um projeto para carregar os coletores
+                          vinculados a ele.
+                        </p>
+                      ) : (
+                        <>
+                          <p className="text-xs text-muted-foreground italic">
+                            Não há coletores no projeto.
+                          </p>
+                          <Button
+                            variant="link"
+                            className="h-auto p-0 text-xs justify-start text-primary"
+                            asChild
+                          >
+                            <Link
+                              to="/projects/$projectId"
+                              params={{ projectId: projectId as string }}
+                            >
+                              Adicione aqui
+                            </Link>
+                          </Button>
+                        </>
+                      )}
+                    </div>
+                  ) : (
+                    availableCollectors.map((collector) => {
+                      const isSelected = selectedCollectors.includes(
+                        collector.id,
+                      );
+                      return (
+                        <Button
+                          key={collector.id}
+                          variant={isSelected ? "secondary" : "ghost"}
+                          className="justify-start h-9 md:h-10 px-3 text-xs shrink-0 md:shrink font-medium border border-transparent hover:border-border"
+                          onClick={() => toggleCollector(collector.id)}
+                        >
+                          <div
+                            className={`w-4 h-4 mr-2 rounded border flex items-center justify-center shrink-0 transition-colors ${
+                              isSelected
+                                ? "bg-primary border-primary"
+                                : "border-input bg-background"
+                            }`}
+                          >
+                            {isSelected && (
+                              <Check
+                                size={12}
+                                className="text-primary-foreground"
+                                strokeWidth={3}
+                              />
+                            )}
+                          </div>
+                          <span className="truncate whitespace-nowrap">
+                            {collector.name}
+                          </span>
+                        </Button>
+                      );
+                    })
+                  )}
+                </div>
               </div>
             </>
           )}

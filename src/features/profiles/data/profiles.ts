@@ -1,12 +1,12 @@
 import { faker } from '@faker-js/faker'
 import { roles } from './data'
-import { featureGroups } from '@/features/features/data/features'
+import { FEATURE_GROUPS } from '@/features/features/data/features'
 import type { Profile } from './schema'
 
 // Seed for consistent results
 faker.seed(42424)
 
-const allPermissions = featureGroups.flatMap((g) => g.children.map((c) => c.id))
+const allPermissions = FEATURE_GROUPS.flatMap((g) => g.children.map((c) => c.id))
 
 export const profiles: Profile[] = roles.map((r, idx) => {
   // create a random-sized subset of available permissions

@@ -1,19 +1,12 @@
+import type { I18nKey } from '@/i18n/types';
 import { type LinkProps } from '@tanstack/react-router'
-
 type User = {
-  name: string
+  name: string;
   email: string
   avatar: string
 }
-
-type Team = {
-  name: string
-  logo: React.ElementType
-  plan: string
-}
-
 type BaseNavItem = {
-  title: string
+  title: I18nKey<'common'>
   badge?: string
   icon?: React.ElementType
 }
@@ -33,13 +26,12 @@ type NavItem = (NavCollapsible | NavLink) & {
 }
 
 type NavGroup = {
-  title: string
+  title: I18nKey<'common'>
   items: NavItem[]
 }
 
 type SidebarData = {
   user: User
-  teams: Team[]
   navGroups: NavGroup[]
 }
 

@@ -57,12 +57,12 @@ export const columns: ColumnDef<Liability>[] = [
     cell: ({ row }) => (
       <Link
         to="/passives/$passiveId"
-        params={{ passiveId: row.original.id }}
+        params={{ passiveId: row.original.id ?? '' }}
         className="font-medium truncate hover:underline"
       >
         <div className="flex flex-col gap-x-2">
-          <span className="font-medium text-slate-900">{row.original.nome}</span>
-          <span className="text-xs text-slate-500">{row.original.categoria}</span>
+          <span className="font-medium">{row.original.nome}</span>
+          <span className="text-xs text-muted-foreground">{row.original.categoria}</span>
         </div>
       </Link>
     ),

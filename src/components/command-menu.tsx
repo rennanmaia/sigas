@@ -12,15 +12,19 @@ import {
   CommandList,
   CommandSeparator,
 } from '@/components/ui/command'
-import { sidebarData } from './layout/data/sidebar-data'
 import { ScrollArea } from './ui/scroll-area'
 import { useTranslation } from 'react-i18next'
+import { useSidebarStore } from '@/stores/sidebar-store'
+import { useAuthStore } from '@/stores/auth-store'
 
 export function CommandMenu() {
   const navigate = useNavigate()
   const { setTheme } = useTheme()
   const { open, setOpen } = useSearch()
   const { t } = useTranslation("common")
+  const { auth } = useAuthStore()
+  const roles = auth.user?.role ?? []
+  const { getNavGroups } = useSidebarStore();
 
   const runCommand = React.useCallback(
     (command: () => unknown) => {
@@ -36,14 +40,14 @@ export function CommandMenu() {
       <CommandList>
         <ScrollArea type='hover' className='h-72 pe-1'>
           <CommandEmpty>{t("command.menu.empty")}</CommandEmpty>
-          {sidebarData.navGroups.map((group) => (
-            <CommandGroup key={group.title} heading={group.title}>
+          {getNavGroups(roles).map((group) => (
+            <CommandGroup key={t(group.title)} heading={t(group.title)}>
               {group.items.map((navItem, i) => {
                 if (navItem.url)
                   return (
                     <CommandItem
                       key={`${navItem.url}-${i}`}
-                      value={navItem.title}
+                      value={t(navItem.title)}
                       onSelect={() => {
                         runCommand(() => navigate({ to: navItem.url }))
                       }}
@@ -51,14 +55,14 @@ export function CommandMenu() {
                       <div className='flex size-4 items-center justify-center'>
                         <ArrowRight className='text-muted-foreground/80 size-2' />
                       </div>
-                      {navItem.title}
+                      {t(navItem.title)}
                     </CommandItem>
                   )
 
                 return navItem.items?.map((subItem, i) => (
                   <CommandItem
-                    key={`${navItem.title}-${subItem.url}-${i}`}
-                    value={`${navItem.title}-${subItem.url}`}
+                    key={`${t(navItem.title)}-${subItem.url}-${i}`}
+                    value={`${t(navItem.title)}-${subItem.url}`}
                     onSelect={() => {
                       runCommand(() => navigate({ to: subItem.url }))
                     }}
@@ -66,7 +70,7 @@ export function CommandMenu() {
                     <div className='flex size-4 items-center justify-center'>
                       <ArrowRight className='text-muted-foreground/80 size-2' />
                     </div>
-                    {navItem.title} <ChevronRight /> {subItem.title}
+                    {t(navItem.title)} <ChevronRight /> {t(subItem.title)}
                   </CommandItem>
                 ))
               })}

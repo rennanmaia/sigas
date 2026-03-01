@@ -11,8 +11,9 @@ import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/component
 import { ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
-import { featureGroups } from '@/features/features/data/features'
+import { FEATURE_GROUPS } from '@/features/features/data/features'
 import type { Profile } from '../data/schema'
+import { useTranslation } from 'react-i18next'
 
 const formSchema = z.object({
   name: z.string().min(1, i18next("profiles:create.form.name.validation.required")),
@@ -30,12 +31,13 @@ type Props = {
 }
 
 export default function ProfileForm({ initialValues, submitLabel = 'Save', onSubmit, onCancel }: Props) {
+  const { t } = useTranslation('profiles');
   const [permissionsOpen, setPermissionsOpen] = useState(true)
   const [groupEnabled, setGroupEnabled] = useState<Record<string, boolean>>(
-    () => Object.fromEntries(featureGroups.map((g) => [g.id, true]))
+    () => Object.fromEntries(FEATURE_GROUPS.map((g) => [g.id, true]))
   )
   const [groupOpen, setGroupOpen] = useState<Record<string, boolean>>(
-    () => Object.fromEntries(featureGroups.map((g) => [g.id, false]))
+    () => Object.fromEntries(FEATURE_GROUPS.map((g) => [g.id, false]))
   )
   const [permQuery, setPermQuery] = useState('')
 
@@ -59,7 +61,7 @@ export default function ProfileForm({ initialValues, submitLabel = 'Save', onSub
   useEffect(() => {
     if (!permQuery) return
     const next = { ...groupOpen }
-    featureGroups.forEach((g) => {
+    FEATURE_GROUPS.forEach((g) => {
       const hasMatch = g.children.some((c) => c.label.toLowerCase().includes(permQuery.toLowerCase()))
       if (hasMatch) next[g.id] = true
     })
@@ -69,7 +71,7 @@ export default function ProfileForm({ initialValues, submitLabel = 'Save', onSub
 
   const submit = (values: FormValues) => {
     const enabledPermissions = values.permissions.filter((p) => {
-      const group = featureGroups.find((g) => p.startsWith(`${g.id}.`) || p.startsWith(`${g.id}`))
+      const group = FEATURE_GROUPS.find((g) => p.startsWith(`${g.id}.`) || p.startsWith(`${g.id}`))
       return group ? groupEnabled[group.id] : true
     })
     if (enabledPermissions.length === 0) {
@@ -93,7 +95,7 @@ export default function ProfileForm({ initialValues, submitLabel = 'Save', onSub
     setGroupEnabled((s) => {
       const next = { ...s, [groupId]: !s[groupId] }
       if (!next[groupId]) {
-        const group = featureGroups.find((g) => g.id === groupId)
+        const group = FEATURE_GROUPS.find((g) => g.id === groupId)
         if (group) {
           const current = form.getValues('permissions') || []
           const filtered = current.filter((p) => !group.children.some((c) => c.id === p))
@@ -112,7 +114,7 @@ export default function ProfileForm({ initialValues, submitLabel = 'Save', onSub
           name='name'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Profile name</FormLabel>
+              <FormLabel>{t("create.form.name.label")}</FormLabel>
               <FormControl>
                 <Input placeholder='e.g., Manager' {...field} />
               </FormControl>
@@ -126,9 +128,9 @@ export default function ProfileForm({ initialValues, submitLabel = 'Save', onSub
           name='description'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description (optional)</FormLabel>
+              <FormLabel>{t('create.form.description.label')}</FormLabel>
               <FormControl>
-                <Textarea placeholder='A short description for this profile' {...field} />
+                <Textarea placeholder={t('create.form.description.placeholder')} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -145,7 +147,7 @@ export default function ProfileForm({ initialValues, submitLabel = 'Save', onSub
                   <div className='flex items-center gap-2'>
                     <CollapsibleTrigger asChild>
                       <button type='button' className='flex items-center gap-2 text-sm font-medium'>
-                        <span>Permissions</span>
+                        <span>{t('create.form.permissions.label')}</span>
                         <span className='text-xs text-muted-foreground'>({(form.getValues('permissions') || []).length} selected)</span>
                       </button>
                     </CollapsibleTrigger>
@@ -162,7 +164,7 @@ export default function ProfileForm({ initialValues, submitLabel = 'Save', onSub
 
                 <div className='mb-3 flex items-center gap-3'>
                   <Input
-                    placeholder='Search permissions...'
+                    placeholder={t('create.form.permissions.search.placeholder')}
                     value={permQuery}
                     onChange={(e) => setPermQuery(e.target.value)}
                     className='max-w-sm'
@@ -170,22 +172,22 @@ export default function ProfileForm({ initialValues, submitLabel = 'Save', onSub
                   <div className='ms-auto flex gap-2'>
                     <Button variant='ghost' size='sm' onClick={(e) => {
                       e.preventDefault()
-                      setGroupOpen(Object.fromEntries(featureGroups.map((g) => [g.id, true])))
+                      setGroupOpen(Object.fromEntries(FEATURE_GROUPS.map((g) => [g.id, true])))
                     }}>
-                      Expand all
+                      {t('create.form.permissions.search.expand')}
                     </Button>
                     <Button variant='ghost' size='sm' onClick={(e) => {
                       e.preventDefault()
-                      setGroupOpen(Object.fromEntries(featureGroups.map((g) => [g.id, false])))
+                      setGroupOpen(Object.fromEntries(FEATURE_GROUPS.map((g) => [g.id, false])))
                     }}>
-                      Collapse all
+                      {t('create.form.permissions.search.collapse')}
                     </Button>
                   </div>
                 </div>
 
                 <CollapsibleContent>
                   <div className='gap-4'>
-                    {featureGroups.map((group) => {
+                    {FEATURE_GROUPS.map((group) => {
                       const filtered = permQuery
                         ? group.children.filter((c) => c.label.toLowerCase().includes(permQuery.toLowerCase()))
                         : group.children
@@ -216,7 +218,7 @@ export default function ProfileForm({ initialValues, submitLabel = 'Save', onSub
                                 <CollapsibleTrigger asChild>
                                   <button type='button' className='flex items-center gap-2 text-sm font-medium'>
                                     <span>{group.label}</span>
-                                    <span className='text-xs text-muted-foreground'>({selectedCount} selected)</span>
+                                    <span className='text-xs text-muted-foreground'>({selectedCount} {t('create.form.permissions.featureGroup.selected')})</span>
                                   </button>
                                 </CollapsibleTrigger>
                               </div>
@@ -261,7 +263,7 @@ export default function ProfileForm({ initialValues, submitLabel = 'Save', onSub
 
         <div className='flex items-center gap-2'>
           {onCancel ? (
-            <Button variant='outline' onClick={onCancel}>Cancel</Button>
+            <Button variant='outline' type='button' onClick={onCancel}>{t('create.actions.cancel')}</Button>
           ) : null}
           <Button type='submit' form='profile-form'>{submitLabel}</Button>
         </div>
