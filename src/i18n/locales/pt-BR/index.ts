@@ -585,6 +585,7 @@ export const ptBR: I18nResource = {
         },
         dob: {
           label: "Data de Nascimento",
+          placeholder: "Selecione uma data",
           description:
             "Sua data de nascimento é usada para calcular sua idade.",
         },

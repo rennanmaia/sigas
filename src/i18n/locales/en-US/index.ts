@@ -580,6 +580,7 @@ export const enUS: I18nResource = {
         },
         dob: {
           label: "Date of Birth",
+          placeholder: "Pick a date",
           description: "Your date of birth is used to calculate your age.",
         },
         language: {
