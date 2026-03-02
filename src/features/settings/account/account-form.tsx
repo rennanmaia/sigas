@@ -100,7 +100,11 @@ export function AccountForm() {
           render={({ field }) => (
             <FormItem className="flex flex-col">
               <FormLabel>{t("account.form.dob.label")}</FormLabel>
-              <DatePicker selected={field.value} onSelect={field.onChange} />
+              <DatePicker
+                selected={field.value}
+                onSelect={field.onChange}
+                placeholder={t("account.form.dob.placeholder")}
+              />
               <FormDescription>
                 {t("account.form.dob.description")}
               </FormDescription>
