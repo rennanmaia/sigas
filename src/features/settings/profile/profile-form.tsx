@@ -1,6 +1,7 @@
 import { z } from "zod";
-import {useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslation } from "react-i18next";
 import { t as i18next } from "i18next";
 import { Link } from "@tanstack/react-router";
 import { showSubmittedData } from "@/lib/show-submitted-data";
@@ -33,18 +34,17 @@ const profileFormSchema = z.object({
       iss.input === undefined
         ? i18next("settings:profile.form.email.validation.invalid")
         : undefined,
-  })
+  }),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
-
 export function ProfileForm() {
+  const { t } = useTranslation("settings");
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     mode: "onChange",
   });
-
 
   return (
     <Form {...form}>
@@ -57,14 +57,15 @@ export function ProfileForm() {
           name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nome de usuário</FormLabel>
+              <FormLabel>{t("profile.form.name.label")}</FormLabel>
               <FormControl>
-                <Input placeholder="user.name" {...field} />
+                <Input
+                  placeholder={t("profile.form.name.placeholder")}
+                  {...field}
+                />
               </FormControl>
               <FormDescription>
-                Este é o seu nome público que ficará visível. Pode ser seu nome
-                real ou um pesudônimo. Você pode mudá-lo somente uma vez a cada
-                30 dias
+                {t("profile.form.name.description")}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -75,11 +76,13 @@ export function ProfileForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>{t("profile.form.email.label")}</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecione um email válido para mostrar" />
+                    <SelectValue
+                      placeholder={t("profile.form.email.selectPlaceholder")}
+                    />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -89,14 +92,14 @@ export function ProfileForm() {
                 </SelectContent>
               </Select>
               <FormDescription>
-                Você pode gerenciar endereços de email nas suas{" "}
-                <Link to="/">configurações de email</Link>.
+                {t("profile.form.email.description")}{" "}
+                <Link to="/">{t("profile.form.email.descriptionLink")}</Link>.
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Atualizar perfil</Button>
+        <Button type="submit">{t("profile.form.submit")}</Button>
       </form>
     </Form>
   );

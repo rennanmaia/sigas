@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from "react";
 import {
   type SortingState,
   type VisibilityState,
@@ -10,9 +10,9 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from '@tanstack/react-table'
-import { cn } from '@/lib/utils'
-import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
+} from "@tanstack/react-table";
+import { cn } from "@/lib/utils";
+import { type NavigateFn, useTableUrlState } from "@/hooks/use-table-url-state";
 import {
   Table,
   TableBody,
@@ -20,27 +20,27 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { DataTableBulkActions } from './data-table-bulk-actions'
-import { profilesColumns as columns } from './profiles-columns'
-import { getRouteApi } from '@tanstack/react-router'
-import { useTranslation } from 'react-i18next'
-import { useProfilesStore } from '@/stores/profiles-store'
+} from "@/components/ui/table";
+import { DataTablePagination, DataTableToolbar } from "@/components/data-table";
+import { DataTableBulkActions } from "./data-table-bulk-actions";
+import { profilesColumns as columns } from "./profiles-columns";
+import { getRouteApi } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
+import { useProfilesStore } from "@/stores/profiles-store";
 
 type DataTableProps = {
-  search: Record<string, unknown>
-  navigate: NavigateFn
-}
+  search: Record<string, unknown>;
+  navigate: NavigateFn;
+};
 
-const route = getRouteApi('/_authenticated/profiles/$profileId/')
+const route = getRouteApi("/_authenticated/profiles/$profileId/");
 
 export function ProfilesTable({ search, navigate }: DataTableProps) {
-  const [rowSelection, setRowSelection] = useState({})
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
-  const [sorting, setSorting] = useState<SortingState>([])
-  const navigateToView = route.useNavigate()
-  const { t } = useTranslation("profiles")
+  const [rowSelection, setRowSelection] = useState({});
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const navigateToView = route.useNavigate();
+  const { t } = useTranslation("profiles");
   const { profiles } = useProfilesStore();
 
   const {
@@ -55,10 +55,10 @@ export function ProfilesTable({ search, navigate }: DataTableProps) {
     pagination: { defaultPage: 1, defaultPageSize: 10 },
     globalFilter: { enabled: false },
     columnFilters: [
-      { columnId: 'label', searchKey: 'label', type: 'string' },
-      { columnId: 'value', searchKey: 'value', type: 'array' },
+      { columnId: "label", searchKey: "label", type: "string" },
+      { columnId: "value", searchKey: "value", type: "array" },
     ],
-  })
+  });
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
@@ -83,47 +83,52 @@ export function ProfilesTable({ search, navigate }: DataTableProps) {
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-  })
+  });
 
   useEffect(() => {
-    ensurePageInRange(table.getPageCount())
-  }, [table, ensurePageInRange])
+    ensurePageInRange(table.getPageCount());
+  }, [table, ensurePageInRange]);
 
   return (
     <div
       className={cn(
         'max-sm:has-[div[role="toolbar"]]:mb-16',
-        'flex flex-1 flex-col gap-4'
+        "flex flex-1 flex-col gap-4",
       )}
     >
       <DataTableToolbar
         table={table}
         searchPlaceholder={t("list.table.searchPlaceholder")}
-        searchKey='label'
+        searchKey="label"
         filters={[]}
+        columnLabels={{
+          label: t("list.table.headers.role"),
+          description: t("list.table.headers.description"),
+          permissions: t("list.table.headers.permissions"),
+        }}
       />
-      <div className='overflow-hidden rounded-md border'>
+      <div className="overflow-hidden rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className='group/row'>
+              <TableRow key={headerGroup.id} className="group/row">
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead
                       key={header.id}
                       colSpan={header.colSpan}
                       className={cn(
-                          'bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted'
-                        )}
+                        "bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted",
+                      )}
                     >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -133,26 +138,26 @@ export function ProfilesTable({ search, navigate }: DataTableProps) {
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                  className='group/row'
+                  data-state={row.getIsSelected() && "selected"}
+                  className="group/row"
                   onClick={() => {
                     navigateToView({
                       params: {
-                        profileId: row.original.id
-                      }
-                    })
+                        profileId: row.original.id,
+                      },
+                    });
                   }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
                       className={cn(
-                        'bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted'
+                        "bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted",
                       )}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -162,7 +167,7 @@ export function ProfilesTable({ search, navigate }: DataTableProps) {
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className='h-24 text-center'
+                  className="h-24 text-center"
                 >
                   {t("list.table.noResults")}
                 </TableCell>
@@ -171,8 +176,8 @@ export function ProfilesTable({ search, navigate }: DataTableProps) {
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} className='mt-auto' />
+      <DataTablePagination table={table} className="mt-auto" />
       <DataTableBulkActions table={table} />
     </div>
-  )
+  );
 }

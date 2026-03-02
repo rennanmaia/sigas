@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from "react";
 import {
   type SortingState,
   type VisibilityState,
@@ -10,9 +10,9 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from '@tanstack/react-table'
-import { cn } from '@/lib/utils'
-import { type NavigateFn, useTableUrlState } from '@/hooks/use-table-url-state'
+} from "@tanstack/react-table";
+import { cn } from "@/lib/utils";
+import { type NavigateFn, useTableUrlState } from "@/hooks/use-table-url-state";
 import {
   Table,
   TableBody,
@@ -20,23 +20,29 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { roles } from '../data/data'
-import { DataTableBulkActions } from './data-table-bulk-actions'
-import { usersColumns as columns } from './users-columns'
-import { getRouteApi } from '@tanstack/react-router'
-import { useUsersStore } from '@/stores/users-store'
-import { useTranslation } from 'react-i18next'
+} from "@/components/ui/table";
+import { DataTablePagination, DataTableToolbar } from "@/components/data-table";
+import { roles } from "../data/data";
+import { DataTableBulkActions } from "./data-table-bulk-actions";
+import { usersColumns as columns } from "./users-columns";
+import { getRouteApi } from "@tanstack/react-router";
+import { useUsersStore } from "@/stores/users-store";
+import { useTranslation } from "react-i18next";
 
-const viewUserRoute = getRouteApi('/_authenticated/users/$id/');
+const viewUserRoute = getRouteApi("/_authenticated/users/$id/");
 
-export function UsersTable({ search, navigate }: { search: Record<string, unknown>; navigate: NavigateFn }) {
-  const { t } = useTranslation("users")
-  const { users: data } = useUsersStore()
+export function UsersTable({
+  search,
+  navigate,
+}: {
+  search: Record<string, unknown>;
+  navigate: NavigateFn;
+}) {
+  const { t } = useTranslation("users");
+  const { users: data } = useUsersStore();
   // Local UI-only states
-  const [rowSelection, setRowSelection] = useState({})
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [rowSelection, setRowSelection] = useState({});
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [sorting, setSorting] = useState<SortingState>([]);
 
   const navigateToView = viewUserRoute.useNavigate();
@@ -57,12 +63,12 @@ export function UsersTable({ search, navigate }: { search: Record<string, unknow
     navigate,
     pagination: { defaultPage: 1, defaultPageSize: 10 },
     globalFilter: { enabled: false },
-      columnFilters: [
-      { columnId: 'username', searchKey: 'username', type: 'string' },
-      { columnId: 'status', searchKey: 'status', type: 'array' },
-      { columnId: 'roles', searchKey: 'role', type: 'array' },
+    columnFilters: [
+      { columnId: "username", searchKey: "username", type: "string" },
+      { columnId: "status", searchKey: "status", type: "array" },
+      { columnId: "roles", searchKey: "role", type: "array" },
     ],
-  })
+  });
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
@@ -87,66 +93,69 @@ export function UsersTable({ search, navigate }: { search: Record<string, unknow
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-  })
+  });
 
   useEffect(() => {
-    ensurePageInRange(table.getPageCount())
-  }, [table, ensurePageInRange])
+    ensurePageInRange(table.getPageCount());
+  }, [table, ensurePageInRange]);
 
   return (
     <div
       className={cn(
         'max-sm:has-[div[role="toolbar"]]:mb-16', // Add margin bottom to the table on mobile when the toolbar is visible
-        'flex flex-1 flex-col gap-4'
+        "flex flex-1 flex-col gap-4",
       )}
     >
       <DataTableToolbar
         table={table}
         searchPlaceholder={t("list.table.searchPlaceholder")}
-        searchKey='username'
+        searchKey="username"
         filters={[
           {
-            columnId: 'username',
+            columnId: "username",
             title: t("list.table.filters.name"),
             options: [],
           },
           {
-            columnId: 'roles',
+            columnId: "roles",
             title: t("list.table.filters.roles"),
-            options: roles.map((role) => ({ label: role.label, value: role.value })),
+            options: roles.map((role) => ({
+              label: role.label,
+              value: role.value,
+            })),
           },
           {
-            columnId: 'status',
+            columnId: "status",
             title: t("list.table.filters.status"),
             options: [
-              { label: 'Active', value: 'active' },
-              { label: 'Inactive', value: 'inactive' },
+              { label: "Ativo", value: "active" },
+              { label: "Inativo", value: "inactive" },
             ],
           },
         ]}
       />
-      <div className='overflow-hidden rounded-md border'>
+      <div className="overflow-hidden rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className='group/row'>
+              <TableRow key={headerGroup.id} className="group/row">
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead
                       key={header.id}
                       colSpan={header.colSpan}
                       className={cn(
-                        'bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted',
+                        "bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted",
                       )}
                     >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -156,26 +165,26 @@ export function UsersTable({ search, navigate }: { search: Record<string, unknow
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                  className='group/row'
+                  data-state={row.getIsSelected() && "selected"}
+                  className="group/row"
                   onClick={() => {
                     navigateToView({
                       params: {
-                        id: row.original.id
-                      }
-                    })
+                        id: row.original.id,
+                      },
+                    });
                   }}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
                       className={cn(
-                        'bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted'
+                        "bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted",
                       )}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -185,7 +194,7 @@ export function UsersTable({ search, navigate }: { search: Record<string, unknow
               <TableRow>
                 <TableCell
                   colSpan={columns.length}
-                  className='h-24 text-center'
+                  className="h-24 text-center"
                 >
                   {t("list.table.noResults")}
                 </TableCell>
@@ -194,8 +203,8 @@ export function UsersTable({ search, navigate }: { search: Record<string, unknow
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} className='mt-auto' />
+      <DataTablePagination table={table} className="mt-auto" />
       <DataTableBulkActions table={table} />
     </div>
-  )
+  );
 }
