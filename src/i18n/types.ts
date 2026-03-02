@@ -211,6 +211,23 @@ export type I18nResource = {
     list: {
       title: string;
       description: string;
+      table: {
+        searchPlaceholder: string;
+        noResults: string;
+        headers: {
+          title: string;
+          status: string;
+          owner: string;
+          project: string;
+          lastUpdated: string;
+          questions: string;
+          responses: string;
+        };
+        filters: {
+          status: string;
+          project: string;
+        };
+      };
     };
   };
   profiles: {
