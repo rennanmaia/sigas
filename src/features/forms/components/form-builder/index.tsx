@@ -360,7 +360,7 @@ export const FormBuilder = forwardRef<
                 onUpdateResponse={handleUpdateResponse}
               />
             ) : (
-              <main className="flex-1 h-full overflow-hidden flex flex-col bg-slate-50/50 relative">
+              <main className="flex-1 h-full overflow-hidden flex flex-col bg-muted relative">
                 <ScrollArea
                   ref={scrollAreaRef}
                   className="flex-1 w-full h-full"

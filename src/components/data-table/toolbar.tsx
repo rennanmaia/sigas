@@ -9,6 +9,7 @@ type DataTableToolbarProps<TData> = {
   table: Table<TData>;
   searchPlaceholder?: string;
   searchKey?: string;
+  columnLabels?: Record<string, string>;
   filters?: {
     columnId: string;
     title: string;
@@ -24,6 +25,7 @@ export function DataTableToolbar<TData>({
   table,
   searchPlaceholder = "Filter...",
   searchKey,
+  columnLabels,
   filters = [],
 }: DataTableToolbarProps<TData>) {
   const isFiltered =
@@ -79,7 +81,7 @@ export function DataTableToolbar<TData>({
           </Button>
         )}
       </div>
-      <DataTableViewOptions table={table} />
+      <DataTableViewOptions table={table} columnLabels={columnLabels} />
     </div>
   );
 }

@@ -7,10 +7,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ConfigDrawer } from "@/components/config-drawer";
 import { Header } from "@/components/layout/header";
 import { Main } from "@/components/layout/main";
-import { ProfileDropdown } from "@/components/profile-dropdown";
 import { Search } from "@/components/search";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { LanguageSwitch } from "@/components/language-switch";
@@ -58,13 +56,11 @@ export function Dashboard() {
     <>
       {/* ===== Top Heading ===== */}
       <Header>
-          <Search />
-          <div className="ms-auto flex items-center space-x-4">
-            <LanguageSwitch />
-            <ThemeSwitch />
-            <ConfigDrawer />
-            <ProfileDropdown />
-          </div>
+        <Search />
+        <div className="ms-auto flex items-center space-x-4">
+          <LanguageSwitch />
+          <ThemeSwitch />
+        </div>
       </Header>
 
       {/* ===== Main ===== */}

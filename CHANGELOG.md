@@ -1,3 +1,10 @@
+# [1.2.0-beta.1](https://github.com/rennanmaia/sigas/compare/v1.1.0...v1.2.0-beta.1) (2026-03-02)
+
+
+### Features
+
+* **assets:** add new logo icon for branding ([a89e7b5](https://github.com/rennanmaia/sigas/commit/a89e7b50d50509194c5e876f4ea271bf420e1625))
+
 # [1.1.0](https://github.com/rennanmaia/sigas/compare/v1.0.0...v1.1.0) (2026-03-01)
 
 

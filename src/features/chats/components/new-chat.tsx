@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { Check, X } from 'lucide-react'
-import { showSubmittedData } from '@/lib/show-submitted-data'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -53,11 +52,11 @@ export function NewChat({ users, onOpenChange, open }: NewChatProps) {
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className='sm:max-w-[600px]'>
         <DialogHeader>
-          <DialogTitle>New message</DialogTitle>
+          <DialogTitle>Nova conversa</DialogTitle>
         </DialogHeader>
         <div className='flex flex-col gap-4'>
           <div className='flex flex-wrap items-baseline-last gap-2'>
-            <span className='text-muted-foreground min-h-6 text-sm'>To:</span>
+            <span className='text-muted-foreground min-h-6 text-sm'>Para:</span>
             {selectedUsers.map((user) => (
               <Badge key={user.id} variant='default'>
                 {user.fullName}
@@ -77,11 +76,11 @@ export function NewChat({ users, onOpenChange, open }: NewChatProps) {
           </div>
           <Command className='rounded-lg border'>
             <CommandInput
-              placeholder='Search people...'
+              placeholder='Buscar pessoas...'
               className='text-foreground'
             />
             <CommandList>
-              <CommandEmpty>No people found.</CommandEmpty>
+              <CommandEmpty>Pessoas não encontradas.</CommandEmpty>
               <CommandGroup>
                 {users.map((user) => (
                   <CommandItem
@@ -115,10 +114,10 @@ export function NewChat({ users, onOpenChange, open }: NewChatProps) {
           </Command>
           <Button
             variant={'default'}
-            onClick={() => showSubmittedData(selectedUsers)}
+            onClick={() => handleOpenChange(false)}
             disabled={selectedUsers.length === 0}
           >
-            Chat
+            Criar conversa
           </Button>
         </div>
       </DialogContent>

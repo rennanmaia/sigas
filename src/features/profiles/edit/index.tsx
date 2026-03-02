@@ -1,31 +1,31 @@
-import { Header } from '@/components/layout/header'
-import { Main } from '@/components/layout/main'
-import { ProfileDropdown } from '@/components/profile-dropdown'
-import { ConfigDrawer } from '@/components/config-drawer'
-import { ThemeSwitch } from '@/components/theme-switch'
-import { LanguageSwitch } from '@/components/language-switch'
-import { Link } from '@tanstack/react-router'
-import { ArrowLeft } from 'lucide-react'
-import { toast } from 'sonner'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import ProfileForm from '@/features/profiles/components/profile-form'
-import type { FormValues } from '@/features/profiles/components/profile-form'
-import { Route } from '@/routes/_authenticated/profiles/edit/$id'
-import { useProfilesStore } from '@/stores/profiles-store'
+import { Header } from "@/components/layout/header";
+import { Main } from "@/components/layout/main";
+import { ProfileDropdown } from "@/components/profile-dropdown";
+import { ConfigDrawer } from "@/components/config-drawer";
+import { ThemeSwitch } from "@/components/theme-switch";
+import { LanguageSwitch } from "@/components/language-switch";
+import { Link } from "@tanstack/react-router";
+import { ArrowLeft } from "lucide-react";
+import { toast } from "sonner";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import ProfileForm from "@/features/profiles/components/profile-form";
+import type { FormValues } from "@/features/profiles/components/profile-form";
+import { Route } from "@/routes/_authenticated/profiles/edit/$id";
+import { useProfilesStore } from "@/stores/profiles-store";
 
 function EditProfile() {
   const { id } = Route.useParams();
   const navigate = Route.useNavigate();
-  const { getProfileById, updateProfile } = useProfilesStore()
+  const { getProfileById, updateProfile } = useProfilesStore();
 
-  const profile = getProfileById(id)
+  const profile = getProfileById(id);
 
   if (!profile) {
     return (
       <>
         <Header fixed>
           <div />
-          <div className='ms-auto flex items-center space-x-4'>
+          <div className="ms-auto flex items-center space-x-4">
             <LanguageSwitch />
             <ThemeSwitch />
             <ConfigDrawer />
@@ -33,31 +33,31 @@ function EditProfile() {
           </div>
         </Header>
         <Main>
-          <div className='p-6'>Profile not found.</div>
+          <div className="p-6">Profile not found.</div>
         </Main>
       </>
-    )
+    );
   }
 
   const onSubmit = (values: FormValues) => {
     updateProfile(profile.id, {
       label: values.name,
       description: values.description,
-      permissions: values.permissions
-    })
-    toast.success('Profile updated')
-    navigate({ to: '/profiles' })
-  }
+      permissions: values.permissions,
+    });
+    toast.success("Profile updated");
+    navigate({ to: "/profiles" });
+  };
 
   return (
     <>
       <Header fixed>
-        <div className='flex items-center gap-2'>
-          <Link to='/profiles' className='inline-flex items-center gap-2'>
-            <ArrowLeft /> Back
+        <div className="flex items-center gap-2">
+          <Link to="/profiles" className="inline-flex items-center gap-2">
+            <ArrowLeft /> Voltar
           </Link>
         </div>
-        <div className='ms-auto flex items-center space-x-4'>
+        <div className="ms-auto flex items-center space-x-4">
           <LanguageSwitch />
           <ThemeSwitch />
           <ConfigDrawer />
@@ -66,8 +66,8 @@ function EditProfile() {
       </Header>
 
       <Main>
-        <div className='grid grid-cols-1 gap-6 lg:grid-cols-3'>
-          <div className='lg:col-span-2'>
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2">
             <Card>
               <CardHeader>
                 <CardTitle>Edit profile</CardTitle>
@@ -75,9 +75,9 @@ function EditProfile() {
               <CardContent>
                 <ProfileForm
                   initialValues={profile}
-                  submitLabel='Save changes'
+                  submitLabel="Save changes"
                   onSubmit={onSubmit}
-                  onCancel={() => navigate({ to: '/profiles' })}
+                  onCancel={() => navigate({ to: "/profiles" })}
                 />
               </CardContent>
             </Card>
@@ -85,7 +85,7 @@ function EditProfile() {
         </div>
       </Main>
     </>
-  )
+  );
 }
 
-export default EditProfile
+export default EditProfile;

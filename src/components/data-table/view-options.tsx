@@ -8,17 +8,19 @@ import {
   DropdownMenuContent,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu'
-import { useTranslation } from 'react-i18next'
+} from "@/components/ui/dropdown-menu";
+import { useTranslation } from "react-i18next";
 
 type DataTableViewOptionsProps<TData> = {
   table: Table<TData>;
+  columnLabels?: Record<string, string>;
 };
 
 export function DataTableViewOptions<TData>({
   table,
+  columnLabels,
 }: DataTableViewOptionsProps<TData>) {
-  const { t } = useTranslation("common")
+  const { t } = useTranslation("common");
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
@@ -27,18 +29,20 @@ export function DataTableViewOptions<TData>({
           size="sm"
           className="ms-auto hidden h-8 lg:flex"
         >
-          <MixerHorizontalIcon className='size-4' />
+          <MixerHorizontalIcon className="size-4" />
           {t("table.viewOptions.title")}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align='end' className='w-[150px]'>
-        <DropdownMenuLabel>{t("table.viewOptions.menuTitle")}</DropdownMenuLabel>
+      <DropdownMenuContent align="end" className="w-[150px]">
+        <DropdownMenuLabel>
+          {t("table.viewOptions.menuTitle")}
+        </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {table
           .getAllColumns()
           .filter(
             (column) =>
-              typeof column.accessorFn !== "undefined" && column.getCanHide()
+              typeof column.accessorFn !== "undefined" && column.getCanHide(),
           )
           .map((column) => {
             return (
@@ -48,7 +52,7 @@ export function DataTableViewOptions<TData>({
                 checked={column.getIsVisible()}
                 onCheckedChange={(value) => column.toggleVisibility(!!value)}
               >
-                {column.id}
+                {columnLabels?.[column.id] ?? column.id}
               </DropdownMenuCheckboxItem>
             );
           })}
