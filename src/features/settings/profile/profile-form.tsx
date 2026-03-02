@@ -1,10 +1,9 @@
 import { z } from "zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import {useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { t as i18next } from "i18next";
 import { Link } from "@tanstack/react-router";
 import { showSubmittedData } from "@/lib/show-submitted-data";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -23,7 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 
 const profileFormSchema = z.object({
   username: z
@@ -35,39 +33,18 @@ const profileFormSchema = z.object({
       iss.input === undefined
         ? i18next("settings:profile.form.email.validation.invalid")
         : undefined,
-  }),
-  bio: z.string().max(160).min(4, i18next("settings:profile.form.bio.validation.minLength")),
-  urls: z
-    .array(
-      z.object({
-        value: z.string().url(i18next("settings:profile.form.urls.validation.invalid")),
-      })
-    )
-    .optional(),
+  })
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
-// This can come from your database or API.
-const defaultValues: Partial<ProfileFormValues> = {
-  bio: "I own a computer.",
-  urls: [
-    { value: "https://shadcn.com" },
-    { value: "http://twitter.com/shadcn" },
-  ],
-};
 
 export function ProfileForm() {
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
-    defaultValues,
     mode: "onChange",
   });
 
-  const { fields, append } = useFieldArray({
-    name: "urls",
-    control: form.control,
-  });
 
   return (
     <Form {...form}>
@@ -119,58 +96,6 @@ export function ProfileForm() {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="bio"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Bio</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Tell us a little bit about yourself"
-                  className="resize-none"
-                  {...field}
-                />
-              </FormControl>
-              <FormDescription>
-                Você pode <span>@mencionar</span> outros usuários.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <div>
-          {fields.map((field, index) => (
-            <FormField
-              control={form.control}
-              key={field.id}
-              name={`urls.${index}.value`}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className={cn(index !== 0 && "sr-only")}>
-                    URLs
-                  </FormLabel>
-                  <FormDescription className={cn(index !== 0 && "sr-only")}>
-                    Adicione links para seu website, blog ou redes sociais.
-                  </FormDescription>
-                  <FormControl className={cn(index !== 0 && "mt-1.5")}>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          ))}
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="mt-2"
-            onClick={() => append({ value: "" })}
-          >
-            Adicionar URL
-          </Button>
-        </div>
         <Button type="submit">Atualizar perfil</Button>
       </form>
     </Form>
