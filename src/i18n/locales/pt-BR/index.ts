@@ -227,6 +227,23 @@ export const ptBR: I18nResource = {
     list: {
       title: "Formulários",
       description: "Gerencie e publique seus formulários",
+      table: {
+        searchPlaceholder: "Filtrar por título...",
+        noResults: "Nenhum resultado encontrado.",
+        headers: {
+          title: "Título",
+          status: "Status",
+          owner: "Proprietário",
+          project: "Projeto",
+          lastUpdated: "Modificado",
+          questions: "Questões",
+          responses: "Respostas",
+        },
+        filters: {
+          status: "Status",
+          project: "Projeto",
+        },
+      },
     },
   },
   profiles: {

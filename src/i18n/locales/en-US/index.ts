@@ -224,6 +224,23 @@ export const enUS: I18nResource = {
     list: {
       title: "Forms",
       description: "Manage and publish your forms",
+      table: {
+        searchPlaceholder: "Filter by title...",
+        noResults: "No results found.",
+        headers: {
+          title: "Title",
+          status: "Status",
+          owner: "Owner",
+          project: "Project",
+          lastUpdated: "Modified",
+          questions: "Questions",
+          responses: "Responses",
+        },
+        filters: {
+          status: "Status",
+          project: "Project",
+        },
+      },
     },
   },
   profiles: {
