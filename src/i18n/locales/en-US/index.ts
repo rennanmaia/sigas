@@ -525,8 +525,10 @@ export const enUS: I18nResource = {
       description: "This is how other users will see your profile",
       form: {
         name: {
-          label: "Name",
-          placeholder: "Your full name",
+          label: "Username",
+          placeholder: "user.name",
+          description:
+            "This is your public display name. It can be your real name or a pseudonym. You can only change it once every 30 days.",
           validation: {
             required: "Name is required",
             invalid: "Name must be between 2 and 30 characters",
@@ -536,6 +538,9 @@ export const enUS: I18nResource = {
         email: {
           label: "Email",
           placeholder: "your.email@example.com",
+          selectPlaceholder: "Select a verified email to display",
+          description: "You can manage verified email addresses in your",
+          descriptionLink: "email settings",
           validation: {
             invalid: "Invalid email",
           },
@@ -554,6 +559,7 @@ export const enUS: I18nResource = {
             invalid: "Invalid URL",
           },
         },
+        submit: "Update profile",
       },
     },
     account: {
