@@ -25,6 +25,7 @@ import { DataTableBulkActions } from "./data-table-bulk-actions";
 import { useForms } from "../components/forms-provider";
 import { formsColumns as columns } from "./forms-columns";
 import { projects } from "@/features/projects/data/projects-mock";
+import { useTranslation } from "react-i18next";
 
 export function FormsTable({
   search,
@@ -34,6 +35,7 @@ export function FormsTable({
   navigate: NavigateFn;
 }) {
   const { forms } = useForms();
+  const { t } = useTranslation("forms");
 
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -89,12 +91,12 @@ export function FormsTable({
     <div className="flex flex-1 flex-col gap-4">
       <DataTableToolbar
         table={table}
-        searchPlaceholder="Filtrar por título..."
+        searchPlaceholder={t("list.table.searchPlaceholder")}
         searchKey="title"
         filters={[
           {
             columnId: "status",
-            title: "Status",
+            title: t("list.table.filters.status"),
             options: [
               { label: "Ativo", value: "Ativo" },
               { label: "Rascunho", value: "Rascunho" },
@@ -104,13 +106,22 @@ export function FormsTable({
           },
           {
             columnId: "projectId",
-            title: "Projeto",
+            title: t("list.table.filters.project"),
             options: projects.map((project) => ({
               label: project.title,
               value: project.id,
             })),
           },
         ]}
+        columnLabels={{
+          title: t("list.table.headers.title"),
+          status: t("list.table.headers.status"),
+          owner: t("list.table.headers.owner"),
+          projectId: t("list.table.headers.project"),
+          lastUpdated: t("list.table.headers.lastUpdated"),
+          questionsCount: t("list.table.headers.questions"),
+          responses: t("list.table.headers.responses"),
+        }}
       />
       <div className="overflow-hidden rounded-md border bg-card">
         <Table>
