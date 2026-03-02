@@ -18,10 +18,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { ConfigDrawer } from "@/components/config-drawer";
 import { Header } from "@/components/layout/header";
 import { Main } from "@/components/layout/main";
-import { ProfileDropdown } from "@/components/profile-dropdown";
 import { Search } from "@/components/search";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { LanguageSwitch } from "@/components/language-switch";
@@ -92,15 +90,15 @@ function ProjectsList() {
         <div className="ms-auto flex items-center gap-4">
           <LanguageSwitch />
           <ThemeSwitch />
-          <ConfigDrawer />
-          <ProfileDropdown />
         </div>
       </Header>
 
       <Main className="flex flex-1 flex-col gap-4 sm:gap-1">
         <div className="flex flex-wrap items-end justify-between gap-2">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">{t("list.title")}</h1>
+            <h1 className="text-2xl font-bold tracking-tight">
+              {t("list.title")}
+            </h1>
             <p className="text-muted-foreground">{t("list.description")}</p>
           </div>
           <div className="flex gap-2">
@@ -128,18 +126,30 @@ function ProjectsList() {
             />
             <Select
               value={projectType}
-              onValueChange={(v) => handleTypeChange(v as ProjectStatus | "all")}
+              onValueChange={(v) =>
+                handleTypeChange(v as ProjectStatus | "all")
+              }
             >
               <SelectTrigger className="w-36">
                 <SelectValue>{t(`list.filters.${projectType}`)}</SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">{t("list.filters.all")}</SelectItem>
-                <SelectItem value="ativo">{t("list.filters.active")}</SelectItem>
-                <SelectItem value="pausado">{t("list.filters.paused")}</SelectItem>
-                <SelectItem value="finalizado">{t("list.filters.finished")}</SelectItem>
-                <SelectItem value="cancelado">{t("list.filters.canceled")}</SelectItem>
-                <SelectItem value="expirado">{t("list.filters.expired")}</SelectItem>
+                <SelectItem value="ativo">
+                  {t("list.filters.active")}
+                </SelectItem>
+                <SelectItem value="pausado">
+                  {t("list.filters.paused")}
+                </SelectItem>
+                <SelectItem value="finalizado">
+                  {t("list.filters.finished")}
+                </SelectItem>
+                <SelectItem value="cancelado">
+                  {t("list.filters.canceled")}
+                </SelectItem>
+                <SelectItem value="expirado">
+                  {t("list.filters.expired")}
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
