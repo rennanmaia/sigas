@@ -561,6 +561,7 @@ export type I18nResource = {
         };
         dob: {
           label: string;
+          placeholder: string;
           description: string;
         };
         language: {
