@@ -531,7 +531,7 @@ export const ptBR: I18nResource = {
       form: {
         name: {
           label: "Nome de usuário",
-          placeholder: "user.name",
+          placeholder: "Seu nome de usuário",
           description:
             "Este é o seu nome público que ficará visível. Pode ser seu nome real ou um pseudônimo. Você pode mudá-lo somente uma vez a cada 30 dias.",
           validation: {

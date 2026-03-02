@@ -526,7 +526,7 @@ export const enUS: I18nResource = {
       form: {
         name: {
           label: "Username",
-          placeholder: "user.name",
+          placeholder: "Your username",
           description:
             "This is your public display name. It can be your real name or a pseudonym. You can only change it once every 30 days.",
           validation: {
