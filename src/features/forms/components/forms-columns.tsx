@@ -6,6 +6,7 @@ import { DataTableColumnHeader } from "@/components/data-table";
 import { projects } from "@/features/projects/data/projects-mock";
 import { Link } from "@tanstack/react-router";
 import { DataTableRowActions } from "./forms-table-row-action";
+import { useTranslation } from "react-i18next";
 
 const statusStyles: Record<string, string> = {
   Ativo: "border-blue-200 bg-blue-50 text-blue-700",
@@ -39,7 +40,15 @@ export const formsColumns: ColumnDef<FormItem>[] = [
   },
   {
     accessorKey: "title",
-    header: "Título",
+    header: ({ column }) => {
+      const { t } = useTranslation("forms");
+      return (
+        <DataTableColumnHeader
+          column={column}
+          title={t("list.table.headers.title")}
+        />
+      );
+    },
     cell: ({ row }) => (
       <div className="flex flex-col max-w-[300px]">
         <Link
@@ -54,7 +63,15 @@ export const formsColumns: ColumnDef<FormItem>[] = [
   },
   {
     accessorKey: "status",
-    header: "Status",
+    header: ({ column }) => {
+      const { t } = useTranslation("forms");
+      return (
+        <DataTableColumnHeader
+          column={column}
+          title={t("list.table.headers.status")}
+        />
+      );
+    },
     cell: ({ row }) => {
       const status = row.getValue("status") as string;
       return (
@@ -67,9 +84,15 @@ export const formsColumns: ColumnDef<FormItem>[] = [
   },
   {
     accessorKey: "owner",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Proprietário" />
-    ),
+    header: ({ column }) => {
+      const { t } = useTranslation("forms");
+      return (
+        <DataTableColumnHeader
+          column={column}
+          title={t("list.table.headers.owner")}
+        />
+      );
+    },
     cell: ({ row }) => (
       <div className="flex items-center gap-2">
         <div className="size-6 rounded-full bg-primary/10 flex items-center justify-center text-[10px]">
@@ -84,9 +107,15 @@ export const formsColumns: ColumnDef<FormItem>[] = [
   },
   {
     accessorKey: "projectId",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Projeto" />
-    ),
+    header: ({ column }) => {
+      const { t } = useTranslation("forms");
+      return (
+        <DataTableColumnHeader
+          column={column}
+          title={t("list.table.headers.project")}
+        />
+      );
+    },
     cell: ({ row }) => {
       const projectId = row.getValue("projectId") as string;
       const project = projects.find((p) => p.id === projectId);
@@ -104,9 +133,15 @@ export const formsColumns: ColumnDef<FormItem>[] = [
   },
   {
     accessorKey: "lastUpdated",
-    header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Modificado" />
-    ),
+    header: ({ column }) => {
+      const { t } = useTranslation("forms");
+      return (
+        <DataTableColumnHeader
+          column={column}
+          title={t("list.table.headers.lastUpdated")}
+        />
+      );
+    },
     cell: ({ row }) => (
       <div className="text-xs text-muted-foreground ml-4">
         {row.getValue("lastUpdated")}
@@ -115,7 +150,12 @@ export const formsColumns: ColumnDef<FormItem>[] = [
   },
   {
     accessorKey: "questionsCount",
-    header: () => <div className="text-center">Questões</div>,
+    header: () => {
+      const { t } = useTranslation("forms");
+      return (
+        <div className="text-center">{t("list.table.headers.questions")}</div>
+      );
+    },
     cell: ({ row }) => (
       <div className="text-center text-sm">
         {row.getValue("questionsCount")}
@@ -124,7 +164,12 @@ export const formsColumns: ColumnDef<FormItem>[] = [
   },
   {
     accessorKey: "responses",
-    header: () => <div className="text-center">Respostas</div>,
+    header: () => {
+      const { t } = useTranslation("forms");
+      return (
+        <div className="text-center">{t("list.table.headers.responses")}</div>
+      );
+    },
     cell: ({ row }) => (
       <div className="text-center text-sm">{row.getValue("responses")}</div>
     ),

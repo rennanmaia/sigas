@@ -2,6 +2,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslation } from "react-i18next";
 import { t as i18next } from "i18next";
 import { showSubmittedData } from "@/lib/show-submitted-data";
 import { cn } from "@/lib/utils";
@@ -61,6 +62,7 @@ const defaultValues: Partial<AccountFormValues> = {
 };
 
 export function AccountForm() {
+  const { t } = useTranslation("settings");
   const form = useForm<AccountFormValues>({
     resolver: zodResolver(accountFormSchema),
     defaultValues,
@@ -78,12 +80,15 @@ export function AccountForm() {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nome</FormLabel>
+              <FormLabel>{t("account.form.name.label")}</FormLabel>
               <FormControl>
-                <Input placeholder="Seu nome" {...field} />
+                <Input
+                  placeholder={t("account.form.name.placeholder")}
+                  {...field}
+                />
               </FormControl>
               <FormDescription>
-                Este é o nome que será mostrado seu perfil e em emails.
+                {t("account.form.name.description")}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -94,10 +99,14 @@ export function AccountForm() {
           name="dob"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Data de nascimento</FormLabel>
-              <DatePicker selected={field.value} onSelect={field.onChange} />
+              <FormLabel>{t("account.form.dob.label")}</FormLabel>
+              <DatePicker
+                selected={field.value}
+                onSelect={field.onChange}
+                placeholder={t("account.form.dob.placeholder")}
+              />
               <FormDescription>
-                Sua data de nascimento é usada para calcular sua idade.
+                {t("account.form.dob.description")}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -108,7 +117,7 @@ export function AccountForm() {
           name="language"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Idioma</FormLabel>
+              <FormLabel>{t("account.form.language.label")}</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -117,22 +126,26 @@ export function AccountForm() {
                       role="combobox"
                       className={cn(
                         "w-[200px] justify-between",
-                        !field.value && "text-muted-foreground"
+                        !field.value && "text-muted-foreground",
                       )}
                     >
                       {field.value
                         ? languages.find(
-                            (language) => language.value === field.value
+                            (language) => language.value === field.value,
                           )?.label
-                        : "Selecione um idioma"}
+                        : t("account.form.language.placeholder")}
                       <CaretSortIcon className="ms-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
                 <PopoverContent className="w-[200px] p-0">
                   <Command>
-                    <CommandInput placeholder="Search language..." />
-                    <CommandEmpty>Idioma não encontrado</CommandEmpty>
+                    <CommandInput
+                      placeholder={t("account.form.language.searchPlaceholder")}
+                    />
+                    <CommandEmpty>
+                      {t("account.form.language.notFound")}
+                    </CommandEmpty>
                     <CommandGroup>
                       <CommandList>
                         {languages.map((language) => (
@@ -148,7 +161,7 @@ export function AccountForm() {
                                 "size-4",
                                 language.value === field.value
                                   ? "opacity-100"
-                                  : "opacity-0"
+                                  : "opacity-0",
                               )}
                             />
                             {language.label}
@@ -160,13 +173,13 @@ export function AccountForm() {
                 </PopoverContent>
               </Popover>
               <FormDescription>
-                Esse é o idioma que será usado no Dashboard{" "}
+                {t("account.form.language.description")}
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit">Update account</Button>
+        <Button type="submit">{t("account.form.submit")}</Button>
       </form>
     </Form>
   );
