@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { PassivesTable } from "./components/passives-table";
 import { getRouteApi } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
 import { Header } from "@/components/layout/header";
@@ -8,13 +7,11 @@ import { ThemeSwitch } from "@/components/theme-switch";
 import { LanguageSwitch } from "@/components/language-switch";
 
 import { Main } from "@/components/layout/main";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PassivesOverview } from "./components/passives-overview";
 import { CriticalRisksManagement } from "./components/critical-risk-management";
 import { useEffect } from "react";
 import {
   LiabilityView,
-  type LiabilitySearch,
 } from "@/routes/_authenticated/passives";
 import { Link } from "@tanstack/react-router";
 import { LiabilitiesProvider } from "./components/passives-provider";
@@ -23,10 +20,9 @@ const route = getRouteApi("/_authenticated/passives/");
 
 export function Passives() {
   const { t } = useTranslation("passives");
-  const search = route.useSearch();
   const navigate = route.useNavigate();
 
-  const { view, tabs } = route.useSearch();
+  const { view } = route.useSearch();
 
   const goBack = () =>
     navigate({
@@ -36,8 +32,6 @@ export function Passives() {
         selectedId: undefined,
       }),
     });
-  const setTab = (tab: LiabilitySearch["tabs"]) =>
-    navigate({ search: (prev) => ({ ...prev, tabs: tab }) });
 
   useEffect(() => {
     if (!view) {
