@@ -511,6 +511,7 @@ export type I18nResource = {
         name: {
           label: string;
           placeholder: string;
+          description: string;
           validation: {
             required: string;
             invalid: string;
@@ -520,6 +521,9 @@ export type I18nResource = {
         email: {
           label: string;
           placeholder: string;
+          selectPlaceholder: string;
+          description: string;
+          descriptionLink: string;
           validation: {
             invalid: string;
           };
@@ -538,6 +542,7 @@ export type I18nResource = {
             invalid: string;
           };
         };
+        submit: string;
       };
     };
     account: {
