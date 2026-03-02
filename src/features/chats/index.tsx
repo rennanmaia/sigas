@@ -7,12 +7,10 @@ import {
   MoreVertical,
   Edit,
   Paperclip,
-  Phone,
   ImagePlus,
   Plus,
   Search as SearchIcon,
   Send,
-  Video,
   MessagesSquare,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -49,7 +47,7 @@ export function Chats() {
 
   const currentMessage = selectedUser?.messages.reduce(
     (acc: Record<string, Convo[]>, obj) => {
-      const key = format(obj.timestamp, 'd MMM, yyyy')
+      const key = format(obj.timestamp, "dd/MM/yyyy")
 
       // Create an array for the category if it doesn't exist
       if (!acc[key]) {
@@ -124,7 +122,7 @@ export function Chats() {
                 const lastConvo = messages[0]
                 const lastMsg =
                   lastConvo.sender === 'You'
-                    ? `You: ${lastConvo.message}`
+                    ? `Você: ${lastConvo.message}`
                     : lastConvo.message
                 return (
                   <Fragment key={id}>
@@ -206,20 +204,6 @@ export function Chats() {
                   <Button
                     size='icon'
                     variant='ghost'
-                    className='hidden size-8 rounded-full sm:inline-flex lg:size-10'
-                  >
-                    <Video size={22} className='stroke-muted-foreground' />
-                  </Button>
-                  <Button
-                    size='icon'
-                    variant='ghost'
-                    className='hidden size-8 rounded-full sm:inline-flex lg:size-10'
-                  >
-                    <Phone size={22} className='stroke-muted-foreground' />
-                  </Button>
-                  <Button
-                    size='icon'
-                    variant='ghost'
                     className='h-10 rounded-md sm:h-8 sm:w-4 lg:h-10 lg:w-6'
                   >
                     <MoreVertical className='stroke-muted-foreground sm:size-5' />
@@ -263,7 +247,13 @@ export function Chats() {
                     </div>
                   </div>
                 </div>
-                <form className='flex w-full flex-none gap-2'>
+                <form 
+                  className='flex w-full flex-none gap-2'
+                  onSubmit={(e) => {
+                    e.preventDefault()
+                    // Lógica de envio de mensagem aqui
+                  }}
+                >
                   <div className='border-input bg-card focus-within:ring-ring flex flex-1 items-center gap-2 rounded-md border px-2 py-1 focus-within:ring-1 focus-within:outline-hidden lg:gap-4'>
                     <div className='space-x-1'>
                       <Button
@@ -306,6 +296,7 @@ export function Chats() {
                       />
                     </label>
                     <Button
+                      type='submit'
                       variant='ghost'
                       size='icon'
                       className='hidden sm:inline-flex'
@@ -313,7 +304,7 @@ export function Chats() {
                       <Send size={20} />
                     </Button>
                   </div>
-                  <Button className='h-full sm:hidden'>
+                  <Button type='submit' className='h-full sm:hidden'>
                     <Send size={18} /> {t('buttons.send')}
                   </Button>
                 </form>
