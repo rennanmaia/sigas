@@ -9,72 +9,72 @@
       "messages": [
         {
           "sender": "You",
-          "message": "See you later, Alex!",
+          "message": "Até logo, Alex!",
           "timestamp": "2024-08-24T11:15:15"
         },
         {
           "sender": "Alex",
-          "message": "Alright, talk to you later!",
+          "message": "Tudo bem, até breve!",
           "timestamp": "2024-08-24T11:11:30"
         },
         {
           "sender": "You",
-          "message": "For sure. Anyway, I should get back to reviewing the project.",
+          "message": "Claro. Aliás, devo voltar a revisar o projeto.",
           "timestamp": "2024-08-23T09:26:50"
         },
         {
           "sender": "Alex",
-          "message": "Yeah, let me know what you think.",
+          "message": "Sim, me diga o que você acha.",
           "timestamp": "2024-08-23T09:25:15"
         },
         {
           "sender": "You",
-          "message": "Oh, nice! I've been waiting for that. I'll check it out later.",
+          "message": "Ah, legal! Eu estava esperando por isso. Vou verificar depois.",
           "timestamp": "2024-08-23T09:24:30"
         },
         {
           "sender": "Alex",
-          "message": "They've added a dark mode option! It looks really sleek.",
+          "message": "Eles adicionaram uma opção de modo escuro! Parece realmente elegante.",
           "timestamp": "2024-08-23T09:23:10"
         },
         {
           "sender": "You",
-          "message": "No, not yet. What's new?",
+          "message": "Não, ainda não. O que há de novo?",
           "timestamp": "2024-08-23T09:22:00"
         },
         {
           "sender": "Alex",
-          "message": "By the way, have you seen the new feature update?",
+          "message": "Por falar nisso, você viu a atualização do novo recurso?",
           "timestamp": "2024-08-23T09:21:05"
         },
         {
           "sender": "You",
-          "message": "Will do! Thanks, Alex.",
+          "message": "Farei isso! Obrigado, Alex.",
           "timestamp": "2024-08-23T09:20:10"
         },
         {
           "sender": "Alex",
-          "message": "Great! Let me know if you need any help.",
+          "message": "Ótimo! Me avise se precisar de ajuda.",
           "timestamp": "2024-08-23T09:19:20"
         },
         {
           "sender": "You",
-          "message": "Almost done. Just need to review a few things.",
+          "message": "Quase pronto. Só preciso revisar algumas coisas.",
           "timestamp": "2024-08-23T09:18:45"
         },
         {
           "sender": "Alex",
-          "message": "I'm good, thanks! Did you finish the project?",
+          "message": "Vou bem, obrigado! Você terminou o projeto?",
           "timestamp": "2024-08-23T09:17:10"
         },
         {
           "sender": "You",
-          "message": "Hey Alex, I'm doing well! How about you?",
+          "message": "Oi Alex, estou indo bem! E você?",
           "timestamp": "2024-08-23T09:16:30"
         },
         {
           "sender": "Alex",
-          "message": "Hey Bob, how are you doing?",
+          "message": "Oi Bob, como você está?",
           "timestamp": "2024-08-23T09:15:00"
         }
       ]
@@ -88,17 +88,17 @@
       "messages": [
         {
           "sender": "Taylor",
-          "message": "Yeah, it's really well-explained. You should give it a try.",
+          "message": "Sim, é realmente bem explicado. Você deveria tentar.",
           "timestamp": "2024-08-23T10:35:00"
         },
         {
           "sender": "You",
-          "message": "Not yet, is it good?",
+          "message": "Ainda não, é bom?",
           "timestamp": "2024-08-23T10:32:00"
         },
         {
           "sender": "Taylor",
-          "message": "Hey, did you check out that new tutorial?",
+          "message": "Oi, você viu aquele novo tutorial?",
           "timestamp": "2024-08-23T10:30:00"
         }
       ]
@@ -112,22 +112,22 @@
       "messages": [
         {
           "sender": "You",
-          "message": "Yep, see ya. 👋🏼",
+          "message": "Sim, até! 👋🏼",
           "timestamp": "2024-08-22T18:59:00"
         },
         {
           "sender": "John",
-          "message": "Great, see you then!",
+          "message": "Ótimo, até então!",
           "timestamp": "2024-08-22T18:55:00"
         },
         {
           "sender": "You",
-          "message": "Yes, same time as usual. I'll send the invite shortly.",
+          "message": "Sim, mesma hora de sempre. Vou enviar o convite em breve.",
           "timestamp": "2024-08-22T18:50:00"
         },
         {
           "sender": "John",
-          "message": "Are we still on for the meeting tomorrow?",
+          "message": "Ainda vamos fazer a reunião amanhã?",
           "timestamp": "2024-08-22T18:45:00"
         }
       ]
@@ -141,22 +141,22 @@
       "messages": [
         {
           "sender": "You",
-          "message": "Sure ✌🏼",
+          "message": "Claro ✌🏼",
           "timestamp": "2024-08-23T11:30:00"
         },
         {
           "sender": "Megan",
-          "message": "Thanks, appreciate it!",
+          "message": "Obrigada, aprecio!",
           "timestamp": "2024-08-23T11:30:00"
         },
         {
           "sender": "You",
-          "message": "Sure thing! I'll take a look in the next hour.",
+          "message": "Claro! Vou dar uma olhada na próxima hora.",
           "timestamp": "2024-08-23T11:25:00"
         },
         {
           "sender": "Megan",
-          "message": "Hey! Do you have time to review my PR today?",
+          "message": "Oi! Você tem tempo para revisar meu PR hoje?",
           "timestamp": "2024-08-23T11:20:00"
         }
       ]
@@ -170,17 +170,17 @@
       "messages": [
         {
           "sender": "You",
-          "message": "Great, I'll review them now!",
+          "message": "Ótimo, vou revisar agora!",
           "timestamp": "2024-08-23T12:00:00"
         },
         {
           "sender": "David",
-          "message": "Just sent you the files. Let me know if you need any changes.",
+          "message": "Enviei os arquivos para você. Me avise se precisar de mudanças.",
           "timestamp": "2024-08-23T11:58:00"
         },
         {
           "sender": "David",
-          "message": "I finished the design for the dashboard. Thoughts?",
+          "message": "Terminei o design do painel. Pensamentos?",
           "timestamp": "2024-08-23T11:55:00"
         }
       ]
@@ -194,17 +194,17 @@
       "messages": [
         {
           "sender": "Julia",
-          "message": "Same here! It's coming together nicely.",
+          "message": "Idem! Está ficando muito bem.",
           "timestamp": "2024-08-22T14:10:00"
         },
         {
           "sender": "You",
-          "message": "I'm really excited to see the final product!",
+          "message": "Estou realmente animado para ver o produto final!",
           "timestamp": "2024-08-22T14:15:00"
         },
         {
           "sender": "You",
-          "message": "How's the project looking on your end?",
+          "message": "Como está o projeto do seu lado?",
           "timestamp": "2024-08-22T14:05:00"
         }
       ]
@@ -218,17 +218,17 @@
       "messages": [
         {
           "sender": "Brad",
-          "message": "Got it! Thanks for the update.",
+          "message": "Entendi! Obrigado pela atualização.",
           "timestamp": "2024-08-23T15:45:00"
         },
         {
           "sender": "You",
-          "message": "The release has been delayed to next week.",
+          "message": "O lançamento foi adiado para a próxima semana.",
           "timestamp": "2024-08-23T15:40:00"
         },
         {
           "sender": "Brad",
-          "message": "Hey, any news on the release?",
+          "message": "Oi, alguma novidade sobre o lançamento?",
           "timestamp": "2024-08-23T15:35:00"
         }
       ]
@@ -242,17 +242,17 @@
       "messages": [
         {
           "sender": "Katie",
-          "message": "I'll join the call in a few minutes.",
+          "message": "Vou entrar na chamada em alguns minutos.",
           "timestamp": "2024-08-23T09:50:00"
         },
         {
           "sender": "You",
-          "message": "Perfect! We'll start as soon as you're in.",
+          "message": "Perfeito! Vamos começar assim que você entrar.",
           "timestamp": "2024-08-23T09:48:00"
         },
         {
           "sender": "Katie",
-          "message": "Is the meeting still on?",
+          "message": "A reunião ainda está marcada?",
           "timestamp": "2024-08-23T09:45:00"
         }
       ]
@@ -266,17 +266,17 @@
       "messages": [
         {
           "sender": "Matt",
-          "message": "Sure thing, I'll send over the updates shortly.",
+          "message": "Claro, vou enviar as atualizações em breve.",
           "timestamp": "2024-08-23T10:25:00"
         },
         {
           "sender": "You",
-          "message": "Could you update the backend as well?",
+          "message": "Você poderia atualizar o backend também?",
           "timestamp": "2024-08-23T10:23:00"
         },
         {
           "sender": "Matt",
-          "message": "The frontend updates are done. How does it look?",
+          "message": "As atualizações do frontend estão prontas. Como está?",
           "timestamp": "2024-08-23T10:20:00"
         }
       ]
@@ -290,17 +290,17 @@
       "messages": [
         {
           "sender": "You",
-          "message": "Thanks! I'll review your code and get back to you.",
+          "message": "Obrigado! Vou revisar seu código e volto com você.",
           "timestamp": "2024-08-23T16:10:00"
         },
         {
           "sender": "Sophie",
-          "message": "Let me know if you need anything else.",
+          "message": "Me avise se precisar de mais alguma coisa.",
           "timestamp": "2024-08-23T16:05:00"
         },
         {
           "sender": "Sophie",
-          "message": "The feature is implemented. Can you review it?",
+          "message": "O recurso foi implementado. Você pode revisar?",
           "timestamp": "2024-08-23T16:00:00"
         }
       ]
