@@ -69,36 +69,10 @@ export function Passives() {
             </Link>
           </div>
         </div>
-
-        <Tabs
-          orientation="vertical"
-          defaultValue={tabs}
-          value={tabs}
-          className="space-y-4"
-          onValueChange={(e) => {
-            setTab(e as LiabilitySearch["tabs"]);
-          }}
-        >
-          <div className="w-full overflow-x-auto pb-2">
-            <TabsList>
-              <TabsTrigger value={LiabilityView.OVERVIEW}>
-                {t("list.tabs.overview")}
-              </TabsTrigger>
-              <TabsTrigger value={LiabilityView.LIST}>
-                {t("list.tabs.management")}
-              </TabsTrigger>
-            </TabsList>
-          </div>
-          <TabsContent value={LiabilityView.OVERVIEW} className="space-y-4">
-            {view === LiabilityView.OVERVIEW && <PassivesOverview />}
-            {view === LiabilityView.CRITICAL && (
-              <CriticalRisksManagement onBack={goBack} />
-            )}
-          </TabsContent>
-          <TabsContent value={LiabilityView.LIST} className="space-y-4">
-            <PassivesTable navigate={navigate as any} search={search} />
-          </TabsContent>
-        </Tabs>
+        {view === LiabilityView.OVERVIEW && <PassivesOverview />}
+        {view === LiabilityView.CRITICAL && (
+          <CriticalRisksManagement onBack={goBack} />
+        )}
       </Main>
     </LiabilitiesProvider>
   );
