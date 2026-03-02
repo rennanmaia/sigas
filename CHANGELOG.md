@@ -1,4 +1,4 @@
-# [1.1.0-beta.1](https://github.com/rennanmaia/sigas/compare/v1.0.0...v1.1.0-beta.1) (2026-03-01)
+# [1.1.0](https://github.com/rennanmaia/sigas/compare/v1.0.0...v1.1.0) (2026-03-01)
 
 
 ### Bug Fixes
