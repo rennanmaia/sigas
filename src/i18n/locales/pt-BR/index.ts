@@ -530,8 +530,10 @@ export const ptBR: I18nResource = {
       description: "É assim que outros usuários irão ver seu perfil",
       form: {
         name: {
-          label: "Nome",
-          placeholder: "Seu nome completo",
+          label: "Nome de usuário",
+          placeholder: "user.name",
+          description:
+            "Este é o seu nome público que ficará visível. Pode ser seu nome real ou um pseudônimo. Você pode mudá-lo somente uma vez a cada 30 dias.",
           validation: {
             required: "Nome é obrigatório",
             invalid: "O nome deve ter entre 2 e 30 caracteres",
@@ -541,6 +543,9 @@ export const ptBR: I18nResource = {
         email: {
           label: "Email",
           placeholder: "seu.email@exemplo.com",
+          selectPlaceholder: "Selecione um email válido para mostrar",
+          description: "Você pode gerenciar endereços de email nas suas",
+          descriptionLink: "configurações de email",
           validation: {
             invalid: "Email inválido",
           },
@@ -559,6 +564,7 @@ export const ptBR: I18nResource = {
             invalid: "URL inválida",
           },
         },
+        submit: "Atualizar perfil",
       },
     },
     account: {
