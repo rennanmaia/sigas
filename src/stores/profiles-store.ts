@@ -2,37 +2,87 @@ import { create } from 'zustand';
 import type { Profile } from '@/features/profiles/data/schema';
 import { profiles as initialProfiles } from '@/features/profiles/data/profiles';
 
+interface ProfileLog {
+  id: string;
+  userId: string;
+  userName: string;
+  action: "criação" | "edição" | "exclusão";
+  profileId: string;
+  profileLabel: string;
+  timestamp: string;
+  details?: string;
+}
+
 interface ProfilesStore {
   profiles: Profile[];
+  logs: ProfileLog[];
   setProfiles: (profiles: Profile[]) => void;
   addProfile: (profile: Profile) => void;
   updateProfile: (id: string, profile: Partial<Profile>) => void;
   deleteProfile: (id: string) => void;
   getProfileById: (id: string) => Profile | undefined;
   getProfilesByRole: (value: string) => Profile[];
+  addLog: (
+    action: ProfileLog["action"],
+    profileId: string,
+    profileLabel: string,
+    details?: string,
+    userName?: string,
+  ) => void;
 }
 
 export const useProfilesStore = create<ProfilesStore>((set, get) => ({
-  profiles: initialProfiles,
+  profiles: (() => {
+    const saved = localStorage.getItem("local-profiles");
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return initialProfiles;
+      }
+    }
+    return initialProfiles;
+  })(),
 
-  setProfiles: (profiles) => set({ profiles }),
+  logs: (() => {
+    const savedLogs = localStorage.getItem("profile-logs");
+    if (savedLogs) {
+      try {
+        return JSON.parse(savedLogs);
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  })(),
+
+  setProfiles: (profiles) => {
+    set({ profiles });
+    localStorage.setItem("local-profiles", JSON.stringify(profiles));
+  },
 
   addProfile: (profile) =>
-    set((state) => ({
-      profiles: [profile, ...state.profiles],
-    })),
+    set((state) => {
+      const newProfiles = [profile, ...state.profiles];
+      localStorage.setItem("local-profiles", JSON.stringify(newProfiles));
+      return { profiles: newProfiles };
+    }),
 
   updateProfile: (id, updates) =>
-    set((state) => ({
-      profiles: state.profiles.map((profile) =>
+    set((state) => {
+      const newProfiles = state.profiles.map((profile) =>
         profile.id === id ? { ...profile, ...updates } : profile
-      ),
-    })),
+      );
+      localStorage.setItem("local-profiles", JSON.stringify(newProfiles));
+      return { profiles: newProfiles };
+    }),
 
   deleteProfile: (id) =>
-    set((state) => ({
-      profiles: state.profiles.filter((profile) => profile.id !== id),
-    })),
+    set((state) => {
+      const newProfiles = state.profiles.filter((profile) => profile.id !== id);
+      localStorage.setItem("local-profiles", JSON.stringify(newProfiles));
+      return { profiles: newProfiles };
+    }),
 
   getProfileById: (id) => {
     return get().profiles.find((profile) => profile.id === id);
@@ -40,5 +90,30 @@ export const useProfilesStore = create<ProfilesStore>((set, get) => ({
 
   getProfilesByRole: (value) => {
     return get().profiles.filter((profile) => profile.value === value);
+  },
+
+  addLog: (
+    action,
+    profileId,
+    profileLabel,
+    details,
+    userName,
+  ) => {
+    const newLog: ProfileLog = {
+      id: crypto.randomUUID(),
+      userId: "user-001",
+      userName: userName || "Usuário Sistema",
+      action,
+      profileId,
+      profileLabel,
+      timestamp: new Date().toISOString(),
+      details,
+    };
+    set((state) => {
+      const newLogs = [newLog, ...state.logs];
+      localStorage.setItem("profile-logs", JSON.stringify(newLogs));
+      return { logs: newLogs };
+    });
+    console.log(`[PROFILE LOG] ${action.toUpperCase()}:`, newLog);
   },
 }));

@@ -259,6 +259,7 @@ export const ptBR: I18nResource = {
     list: {
       buttons: {
         add: "Adicionar Novo Perfil",
+        logs: "Histórico",
       },
       title: "Lista de Perfis",
       description: "Gerencie seus perfis e suas funções aqui.",
