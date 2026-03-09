@@ -256,6 +256,7 @@ export const enUS: I18nResource = {
     list: {
       buttons: {
         add: "Add New Profile",
+        logs: "History",
       },
       title: "Profile List",
       description: "Manage your profiles and their roles here.",

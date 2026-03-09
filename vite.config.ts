@@ -9,7 +9,10 @@ import { fileURLToPath, URL } from 'node:url'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    devtools(),
+    devtools({
+      port: 42070,
+      host: 'localhost',
+    }),
     tanstackRouter({
       target: 'react',
       autoCodeSplitting: true,
