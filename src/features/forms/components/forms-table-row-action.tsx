@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Link } from "@tanstack/react-router";
 import { useForms } from "./forms-provider";
+import { useFormsStore } from "@/stores/forms-store";
 import { MobilePreviewDialog } from "./mobile-preview-dialog";
 import { useState } from "react";
 
@@ -22,6 +23,7 @@ type DataTableRowActionsProps = {
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
   const { setOpen, setCurrentForm, duplicateForm } = useForms();
+  const { addLog } = useFormsStore();
   const [showPreview, setShowPreview] = useState(false);
 
   return (
@@ -59,7 +61,15 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => {
-                duplicateForm(row.original.id);
+                const newId = duplicateForm(row.original.id);
+                if (newId !== undefined) {
+                  addLog(
+                    "criação",
+                    newId,
+                    `Cópia de ${row.original.title}`,
+                    `Duplicado do formulário ${row.original.id}`,
+                  );
+                }
                 toast.success(
                   `Formulário "${row.original.title}" duplicado com sucesso!`,
                 );

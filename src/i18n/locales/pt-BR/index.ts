@@ -227,6 +227,10 @@ export const ptBR: I18nResource = {
     list: {
       title: "Formulários",
       description: "Gerencie e publique seus formulários",
+      buttons: {
+        add: "Adicionar Formulário",
+        logs: "Histórico",
+      },
       table: {
         searchPlaceholder: "Filtrar por título...",
         noResults: "Nenhum resultado encontrado.",
@@ -244,6 +248,10 @@ export const ptBR: I18nResource = {
           project: "Projeto",
         },
       },
+    },
+    logs: {
+      title: "Logs de formulários",
+      empty: "Nada criado",
     },
   },
   profiles: {

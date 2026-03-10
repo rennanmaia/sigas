@@ -134,7 +134,7 @@ export function FormsProvider({ children }: { children: ReactNode }) {
 
   const duplicateForm = (id: string) => {
     const formToDuplicate = forms.find((f) => f.id === id);
-    if (!formToDuplicate) return;
+    if (!formToDuplicate) return undefined;
 
     const newFormId = `frm-${Math.floor(Math.random() * 10000)}`;
     const duplicatedForm: FormItem = {
@@ -154,6 +154,7 @@ export function FormsProvider({ children }: { children: ReactNode }) {
     const updated = [duplicatedForm, ...forms];
     setForms(updated);
     localStorage.setItem("local-forms", JSON.stringify(updated));
+    return newFormId;
   };
 
   return (

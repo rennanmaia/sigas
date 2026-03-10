@@ -224,6 +224,10 @@ export const enUS: I18nResource = {
     list: {
       title: "Forms",
       description: "Manage and publish your forms",
+      buttons: {
+        add: "Add Form",
+        logs: "History",
+      },
       table: {
         searchPlaceholder: "Filter by title...",
         noResults: "No results found.",
@@ -241,6 +245,10 @@ export const enUS: I18nResource = {
           project: "Project",
         },
       },
+    },
+    logs: {
+      title: "Form logs",
+      empty: "Not created",
     },
   },
   profiles: {
