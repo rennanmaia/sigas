@@ -331,6 +331,7 @@ export const ptBR: I18nResource = {
       description: "Gerencie seus usuários e suas funções aqui.",
       buttons: {
         add: "Adicionar Novo Usuário",
+        logs: "Histórico",
       },
       table: {
         searchPlaceholder: "Buscar por nome",
@@ -406,6 +407,10 @@ export const ptBR: I18nResource = {
         cancel: "Cancelar",
         create: "Criar",
       },
+    },
+    logs: {
+      title: "Logs de usuários",
+      empty: "Nada criado",
     },
   },
   projects: {

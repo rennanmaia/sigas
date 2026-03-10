@@ -6,11 +6,12 @@ import { useUsersStore } from '@/stores/users-store';
 
 export function UsersToggleStatusDialog({ open, onOpenChange, currentRow }:{ open:boolean; onOpenChange:(b:boolean)=>void; currentRow:any }){
   if(!currentRow) return null
-  const { users, setUsers } = useUsersStore()
+  const { users, setUsers, addLog } = useUsersStore()
 
   const handle = () => {
     const next = currentRow.status === 'active' ? 'inactive' : 'active'
     setUsers(users.map((u) => (u.id === currentRow.id ? { ...u, status: next } : u)))
+    addLog("edição", currentRow.id, currentRow.username, `Status alterado para ${next}.`)
     onOpenChange(false)
     toast.success(`Status changed to ${next}`)
   }

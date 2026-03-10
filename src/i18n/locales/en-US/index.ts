@@ -328,6 +328,7 @@ export const enUS: I18nResource = {
       description: "Manage your users and their roles here.",
       buttons: {
         add: "Add New User",
+        logs: "History",
       },
       table: {
         searchPlaceholder: "Search by name",
@@ -402,6 +403,10 @@ export const enUS: I18nResource = {
         cancel: "Cancel",
         create: "Create",
       },
+    },
+    logs: {
+      title: "User logs",
+      empty: "Nothing created",
     },
   },
   projects: {

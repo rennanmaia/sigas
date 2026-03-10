@@ -245,6 +245,7 @@ export type I18nResource = {
       description: string;
       buttons: {
         add: string;
+        logs: string;
       };
       table: {
         searchPlaceholder: string;

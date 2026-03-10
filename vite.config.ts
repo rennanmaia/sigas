@@ -10,7 +10,6 @@ import { fileURLToPath, URL } from 'node:url'
 export default defineConfig({
   plugins: [
     devtools({
-      port: 42070,
       host: 'localhost',
     }),
     tanstackRouter({
