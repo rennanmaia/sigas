@@ -7,6 +7,7 @@ import { ArrowLeft, Eye, Save, X } from "lucide-react";
 import { useState, useRef, useCallback } from "react";
 
 import { FormsProvider, useForms } from "../components/forms-provider";
+import { useFormsStore } from "@/stores/forms-store";
 import { FormBuilder } from "../components/form-builder";
 import { MobilePreviewDialog } from "../components/mobile-preview-dialog";
 import type { Question } from "../components/form-builder/types/question";
@@ -29,6 +30,7 @@ function CreateFormContent({ initialId }: FormCreateProps) {
   const search = useSearch({ strict: false }) as { projectId?: string };
   const projectId = search?.projectId;
   const { addForm, updateForm } = useForms();
+  const { addLog } = useFormsStore();
   const [previewOpen, setPreviewOpen] = useState(false);
   const [formData, setFormData] = useState<{
     title: string;
@@ -44,10 +46,12 @@ function CreateFormContent({ initialId }: FormCreateProps) {
   const handleSave = (data: any) => {
     if (initialId) {
       updateForm(initialId, data);
+      addLog("edição", initialId, data.title || "", "Formulário atualizado.");
       toast.success("Formulário atualizado com sucesso!");
       navigate({ to: "/forms" });
     } else {
       const newFormId = addForm(data);
+      addLog("criação", newFormId, data.title || "");
       toast.success("Formulário criado com sucesso!");
 
       if (data.projectId && newFormId) {

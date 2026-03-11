@@ -68,7 +68,7 @@ export function UsersInviteDialog({
   onOpenChange,
 }: UserInviteDialogProps) {
   const { t } = useTranslation("users")
-  const { users, setUsers } = useUsersStore();
+  const { users, setUsers, addLog } = useUsersStore();
 
   const form = useForm<UserInviteForm>({
     resolver: zodResolver(formSchema),
@@ -93,6 +93,7 @@ export function UsersInviteDialog({
       updatedAt: new Date(),
     };
     setUsers([newUser, ...users])
+    addLog("criação", newUser.id, newUser.username, `Usuário "${newUser.username}" foi convidado com ${values.roles.length} função(ões).`)
     form.reset()
     onOpenChange(false)
     toast.success(t("create.submit.message"))

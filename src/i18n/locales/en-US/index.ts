@@ -224,6 +224,10 @@ export const enUS: I18nResource = {
     list: {
       title: "Forms",
       description: "Manage and publish your forms",
+      buttons: {
+        add: "Add Form",
+        logs: "History",
+      },
       table: {
         searchPlaceholder: "Filter by title...",
         noResults: "No results found.",
@@ -242,6 +246,10 @@ export const enUS: I18nResource = {
         },
       },
     },
+    logs: {
+      title: "Form logs",
+      empty: "Not created",
+    },
   },
   profiles: {
     view: {
@@ -256,6 +264,7 @@ export const enUS: I18nResource = {
     list: {
       buttons: {
         add: "Add New Profile",
+        logs: "History",
       },
       title: "Profile List",
       description: "Manage your profiles and their roles here.",
@@ -327,6 +336,7 @@ export const enUS: I18nResource = {
       description: "Manage your users and their roles here.",
       buttons: {
         add: "Add New User",
+        logs: "History",
       },
       table: {
         searchPlaceholder: "Search by name",
@@ -401,6 +411,10 @@ export const enUS: I18nResource = {
         cancel: "Cancel",
         create: "Create",
       },
+    },
+    logs: {
+      title: "User logs",
+      empty: "Nothing created",
     },
   },
   projects: {

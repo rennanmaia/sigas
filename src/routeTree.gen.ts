@@ -30,12 +30,15 @@ import { Route as AuthenticatedPassivesIndexRouteImport } from './routes/_authen
 import { Route as AuthenticatedHelpCenterIndexRouteImport } from './routes/_authenticated/help-center/index'
 import { Route as AuthenticatedFormsIndexRouteImport } from './routes/_authenticated/forms/index'
 import { Route as AuthenticatedChatsIndexRouteImport } from './routes/_authenticated/chats/index'
+import { Route as AuthenticatedUsersLogsRouteImport } from './routes/_authenticated/users/logs'
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings/notifications'
 import { Route as AuthenticatedSettingsDisplayRouteImport } from './routes/_authenticated/settings/display'
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedSettingsAccountRouteImport } from './routes/_authenticated/settings/account'
 import { Route as AuthenticatedProjectsLogsRouteImport } from './routes/_authenticated/projects/logs'
 import { Route as AuthenticatedProjectsCreateRouteImport } from './routes/_authenticated/projects/create'
+import { Route as AuthenticatedProfilesLogsRouteImport } from './routes/_authenticated/profiles/logs'
+import { Route as AuthenticatedFormsLogsRouteImport } from './routes/_authenticated/forms/logs'
 import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
 import { Route as AuthenticatedUsersIdIndexRouteImport } from './routes/_authenticated/users/$id/index'
 import { Route as AuthenticatedProjectsProjectIdIndexRouteImport } from './routes/_authenticated/projects/$projectId/index'
@@ -159,6 +162,11 @@ const AuthenticatedChatsIndexRoute = AuthenticatedChatsIndexRouteImport.update({
   path: '/chats/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedUsersLogsRoute = AuthenticatedUsersLogsRouteImport.update({
+  id: '/users/logs',
+  path: '/users/logs',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedSettingsNotificationsRoute =
   AuthenticatedSettingsNotificationsRouteImport.update({
     id: '/notifications',
@@ -195,6 +203,17 @@ const AuthenticatedProjectsCreateRoute =
     path: '/projects/create',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedProfilesLogsRoute =
+  AuthenticatedProfilesLogsRouteImport.update({
+    id: '/profiles/logs',
+    path: '/profiles/logs',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedFormsLogsRoute = AuthenticatedFormsLogsRouteImport.update({
+  id: '/forms/logs',
+  path: '/forms/logs',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedErrorsErrorRoute =
   AuthenticatedErrorsErrorRouteImport.update({
     id: '/errors/$error',
@@ -282,12 +301,15 @@ export interface FileRoutesByFullPath {
   '/503': typeof errors503Route
   '/': typeof AuthenticatedIndexRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
+  '/forms/logs': typeof AuthenticatedFormsLogsRoute
+  '/profiles/logs': typeof AuthenticatedProfilesLogsRoute
   '/projects/create': typeof AuthenticatedProjectsCreateRoute
   '/projects/logs': typeof AuthenticatedProjectsLogsRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/users/logs': typeof AuthenticatedUsersLogsRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
   '/forms': typeof AuthenticatedFormsIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
@@ -321,12 +343,15 @@ export interface FileRoutesByTo {
   '/503': typeof errors503Route
   '/': typeof AuthenticatedIndexRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
+  '/forms/logs': typeof AuthenticatedFormsLogsRoute
+  '/profiles/logs': typeof AuthenticatedProfilesLogsRoute
   '/projects/create': typeof AuthenticatedProjectsCreateRoute
   '/projects/logs': typeof AuthenticatedProjectsLogsRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/users/logs': typeof AuthenticatedUsersLogsRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
   '/forms': typeof AuthenticatedFormsIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
@@ -363,12 +388,15 @@ export interface FileRoutesById {
   '/(errors)/503': typeof errors503Route
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/errors/$error': typeof AuthenticatedErrorsErrorRoute
+  '/_authenticated/forms/logs': typeof AuthenticatedFormsLogsRoute
+  '/_authenticated/profiles/logs': typeof AuthenticatedProfilesLogsRoute
   '/_authenticated/projects/create': typeof AuthenticatedProjectsCreateRoute
   '/_authenticated/projects/logs': typeof AuthenticatedProjectsLogsRoute
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/_authenticated/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/_authenticated/users/logs': typeof AuthenticatedUsersLogsRoute
   '/_authenticated/chats/': typeof AuthenticatedChatsIndexRoute
   '/_authenticated/forms/': typeof AuthenticatedFormsIndexRoute
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexRoute
@@ -405,12 +433,15 @@ export interface FileRouteTypes {
     | '/503'
     | '/'
     | '/errors/$error'
+    | '/forms/logs'
+    | '/profiles/logs'
     | '/projects/create'
     | '/projects/logs'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
     | '/settings/notifications'
+    | '/users/logs'
     | '/chats'
     | '/forms'
     | '/help-center'
@@ -444,12 +475,15 @@ export interface FileRouteTypes {
     | '/503'
     | '/'
     | '/errors/$error'
+    | '/forms/logs'
+    | '/profiles/logs'
     | '/projects/create'
     | '/projects/logs'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
     | '/settings/notifications'
+    | '/users/logs'
     | '/chats'
     | '/forms'
     | '/help-center'
@@ -485,12 +519,15 @@ export interface FileRouteTypes {
     | '/(errors)/503'
     | '/_authenticated/'
     | '/_authenticated/errors/$error'
+    | '/_authenticated/forms/logs'
+    | '/_authenticated/profiles/logs'
     | '/_authenticated/projects/create'
     | '/_authenticated/projects/logs'
     | '/_authenticated/settings/account'
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/display'
     | '/_authenticated/settings/notifications'
+    | '/_authenticated/users/logs'
     | '/_authenticated/chats/'
     | '/_authenticated/forms/'
     | '/_authenticated/help-center/'
@@ -675,6 +712,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedChatsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/users/logs': {
+      id: '/_authenticated/users/logs'
+      path: '/users/logs'
+      fullPath: '/users/logs'
+      preLoaderRoute: typeof AuthenticatedUsersLogsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/settings/notifications': {
       id: '/_authenticated/settings/notifications'
       path: '/notifications'
@@ -715,6 +759,20 @@ declare module '@tanstack/react-router' {
       path: '/projects/create'
       fullPath: '/projects/create'
       preLoaderRoute: typeof AuthenticatedProjectsCreateRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/profiles/logs': {
+      id: '/_authenticated/profiles/logs'
+      path: '/profiles/logs'
+      fullPath: '/profiles/logs'
+      preLoaderRoute: typeof AuthenticatedProfilesLogsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/forms/logs': {
+      id: '/_authenticated/forms/logs'
+      path: '/forms/logs'
+      fullPath: '/forms/logs'
+      preLoaderRoute: typeof AuthenticatedFormsLogsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/errors/$error': {
@@ -831,8 +889,11 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRouteRoute: typeof AuthenticatedSettingsRouteRouteWithChildren
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedErrorsErrorRoute: typeof AuthenticatedErrorsErrorRoute
+  AuthenticatedFormsLogsRoute: typeof AuthenticatedFormsLogsRoute
+  AuthenticatedProfilesLogsRoute: typeof AuthenticatedProfilesLogsRoute
   AuthenticatedProjectsCreateRoute: typeof AuthenticatedProjectsCreateRoute
   AuthenticatedProjectsLogsRoute: typeof AuthenticatedProjectsLogsRoute
+  AuthenticatedUsersLogsRoute: typeof AuthenticatedUsersLogsRoute
   AuthenticatedChatsIndexRoute: typeof AuthenticatedChatsIndexRoute
   AuthenticatedFormsIndexRoute: typeof AuthenticatedFormsIndexRoute
   AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
@@ -857,8 +918,11 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRouteRoute: AuthenticatedSettingsRouteRouteWithChildren,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedErrorsErrorRoute: AuthenticatedErrorsErrorRoute,
+  AuthenticatedFormsLogsRoute: AuthenticatedFormsLogsRoute,
+  AuthenticatedProfilesLogsRoute: AuthenticatedProfilesLogsRoute,
   AuthenticatedProjectsCreateRoute: AuthenticatedProjectsCreateRoute,
   AuthenticatedProjectsLogsRoute: AuthenticatedProjectsLogsRoute,
+  AuthenticatedUsersLogsRoute: AuthenticatedUsersLogsRoute,
   AuthenticatedChatsIndexRoute: AuthenticatedChatsIndexRoute,
   AuthenticatedFormsIndexRoute: AuthenticatedFormsIndexRoute,
   AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,

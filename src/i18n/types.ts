@@ -211,6 +211,10 @@ export type I18nResource = {
     list: {
       title: string;
       description: string;
+      buttons: {
+        add: string;
+        logs: string;
+      };
       table: {
         searchPlaceholder: string;
         noResults: string;
@@ -229,6 +233,10 @@ export type I18nResource = {
         };
       };
     };
+    logs: {
+      title: string;
+      empty: string;
+    };
   };
   profiles: {
     view: {
@@ -245,6 +253,7 @@ export type I18nResource = {
       description: string;
       buttons: {
         add: string;
+        logs: string;
       };
       table: {
         searchPlaceholder: string;
@@ -313,6 +322,7 @@ export type I18nResource = {
       description: string;
       buttons: {
         add: string;
+        logs: string;
       };
       table: {
         searchPlaceholder: string;
@@ -385,6 +395,10 @@ export type I18nResource = {
         create: string;
         cancel: string;
       };
+    };
+    logs: {
+      title: string;
+      empty: string;
     };
   };
   projects: {

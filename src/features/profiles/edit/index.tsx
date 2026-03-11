@@ -16,7 +16,7 @@ import { useProfilesStore } from "@/stores/profiles-store";
 function EditProfile() {
   const { id } = Route.useParams();
   const navigate = Route.useNavigate();
-  const { getProfileById, updateProfile } = useProfilesStore();
+  const { getProfileById, updateProfile, addLog } = useProfilesStore();
 
   const profile = getProfileById(id);
 
@@ -45,6 +45,7 @@ function EditProfile() {
       description: values.description,
       permissions: values.permissions,
     });
+    addLog("edição", profile.id, values.name, `Perfil "${values.name}" foi atualizado.`);
     toast.success("Profile updated");
     navigate({ to: "/profiles" });
   };

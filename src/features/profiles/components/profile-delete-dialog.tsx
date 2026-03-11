@@ -18,7 +18,7 @@ export function ProfilesDeleteDialog({
   currentRow,
 }: ProfileDeleteDialogProps) {
   const { t } = useTranslation("common");
-  const { deleteProfile } = useProfilesStore();
+  const { deleteProfile, addLog } = useProfilesStore();
 
   const config: DeleteDialogConfig = {
     mode: "single",
@@ -30,6 +30,7 @@ export function ProfilesDeleteDialog({
     confirmStrategy: "typed",
     onDelete: (id) => {
       deleteProfile(id as string);
+      addLog("exclusão", id as string, currentRow.label, `Perfil "${currentRow.label}" foi excluído.`);
       toast.success(t("deleteDialog.confirmButton"));
     },
   };
