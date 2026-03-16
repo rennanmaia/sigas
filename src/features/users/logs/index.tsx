@@ -10,6 +10,14 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useUsersStore } from "@/stores/users-store";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -18,8 +26,7 @@ import {
   PenLine,
   Trash2,
   ArrowLeft,
-  ChevronDown,
-  ChevronRight,
+  Eye,
 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
@@ -50,6 +57,26 @@ const actionColors = {
   exclusão: "border-red-200 bg-red-50 text-red-700",
 };
 
+const getRoleLabel = (roleValue: string): string => {
+  const roleLabels: Record<string, string> = {
+    general_administrator: "Administrador Geral",
+    project_administrator: "Gerente de Projeto",
+    questionnaire_administrator: "Administrador de Questionários",
+    collector: "Coletor",
+  };
+  return roleLabels[roleValue] || roleValue;
+};
+
+const getStatusLabel = (status: string): string => {
+  const statusLabels: Record<string, string> = {
+    active: "Ativo",
+    inactive: "Inativo",
+    invited: "Convidado",
+    suspended: "Suspenso",
+  };
+  return statusLabels[status] || status;
+};
+
 type UserLog = {
   id: string;
   userId: string;
@@ -63,25 +90,12 @@ type UserLog = {
 
 export default function UserLogs() {
   const { logs } = useUsersStore();
-  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
   });
-
-  const toggleRow = (logId: string) => {
-    setExpandedRows((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(logId)) {
-        newSet.delete(logId);
-      } else {
-        newSet.add(logId);
-      }
-      return newSet;
-    });
-  };
 
   const columns: ColumnDef<UserLog>[] = [
     {
@@ -128,68 +142,85 @@ export default function UserLogs() {
       ),
     },
     {
-      accessorKey: "targetUserName",
-      header: "Usuário Afetado",
-      cell: ({ row }) => (
-        <div className="font-medium">{row.original.targetUserName}</div>
-      ),
-    },
-    {
-      accessorKey: "targetUserId",
-      header: "ID do Usuário Afetado",
-      cell: ({ row }) => (
-        <div className="text-xs font-mono text-muted-foreground">
-          {row.original.targetUserId}
-        </div>
-      ),
-    },
-    {
       accessorKey: "details",
       header: "Detalhes",
       cell: ({ row }) => {
         const log = row.original;
-        if (!log.details) {
-          return <span className="text-xs text-muted-foreground">-</span>;
-        }
-
-        const detailLines = log.details.split("\n");
-        const isSingleChange = detailLines.length === 1;
-
-        if (isSingleChange) {
-          return (
-            <div className="text-xs text-muted-foreground">
-              {detailLines[0]}
-            </div>
-          );
-        }
-
         return (
-          <div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => toggleRow(log.id)}
-              className="h-7 px-2"
-            >
-              {expandedRows.has(log.id) ? (
-                <ChevronDown className="h-4 w-4" />
-              ) : (
-                <ChevronRight className="h-4 w-4" />
-              )}
-              <span className="ml-1 text-xs">
-                {expandedRows.has(log.id) ? "Ocultar" : "Ver detalhes"}
-              </span>
-            </Button>
-            {expandedRows.has(log.id) && (
-              <div className="mt-2 text-xs space-y-1 pl-2 border-l-2 border-muted">
-                {detailLines.map((detail, i) => (
-                  <div key={i} className="text-muted-foreground">
-                    {detail}
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="ghost" size="sm" className="h-7 px-2">
+                <Eye className="h-4 w-4 mr-1" />
+                Ver detalhes
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Detalhes da Ação</DialogTitle>
+                <DialogDescription>
+                  Informações sobre a ação realizada em{" "}
+                  {format(new Date(log.timestamp), "dd/MM/yyyy 'às' HH:mm:ss", {
+                    locale: ptBR,
+                  })}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <h4 className="font-semibold text-sm">Ação</h4>
+                    <Badge
+                      variant="outline"
+                      className={`gap-1.5 ${actionColors[log.action]}`}
+                    >
+                      {actionIcons[log.action]}
+                      {log.action}
+                    </Badge>
                   </div>
-                ))}
+                  <div>
+                    <h4 className="font-semibold text-sm">Usuário que executou</h4>
+                    <p className="text-sm">{log.userName}</p>
+                    <p className="text-xs text-muted-foreground">{log.userId}</p>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-sm">Usuário Afetado</h4>
+                  {(() => {
+                    const { users } = useUsersStore.getState();
+                    const affectedUser = users.find(u => u.id === log.targetUserId);
+                    if (affectedUser) {
+                      return (
+                        <div className="space-y-2">
+                          <p className="text-sm font-medium">
+                            {affectedUser.firstName} {affectedUser.lastName}
+                          </p>
+                          <div className="text-xs text-muted-foreground space-y-1">
+                            <p>Email: {affectedUser.email}</p>
+                            <p>Telefone: {affectedUser.phoneNumber}</p>
+                            <p>CPF: {affectedUser.cpf || "N/A"}</p>
+                            <p>Status: {getStatusLabel(affectedUser.status)}</p>
+                            <p>Perfis: {affectedUser.roles.map(getRoleLabel).join(", ")}</p>
+                          </div>
+                        </div>
+                      );
+                    }
+                    return (
+                      <div className="text-sm text-muted-foreground">
+                        Usuário não encontrado (ID: {log.targetUserId})
+                      </div>
+                    );
+                  })()}
+                </div>
+                {log.details && (
+                  <div>
+                    <h4 className="font-semibold text-sm">Detalhes da Ação</h4>
+                    <div className="text-sm text-muted-foreground whitespace-pre-line">
+                      {log.details}
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            </DialogContent>
+          </Dialog>
         );
       },
     },
