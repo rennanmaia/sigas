@@ -157,7 +157,7 @@ export default function FormLogs() {
 
         if (isSingleChange) {
           return (
-            <div className="text-xs text-muted-foreground">
+            <div className="text-sm text-muted-foreground">
               {detailLines[0]}
             </div>
           );
@@ -176,12 +176,12 @@ export default function FormLogs() {
               ) : (
                 <ChevronRight className="h-4 w-4" />
               )}
-              <span className="ml-1 text-xs">
+              <span className="ml-1 text-sm">
                 {expandedRows.has(log.id) ? "Ocultar" : "Ver detalhes"}
               </span>
             </Button>
             {expandedRows.has(log.id) && (
-              <div className="mt-2 text-xs space-y-1 pl-2 border-l-2 border-muted">
+              <div className="mt-3 text-sm space-y-2 pl-4 border-l-2 border-muted">
                 {detailLines.map((detail, i) => (
                   <div key={i} className="text-muted-foreground">
                     {detail}

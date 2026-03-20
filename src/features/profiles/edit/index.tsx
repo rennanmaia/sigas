@@ -12,11 +12,16 @@ import ProfileForm from "@/features/profiles/components/profile-form";
 import type { FormValues } from "@/features/profiles/components/profile-form";
 import { Route } from "@/routes/_authenticated/profiles/edit/$id";
 import { useProfilesStore } from "@/stores/profiles-store";
+import { FEATURE_GROUPS } from "@/features/features/data/features";
 
 function EditProfile() {
   const { id } = Route.useParams();
   const navigate = Route.useNavigate();
   const { getProfileById, updateProfile, addLog } = useProfilesStore();
+
+  const PERMISSION_LABELS = Object.fromEntries(
+    FEATURE_GROUPS.flatMap((group) => group.children).map((perm) => [perm.id, perm.label]),
+  );
 
   const profile = getProfileById(id);
 
@@ -40,12 +45,34 @@ function EditProfile() {
   }
 
   const onSubmit = (values: FormValues) => {
+    const previousPermissions = profile.permissions || [];
+    const newPermissions = values.permissions || [];
+
+    const added = newPermissions.filter((perm) => !previousPermissions.includes(perm));
+    const removed = previousPermissions.filter((perm) => !newPermissions.includes(perm));
+
+    const addedLabels = added.map((perm) => PERMISSION_LABELS[perm] ?? perm);
+    const removedLabels = removed.map((perm) => PERMISSION_LABELS[perm] ?? perm);
+
+    const detailsLines: string[] = [`Perfil "${values.name}" foi atualizado.`];
+    if (addedLabels.length) {
+      detailsLines.push(`Funções adicionadas: ${addedLabels.join(", ")}`);
+    }
+    if (removedLabels.length) {
+      detailsLines.push(`Funções removidas: ${removedLabels.join(", ")}`);
+    }
+
     updateProfile(profile.id, {
       label: values.name,
       description: values.description,
       permissions: values.permissions,
     });
-    addLog("edição", profile.id, values.name, `Perfil "${values.name}" foi atualizado.`);
+    addLog(
+      "edição",
+      profile.id,
+      values.name,
+      detailsLines.join("\n"),
+    );
     toast.success("Profile updated");
     navigate({ to: "/profiles" });
   };

@@ -138,7 +138,7 @@ export default function ProfileLogs() {
                 Ver detalhes
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="max-w-4xl">
               <DialogHeader>
                 <DialogTitle>Detalhes da Ação</DialogTitle>
                 <DialogDescription>
@@ -151,7 +151,7 @@ export default function ProfileLogs() {
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <h4 className="font-semibold text-sm">Ação</h4>
+                    <h4 className="font-semibold text-base">Ação</h4>
                     <Badge
                       variant="outline"
                       className={`gap-1.5 ${actionColors[log.action]}`}
@@ -161,21 +161,21 @@ export default function ProfileLogs() {
                     </Badge>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-sm">Usuário que executou</h4>
-                    <p className="text-sm">{log.userName}</p>
-                    <p className="text-xs text-muted-foreground">{log.userId}</p>
+                    <h4 className="font-semibold text-base">Usuário que executou</h4>
+                    <p className="text-base">{log.userName}</p>
+                    <p className="text-sm text-muted-foreground">{log.userId}</p>
                   </div>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-sm">Perfil Afetado</h4>
+                  <h4 className="font-semibold text-base">Perfil Afetado</h4>
                   {(() => {
                     const { getProfileById } = useProfilesStore.getState();
                     const affectedProfile = getProfileById(log.profileId);
                     if (affectedProfile) {
                       return (
                         <div className="space-y-2">
-                          <p className="text-sm font-medium">{affectedProfile.label}</p>
-                          <div className="text-xs text-muted-foreground space-y-1">
+                          <p className="text-base font-medium">{affectedProfile.label}</p>
+                          <div className="text-sm text-muted-foreground space-y-1">
                             <p>ID: {affectedProfile.id}</p>
                             <p>Valor: {affectedProfile.value}</p>
                             {affectedProfile.description && (
@@ -185,7 +185,7 @@ export default function ProfileLogs() {
                               <p>Permissões ({affectedProfile.permissions?.length || 0}):</p>
                               <div className="ml-2 mt-1 flex flex-wrap gap-1">
                               {affectedProfile.permissions?.map((perm, i) => (
-                                <Badge key={i} variant="secondary" className="text-xs">
+                                <Badge key={i} variant="secondary" className="text-sm">
                                   {PERMISSION_LABELS[perm] ?? perm}
                                 </Badge>
                               )) || "Nenhuma"}
@@ -196,7 +196,7 @@ export default function ProfileLogs() {
                       );
                     }
                     return (
-                      <div className="text-sm text-muted-foreground">
+                      <div className="text-base text-muted-foreground">
                         Perfil não encontrado (ID: {log.profileId})
                       </div>
                     );
@@ -204,8 +204,8 @@ export default function ProfileLogs() {
                 </div>
                 {log.details && (
                   <div>
-                    <h4 className="font-semibold text-sm">Detalhes da Ação</h4>
-                    <div className="text-sm text-muted-foreground whitespace-pre-line">
+                    <h4 className="font-semibold text-base">Detalhes da Ação</h4>
+                    <div className="text-base text-muted-foreground whitespace-pre-line">
                       {log.details}
                     </div>
                   </div>

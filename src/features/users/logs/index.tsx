@@ -154,7 +154,7 @@ export default function UserLogs() {
                 Ver detalhes
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-2xl">
+            <DialogContent className="max-w-4xl">
               <DialogHeader>
                 <DialogTitle>Detalhes da Ação</DialogTitle>
                 <DialogDescription>
@@ -167,7 +167,7 @@ export default function UserLogs() {
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <h4 className="font-semibold text-sm">Ação</h4>
+                    <h4 className="font-semibold text-base">Ação</h4>
                     <Badge
                       variant="outline"
                       className={`gap-1.5 ${actionColors[log.action]}`}
@@ -177,23 +177,23 @@ export default function UserLogs() {
                     </Badge>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-sm">Usuário que executou</h4>
-                    <p className="text-sm">{log.userName}</p>
-                    <p className="text-xs text-muted-foreground">{log.userId}</p>
+                    <h4 className="font-semibold text-base">Usuário que executou</h4>
+                    <p className="text-base">{log.userName}</p>
+                    <p className="text-sm text-muted-foreground">{log.userId}</p>
                   </div>
                 </div>
                 <div>
-                  <h4 className="font-semibold text-sm">Usuário Afetado</h4>
+                  <h4 className="font-semibold text-base">Usuário Afetado</h4>
                   {(() => {
                     const { users } = useUsersStore.getState();
                     const affectedUser = users.find(u => u.id === log.targetUserId);
                     if (affectedUser) {
                       return (
                         <div className="space-y-2">
-                          <p className="text-sm font-medium">
+                          <p className="text-base font-medium">
                             {affectedUser.firstName} {affectedUser.lastName}
                           </p>
-                          <div className="text-xs text-muted-foreground space-y-1">
+                          <div className="text-sm text-muted-foreground space-y-1">
                             <p>Email: {affectedUser.email}</p>
                             <p>Telefone: {affectedUser.phoneNumber}</p>
                             <p>CPF: {affectedUser.cpf || "N/A"}</p>
@@ -204,7 +204,7 @@ export default function UserLogs() {
                       );
                     }
                     return (
-                      <div className="text-sm text-muted-foreground">
+                      <div className="text-base text-muted-foreground">
                         Usuário não encontrado (ID: {log.targetUserId})
                       </div>
                     );
@@ -212,8 +212,8 @@ export default function UserLogs() {
                 </div>
                 {log.details && (
                   <div>
-                    <h4 className="font-semibold text-sm">Detalhes da Ação</h4>
-                    <div className="text-sm text-muted-foreground whitespace-pre-line">
+                    <h4 className="font-semibold text-base">Detalhes da Ação</h4>
+                    <div className="text-base text-muted-foreground whitespace-pre-line">
                       {log.details}
                     </div>
                   </div>

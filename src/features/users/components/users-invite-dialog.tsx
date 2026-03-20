@@ -93,7 +93,18 @@ export function UsersInviteDialog({
       updatedAt: new Date(),
     };
     setUsers([newUser, ...users])
-    addLog("criação", newUser.id, newUser.username, `Usuário "${newUser.username}" foi convidado com ${values.roles.length} função(ões).`)
+
+    const roleLabels = values.roles
+      .map((role) => roles.find((r) => r.value === role)?.label ?? role)
+      .join(", ");
+
+    addLog(
+      "criação",
+      newUser.id,
+      newUser.username,
+      `Usuário "${newUser.username}" foi convidado com as funções: ${roleLabels}`,
+    );
+
     form.reset()
     onOpenChange(false)
     toast.success(t("create.submit.message"))
