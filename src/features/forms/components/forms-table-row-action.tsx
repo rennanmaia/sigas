@@ -63,11 +63,12 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
               onClick={() => {
                 const newId = duplicateForm(row.original.id);
                 if (newId !== undefined) {
+                  const questionCount = row.original.questions?.length || 0;
                   addLog(
                     "criação",
                     newId,
                     `Cópia de ${row.original.title}`,
-                    `Duplicado do formulário ${row.original.id}`,
+                    `Formulário duplicado do original "${row.original.title}" (ID: ${row.original.id}) com ${questionCount} pergunta(s)`,
                   );
                 }
                 toast.success(

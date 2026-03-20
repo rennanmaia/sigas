@@ -27,8 +27,9 @@ export function FormDeleteDialog({
     namespace: "forms",
     confirmStrategy: "typed",
     onDelete: (id) => {
+      const questionCount = currentRow.questions?.length || 0;
       deleteForms([id as string]);
-      addLog("exclusão", id as string, currentRow.title, `Formulário "${currentRow.title}" foi excluído.`);
+      addLog("exclusão", id as string, currentRow.title, `Formulário "${currentRow.title}" foi excluído (contendo ${questionCount} pergunta(s)).`);
       toast.success(`Form "${currentRow.title}" deleted successfully`);
     },
   };

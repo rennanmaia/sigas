@@ -10,7 +10,16 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { useFormsStore } from "@/stores/forms-store";
+import { type FormItem } from "../data/forms-mock";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
@@ -18,8 +27,7 @@ import {
   PenLine,
   Trash2,
   ArrowLeft,
-  ChevronDown,
-  ChevronRight,
+  Eye,
 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
@@ -63,25 +71,13 @@ type FormLog = {
 
 export default function FormLogs() {
   const { logs } = useFormsStore();
-  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  const forms: FormItem[] = []; // Formulários não carregados aqui (sem FormsProvider na rota de logs)
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [pagination, setPagination] = useState({
     pageIndex: 0,
     pageSize: 10,
   });
-
-  const toggleRow = (logId: string) => {
-    setExpandedRows((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(logId)) {
-        newSet.delete(logId);
-      } else {
-        newSet.add(logId);
-      }
-      return newSet;
-    });
-  };
 
   const columns: ColumnDef<FormLog>[] = [
     {
@@ -148,48 +144,62 @@ export default function FormLogs() {
       header: "Detalhes",
       cell: ({ row }) => {
         const log = row.original;
-        if (!log.details) {
-          return <span className="text-xs text-muted-foreground">-</span>;
-        }
-
-        const detailLines = log.details.split("\n");
-        const isSingleChange = detailLines.length === 1;
-
-        if (isSingleChange) {
-          return (
-            <div className="text-sm text-muted-foreground">
-              {detailLines[0]}
-            </div>
-          );
-        }
-
         return (
-          <div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => toggleRow(log.id)}
-              className="h-7 px-2"
-            >
-              {expandedRows.has(log.id) ? (
-                <ChevronDown className="h-4 w-4" />
-              ) : (
-                <ChevronRight className="h-4 w-4" />
-              )}
-              <span className="ml-1 text-sm">
-                {expandedRows.has(log.id) ? "Ocultar" : "Ver detalhes"}
-              </span>
-            </Button>
-            {expandedRows.has(log.id) && (
-              <div className="mt-3 text-sm space-y-2 pl-4 border-l-2 border-muted">
-                {detailLines.map((detail, i) => (
-                  <div key={i} className="text-muted-foreground">
-                    {detail}
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="ghost" size="sm" className="h-7 px-2">
+                <Eye className="h-4 w-4 mr-1" />
+                Ver detalhes
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-4xl">
+              <DialogHeader>
+                <DialogTitle>Detalhes da Ação</DialogTitle>
+                <DialogDescription>
+                  Informações sobre a ação realizada em{" "}
+                  {format(new Date(log.timestamp), "dd/MM/yyyy 'às' HH:mm:ss", {
+                    locale: ptBR,
+                  })}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <h4 className="font-semibold text-base">Ação</h4>
+                    <Badge
+                      variant="outline"
+                      className={`gap-1.5 ${actionColors[log.action]}`}
+                    >
+                      {actionIcons[log.action]}
+                      {log.action}
+                    </Badge>
                   </div>
-                ))}
+                  <div>
+                    <h4 className="font-semibold text-base">Usuário que executou</h4>
+                    <p className="text-base">{log.userName}</p>
+                    <p className="text-sm text-muted-foreground">{log.userId}</p>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-base">Formulário Afetado</h4>
+                  <div className="space-y-2">
+                    <p className="text-base font-medium">{log.targetFormTitle}</p>
+                    <div className="text-sm text-muted-foreground space-y-1">
+                      <p>ID: {log.targetFormId}</p>
+                    </div>
+                  </div>
+                </div>
+                {log.details && (
+                  <div>
+                    <h4 className="font-semibold text-base">Detalhes da Ação</h4>
+                    <div className="text-base text-muted-foreground whitespace-pre-line">
+                      {log.details}
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            </DialogContent>
+          </Dialog>
         );
       },
     },

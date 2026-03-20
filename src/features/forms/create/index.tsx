@@ -29,7 +29,7 @@ function CreateFormContent({ initialId }: FormCreateProps) {
   const navigate = useNavigate();
   const search = useSearch({ strict: false }) as { projectId?: string };
   const projectId = search?.projectId;
-  const { addForm, updateForm } = useForms();
+  const { addForm, updateForm, forms } = useForms();
   const { addLog } = useFormsStore();
   const [previewOpen, setPreviewOpen] = useState(false);
   const [formData, setFormData] = useState<{
@@ -45,13 +45,36 @@ function CreateFormContent({ initialId }: FormCreateProps) {
 
   const handleSave = (data: any) => {
     if (initialId) {
+      // Para edição, comparar perguntas antigas e novas
+      const existingForm = forms.find(f => f.id === initialId);
+      const oldQuestions = existingForm?.questions || [];
+      const newQuestions = data.questions || [];
+
+      const addedQuestions = newQuestions.filter((q: Question) =>
+        !oldQuestions.some((oldQ: Question) => oldQ.id === q.id)
+      );
+      const removedQuestions = oldQuestions.filter((oldQ: Question) =>
+        !newQuestions.some((q: Question) => q.id === oldQ.id)
+      );
+
+      const detailsLines: string[] = [`Formulário "${data.title || ""}" foi atualizado.`];
+      if (addedQuestions.length) {
+        detailsLines.push(`Perguntas adicionadas: ${addedQuestions.map((q: Question) => `"${q.label}"`).join(", ")}`);
+      }
+      if (removedQuestions.length) {
+        detailsLines.push(`Perguntas removidas: ${removedQuestions.map((q: Question) => `"${q.label}"`).join(", ")}`);
+      }
+
       updateForm(initialId, data);
-      addLog("edição", initialId, data.title || "", "Formulário atualizado.");
+      addLog("edição", initialId, data.title || "", detailsLines.join("\n"));
       toast.success("Formulário atualizado com sucesso!");
       navigate({ to: "/forms" });
     } else {
+      // Para criação
       const newFormId = addForm(data);
-      addLog("criação", newFormId, data.title || "");
+      const questionTitles = data.questions?.map((q: Question) => `"${q.label}"`).join(", ") || "";
+      const details = `Formulário criado com ${data.questions?.length || 0} pergunta(s): ${questionTitles}`;
+      addLog("criação", newFormId, data.title || "", details);
       toast.success("Formulário criado com sucesso!");
 
       if (data.projectId && newFormId) {

@@ -31,7 +31,8 @@ export function FormsMultiDeleteDialog<TData>({
       idArray.forEach((fid) => {
         const row = selectedRows.find((r) => (r.original as any).id === fid);
         const title = row ? ((row.original as any).title || "") : "";
-        addLog("exclusão", fid as string, title, `Formulário "${title}" foi excluído.`);
+        const questionCount = row ? ((row.original as any).questions?.length || 0) : 0;
+        addLog("exclusão", fid as string, title, `Formulário "${title}" foi excluído (contendo ${questionCount} pergunta(s)).`);
       });
       toast.success(
         `${selectedRows.length} form(s) deleted successfully`
