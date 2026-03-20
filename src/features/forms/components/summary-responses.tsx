@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import type { FormResponse } from "../data/responses-mock";
 import type { Question } from "./form-builder/types/question";
+import type { MapViewMode } from "./form-builder/heatmap";
 import {
   Card,
   CardContent,
@@ -10,18 +11,30 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
   ChartColumnBig,
   ChartLine,
   ChartPie,
   Download,
+  Flame,
   MapPin,
+  MapPinned,
   Radar,
+  ScanSearch,
 } from "lucide-react";
 import { ChartBarDefault } from "./charts/chart-bar";
 import { ChartPieLabel } from "./charts/chart-pie";
 import { ChartLineInteractive } from "./charts/chart-line";
 import { ChartRadar } from "./charts/chart-radar";
+
+const HeatMap = lazy(() => import("./form-builder/heatmap"));
 
 interface SummaryResponsesProps {
   questions: Question[];
@@ -42,11 +55,55 @@ export function SummaryResponses({
     Record<string, string>
   >({});
 
+  const [mapViewModes, setMapViewModes] = useState<Record<string, MapViewMode>>(
+    {},
+  );
+
+  const [selectedMapPoints, setSelectedMapPoints] = useState<
+    Record<string, number | undefined>
+  >({});
+
   const getQuestionViewTab = (questionId: string) =>
     questionViewTabs[questionId] ?? "bar-view";
 
   const setQuestionViewTab = (questionId: string, value: string) =>
     setQuestionViewTabs((prev) => ({ ...prev, [questionId]: value }));
+
+  const getMapViewMode = (questionId: string): MapViewMode =>
+    mapViewModes[questionId] ?? "heatmap";
+
+  const setMapViewMode = (questionId: string, value: MapViewMode) => {
+    setMapViewModes((prev) => ({ ...prev, [questionId]: value }));
+    if (value !== "highlight") {
+      setSelectedMapPoints((prev) => ({ ...prev, [questionId]: undefined }));
+    }
+  };
+
+  const getSelectedMapPoint = (questionId: string) =>
+    selectedMapPoints[questionId];
+
+  const setSelectedMapPoint = (questionId: string, index: number) => {
+    setSelectedMapPoints((prev) => ({ ...prev, [questionId]: index }));
+    setMapViewModes((prev) => ({ ...prev, [questionId]: "highlight" }));
+  };
+
+  const parseMapCoords = (
+    answer: string,
+    label?: string,
+  ): { lat: number; lng: number; label?: string } | null => {
+    const match = answer.match(/lat:([-\d.]+),lng:([-\d.]+)/);
+    if (!match) return null;
+    return { lat: parseFloat(match[1]), lng: parseFloat(match[2]), label };
+  };
+
+  const getMapPoints = (questionId: string) => {
+    return responses.flatMap((r) => {
+      const answer = r.answers[questionId];
+      if (!answer || typeof answer !== "string") return [];
+      const point = parseMapCoords(answer, r.submittedBy);
+      return point ? [point] : [];
+    });
+  };
 
   const getQuestionStats = (questionId: string, question: Question) => {
     const answers = responses
@@ -209,6 +266,146 @@ export function SummaryResponses({
           const groupedNonChartAnswers = getGroupedNonChartAnswers(question);
 
           if (!shouldShowChartTabs) {
+            if (question.type === "map") {
+              const mapPoints = getMapPoints(question.id);
+              const mapMode = getMapViewMode(question.id);
+              const selectedIdx = getSelectedMapPoint(question.id);
+
+              const mapResponses = responses.filter((r) => {
+                const answer = r.answers[question.id];
+                return (
+                  answer &&
+                  typeof answer === "string" &&
+                  answer.includes("lat:")
+                );
+              });
+
+              return (
+                <Card key={question.id}>
+                  <CardHeader>
+                    <CardTitle className="text-base flex justify-between items-start gap-2">
+                      <span>{question.label}</span>
+                      <TooltipProvider>
+                        <div className="flex shrink-0 rounded-md border overflow-hidden">
+                          {(
+                            [
+                              {
+                                value: "heatmap" as MapViewMode,
+                                icon: <Flame className="h-4 w-4" />,
+                                title: "Mapa de calor",
+                              },
+                              {
+                                value: "pins" as MapViewMode,
+                                icon: <MapPinned className="h-4 w-4" />,
+                                title: "Todos os pontos",
+                              },
+                              {
+                                value: "highlight" as MapViewMode,
+                                icon: <ScanSearch className="h-4 w-4" />,
+                                title: "Ponto individual",
+                              },
+                            ] as const
+                          ).map((item) => (
+                            <Tooltip key={item.value}>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant={
+                                    mapMode === item.value ? "default" : "ghost"
+                                  }
+                                  className="h-8 w-8 p-0 rounded-none border-0"
+                                  onClick={() =>
+                                    setMapViewMode(question.id, item.value)
+                                  }
+                                >
+                                  {item.icon}
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent side="bottom">
+                                {item.title}
+                              </TooltipContent>
+                            </Tooltip>
+                          ))}
+                        </div>
+                      </TooltipProvider>
+                    </CardTitle>
+                    <CardDescription>
+                      {mapResponses.length} de {responses.length} responderam
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {mapPoints.length > 0 ? (
+                      <div className="flex gap-4 min-h-[280px]">
+                        {/* Response list */}
+                        <ScrollArea className="w-1/2 rounded-md border">
+                          <div className="p-2 space-y-1">
+                            {mapResponses.map((r, index) => {
+                              const answer = r.answers[question.id] as string;
+                              const coords = parseMapCoords(answer);
+                              const isSelected = selectedIdx === index;
+                              return (
+                                <button
+                                  key={r.id}
+                                  type="button"
+                                  onClick={() =>
+                                    setSelectedMapPoint(question.id, index)
+                                  }
+                                  className={`w-full text-left flex items-start gap-2 rounded-md px-3 py-2 text-sm transition-colors cursor-pointer ${
+                                    isSelected
+                                      ? "bg-primary text-primary-foreground"
+                                      : "hover:bg-muted/70 bg-muted/30"
+                                  }`}
+                                >
+                                  <MapPin
+                                    className={`h-4 w-4 shrink-0 mt-0.5 ${isSelected ? "text-primary-foreground" : "text-muted-foreground"}`}
+                                  />
+                                  <div className="flex flex-col min-w-0">
+                                    <span className="font-medium truncate">
+                                      {r.submittedBy}
+                                    </span>
+                                    {coords && (
+                                      <span
+                                        className={`text-xs font-mono truncate ${isSelected ? "text-primary-foreground/75" : "text-muted-foreground"}`}
+                                      >
+                                        {coords.lat.toFixed(4)},{" "}
+                                        {coords.lng.toFixed(4)}
+                                      </span>
+                                    )}
+                                  </div>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </ScrollArea>
+                        {/* Map */}
+                        <div className="w-1/2 rounded-md overflow-hidden border">
+                          <Suspense
+                            fallback={
+                              <div className="h-full flex items-center justify-center text-sm text-muted-foreground">
+                                Carregando mapa...
+                              </div>
+                            }
+                          >
+                            <HeatMap
+                              points={mapPoints}
+                              mode={mapMode}
+                              selectedIndex={selectedIdx}
+                              className="h-full"
+                            />
+                          </Suspense>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground text-center py-8">
+                        Sem respostas de localização para exibir.
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            }
+
             return (
               <Card key={question.id}>
                 <CardHeader>
@@ -245,9 +442,6 @@ export function SummaryResponses({
                               </div>
                             )}
                           </div>
-                          {question.type === "map" && (
-                            <MapPin className="h-4 w-4 shrink-0 mt-0.5 text-muted-foreground cursor-pointer transition-colors hover:text-foreground" />
-                          )}
                           {(question.type === "photo" ||
                             question.type === "file" ||
                             question.type === "audio") && (
