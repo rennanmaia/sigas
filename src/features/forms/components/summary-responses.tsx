@@ -19,6 +19,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {
+  Bookmark,
+  BookmarkCheck,
   ChartColumnBig,
   ChartLine,
   ChartPie,
@@ -33,6 +35,7 @@ import { ChartBarDefault } from "./charts/chart-bar";
 import { ChartPieLabel } from "./charts/chart-pie";
 import { ChartLineInteractive } from "./charts/chart-line";
 import { ChartRadar } from "./charts/chart-radar";
+import { useResponsePreferences } from "@/context/response-provider";
 
 const HeatMap = lazy(() => import("./form-builder/heatmap"));
 
@@ -51,17 +54,34 @@ export function SummaryResponses({
     "date",
   ];
 
-  const [questionViewTabs, setQuestionViewTabs] = useState<
-    Record<string, string>
-  >({});
+  const {
+    chartTabs: savedChartTabs,
+    mapModes: savedMapModes,
+    saveChartTab,
+    saveMapMode,
+  } = useResponsePreferences();
 
-  const [mapViewModes, setMapViewModes] = useState<Record<string, MapViewMode>>(
-    {},
-  );
+  const [questionViewTabs, setQuestionViewTabs] =
+    useState<Record<string, string>>(savedChartTabs);
+
+  const [mapViewModes, setMapViewModes] =
+    useState<Record<string, MapViewMode>>(savedMapModes);
 
   const [selectedMapPoints, setSelectedMapPoints] = useState<
     Record<string, number | undefined>
   >({});
+
+  const [savedQuestions, setSavedQuestions] = useState<Record<string, boolean>>(
+    {},
+  );
+
+  const handleSaveChartTab = (questionId: string) => {
+    saveChartTab(questionId, getQuestionViewTab(questionId));
+    setSavedQuestions((prev) => ({ ...prev, [questionId]: true }));
+    setTimeout(() => {
+      setSavedQuestions((prev) => ({ ...prev, [questionId]: false }));
+    }, 1800);
+  };
 
   const getQuestionViewTab = (questionId: string) =>
     questionViewTabs[questionId] ?? "bar-view";
@@ -77,6 +97,7 @@ export function SummaryResponses({
     if (value !== "highlight") {
       setSelectedMapPoints((prev) => ({ ...prev, [questionId]: undefined }));
     }
+    saveMapMode(questionId, value);
   };
 
   const getSelectedMapPoint = (questionId: string) =>
@@ -337,7 +358,6 @@ export function SummaryResponses({
                   <CardContent>
                     {mapPoints.length > 0 ? (
                       <div className="flex gap-4 min-h-[280px]">
-                        {/* Response list */}
                         <ScrollArea className="w-1/2 rounded-md border">
                           <div className="p-2 space-y-1">
                             {mapResponses.map((r, index) => {
@@ -378,7 +398,6 @@ export function SummaryResponses({
                             })}
                           </div>
                         </ScrollArea>
-                        {/* Map */}
                         <div className="w-1/2 rounded-md overflow-hidden border">
                           <Suspense
                             fallback={
@@ -471,33 +490,75 @@ export function SummaryResponses({
                 <CardHeader>
                   <CardTitle className="text-base flex justify-between items-center">
                     {question.label}
-
-                    <TabsList className="grid w-full max-w-md grid-cols-4">
-                      <TabsTrigger
-                        value="bar-view"
-                        className="flex items-center gap-2"
-                      >
-                        <ChartColumnBig />
-                      </TabsTrigger>
-                      <TabsTrigger
-                        value="pie-view"
-                        className="flex items-center gap-2"
-                      >
-                        <ChartPie />
-                      </TabsTrigger>
-                      <TabsTrigger
-                        value="line-view"
-                        className="flex items-center gap-2"
-                      >
-                        <ChartLine />
-                      </TabsTrigger>
-                      <TabsTrigger
-                        value="radar-view"
-                        className="flex items-center gap-2"
-                      >
-                        <Radar />
-                      </TabsTrigger>
-                    </TabsList>
+                    <TooltipProvider>
+                      <div className="flex items-center gap-2">
+                        <TabsList className="grid grid-cols-4">
+                          {(
+                            [
+                              {
+                                value: "bar-view",
+                                icon: <ChartColumnBig className="h-4 w-4" />,
+                                title: "Gráfico de barras",
+                              },
+                              {
+                                value: "pie-view",
+                                icon: <ChartPie className="h-4 w-4" />,
+                                title: "Gráfico de pizza",
+                              },
+                              {
+                                value: "line-view",
+                                icon: <ChartLine className="h-4 w-4" />,
+                                title: "Gráfico de linha",
+                              },
+                              {
+                                value: "radar-view",
+                                icon: <Radar className="h-4 w-4" />,
+                                title: "Gráfico de radar",
+                              },
+                            ] as const
+                          ).map((item) => (
+                            <Tooltip key={item.value}>
+                              <TooltipTrigger asChild>
+                                <span className="inline-flex">
+                                  <TabsTrigger value={item.value}>
+                                    {item.icon}
+                                  </TabsTrigger>
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent side="bottom">
+                                {item.title}
+                              </TooltipContent>
+                            </Tooltip>
+                          ))}
+                        </TabsList>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant={
+                                savedQuestions[question.id]
+                                  ? "default"
+                                  : "outline"
+                              }
+                              className="gap-1.5 transition-all duration-200"
+                              onClick={() => handleSaveChartTab(question.id)}
+                            >
+                              {savedQuestions[question.id] ? (
+                                <BookmarkCheck className="h-3.5 w-3.5" />
+                              ) : (
+                                <Bookmark className="h-3.5 w-3.5" />
+                              )}
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="bottom">
+                            {savedQuestions[question.id]
+                              ? "Preferência salva!"
+                              : "Salvar visualização atual como preferência"}
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+                    </TooltipProvider>
                   </CardTitle>
                   <CardDescription>
                     {(question.type === "select" ||
