@@ -10,15 +10,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { useProfilesStore } from "@/stores/profiles-store";
+import { useProfiles } from "@/features/profiles/components/profiles-provider";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
@@ -30,7 +22,6 @@ import {
 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { FEATURE_GROUPS } from "@/features/features/data/features";
 import {
   type SortingState,
   type ColumnFiltersState,
@@ -57,10 +48,6 @@ const actionColors = {
   edição: "border-blue-200 bg-blue-50 text-blue-700",
   exclusão: "border-red-200 bg-red-50 text-red-700",
 };
-
-const PERMISSION_LABELS = Object.fromEntries(
-  FEATURE_GROUPS.flatMap((group) => group.children).map((perm) => [perm.id, perm.label])
-);
 type ProfileLog = {
   id: string;
   userId: string;
@@ -73,7 +60,7 @@ type ProfileLog = {
 };
 
 export default function ProfileLogs() {
-  const { logs } = useProfilesStore();
+  const { logs } = useProfiles();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [pagination, setPagination] = useState({
@@ -126,93 +113,24 @@ export default function ProfileLogs() {
       ),
     },
     {
+      accessorKey: "profileLabel",
+      header: "Perfil",
+      cell: ({ row }) => (
+        <div className="text-sm font-medium">{row.original.profileLabel}</div>
+      ),
+    },
+    {
       accessorKey: "details",
       header: "Detalhes",
       cell: ({ row }) => {
         const log = row.original;
         return (
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-7 px-2">
-                <Eye className="h-4 w-4 mr-1" />
-                Ver detalhes
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-4xl">
-              <DialogHeader>
-                <DialogTitle>Detalhes da Ação</DialogTitle>
-                <DialogDescription>
-                  Informações sobre a ação realizada em{" "}
-                  {format(new Date(log.timestamp), "dd/MM/yyyy 'às' HH:mm:ss", {
-                    locale: ptBR,
-                  })}
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <h4 className="font-semibold text-base">Ação</h4>
-                    <Badge
-                      variant="outline"
-                      className={`gap-1.5 ${actionColors[log.action]}`}
-                    >
-                      {actionIcons[log.action]}
-                      {log.action}
-                    </Badge>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-base">Usuário que executou</h4>
-                    <p className="text-base">{log.userName}</p>
-                    <p className="text-sm text-muted-foreground">{log.userId}</p>
-                  </div>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-base">Perfil Afetado</h4>
-                  {(() => {
-                    const { getProfileById } = useProfilesStore.getState();
-                    const affectedProfile = getProfileById(log.profileId);
-                    if (affectedProfile) {
-                      return (
-                        <div className="space-y-2">
-                          <p className="text-base font-medium">{affectedProfile.label}</p>
-                          <div className="text-sm text-muted-foreground space-y-1">
-                            <p>ID: {affectedProfile.id}</p>
-                            <p>Valor: {affectedProfile.value}</p>
-                            {affectedProfile.description && (
-                              <p>Descrição: {affectedProfile.description}</p>
-                            )}
-                            <div>
-                              <p>Permissões ({affectedProfile.permissions?.length || 0}):</p>
-                              <div className="ml-2 mt-1 flex flex-wrap gap-1">
-                              {affectedProfile.permissions?.map((perm, i) => (
-                                <Badge key={i} variant="secondary" className="text-sm">
-                                  {PERMISSION_LABELS[perm] ?? perm}
-                                </Badge>
-                              )) || "Nenhuma"}
-                            </div>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    }
-                    return (
-                      <div className="text-base text-muted-foreground">
-                        Perfil não encontrado (ID: {log.profileId})
-                      </div>
-                    );
-                  })()}
-                </div>
-                {log.details && (
-                  <div>
-                    <h4 className="font-semibold text-base">Detalhes da Ação</h4>
-                    <div className="text-base text-muted-foreground whitespace-pre-line">
-                      {log.details}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </DialogContent>
-          </Dialog>
+          <Button asChild variant="ghost" size="sm" className="h-7 px-2">
+            <Link to="/profiles/logs/$logId" params={{ logId: log.id }}>
+              <Eye className="h-4 w-4 mr-1" />
+              Ver detalhes
+            </Link>
+          </Button>
         );
       },
     },

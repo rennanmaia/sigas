@@ -50,10 +50,52 @@ export const useProfilesStore = create<ProfilesStore>((set, get) => ({
       try {
         return JSON.parse(savedLogs);
       } catch {
-        return [];
+        return [
+          {
+            id: "profile-log-001",
+            userId: "user-001",
+            userName: "Admin",
+            action: "criação",
+            profileId: "generaladmin-0",
+            profileLabel: "Administrador Geral",
+            timestamp: new Date().toISOString(),
+            details: "Perfil criado com sucesso",
+          },
+          {
+            id: "profile-log-002",
+            userId: "user-001",
+            userName: "Admin",
+            action: "edição",
+            profileId: "generaladmin-0",
+            profileLabel: "Administrador Geral",
+            timestamp: new Date().toISOString(),
+            details: "Permissões atualizadas",
+          },
+        ];
       }
     }
-    return [];
+    return [
+      {
+        id: "profile-log-001",
+        userId: "user-001",
+        userName: "Admin",
+        action: "criação",
+        profileId: "generaladmin-0",
+        profileLabel: "Administrador Geral",
+        timestamp: new Date().toISOString(),
+        details: "Perfil criado com sucesso",
+      },
+      {
+        id: "profile-log-002",
+        userId: "user-001",
+        userName: "Admin",
+        action: "edição",
+        profileId: "generaladmin-0",
+        profileLabel: "Administrador Geral",
+        timestamp: new Date().toISOString(),
+        details: "Permissões atualizadas",
+      },
+    ];
   })(),
 
   setProfiles: (profiles) => {

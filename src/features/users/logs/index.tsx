@@ -10,14 +10,6 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { useUsersStore } from "@/stores/users-store";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -55,26 +47,6 @@ const actionColors = {
   criação: "border-green-200 bg-green-50 text-green-700",
   edição: "border-blue-200 bg-blue-50 text-blue-700",
   exclusão: "border-red-200 bg-red-50 text-red-700",
-};
-
-const getRoleLabel = (roleValue: string): string => {
-  const roleLabels: Record<string, string> = {
-    general_administrator: "Administrador Geral",
-    project_administrator: "Gerente de Projeto",
-    questionnaire_administrator: "Administrador de Questionários",
-    collector: "Coletor",
-  };
-  return roleLabels[roleValue] || roleValue;
-};
-
-const getStatusLabel = (status: string): string => {
-  const statusLabels: Record<string, string> = {
-    active: "Ativo",
-    inactive: "Inativo",
-    invited: "Convidado",
-    suspended: "Suspenso",
-  };
-  return statusLabels[status] || status;
 };
 
 type UserLog = {
@@ -147,80 +119,12 @@ export default function UserLogs() {
       cell: ({ row }) => {
         const log = row.original;
         return (
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-7 px-2">
-                <Eye className="h-4 w-4 mr-1" />
-                Ver detalhes
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-4xl">
-              <DialogHeader>
-                <DialogTitle>Detalhes da Ação</DialogTitle>
-                <DialogDescription>
-                  Informações sobre a ação realizada em{" "}
-                  {format(new Date(log.timestamp), "dd/MM/yyyy 'às' HH:mm:ss", {
-                    locale: ptBR,
-                  })}
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <h4 className="font-semibold text-base">Ação</h4>
-                    <Badge
-                      variant="outline"
-                      className={`gap-1.5 ${actionColors[log.action]}`}
-                    >
-                      {actionIcons[log.action]}
-                      {log.action}
-                    </Badge>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-base">Usuário que executou</h4>
-                    <p className="text-base">{log.userName}</p>
-                    <p className="text-sm text-muted-foreground">{log.userId}</p>
-                  </div>
-                </div>
-                <div>
-                  <h4 className="font-semibold text-base">Usuário Afetado</h4>
-                  {(() => {
-                    const { users } = useUsersStore.getState();
-                    const affectedUser = users.find(u => u.id === log.targetUserId);
-                    if (affectedUser) {
-                      return (
-                        <div className="space-y-2">
-                          <p className="text-base font-medium">
-                            {affectedUser.firstName} {affectedUser.lastName}
-                          </p>
-                          <div className="text-sm text-muted-foreground space-y-1">
-                            <p>Email: {affectedUser.email}</p>
-                            <p>Telefone: {affectedUser.phoneNumber}</p>
-                            <p>CPF: {affectedUser.cpf || "N/A"}</p>
-                            <p>Status: {getStatusLabel(affectedUser.status)}</p>
-                            <p>Perfis: {affectedUser.roles.map(getRoleLabel).join(", ")}</p>
-                          </div>
-                        </div>
-                      );
-                    }
-                    return (
-                      <div className="text-base text-muted-foreground">
-                        Usuário não encontrado (ID: {log.targetUserId})
-                      </div>
-                    );
-                  })()}
-                </div>
-                {log.details && (
-                  <div>
-                    <h4 className="font-semibold text-base">Detalhes da Ação</h4>
-                    <div className="text-base text-muted-foreground whitespace-pre-line">
-                      {log.details}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </DialogContent>
-          </Dialog>
+          <Button asChild variant="ghost" size="sm" className="h-7 px-2">
+            <Link to="/users/logs/$logId" params={{ logId: log.id }}>
+              <Eye className="h-4 w-4 mr-1" />
+              Ver detalhes
+            </Link>
+          </Button>
         );
       },
     },

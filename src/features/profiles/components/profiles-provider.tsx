@@ -23,6 +23,7 @@ type ProfilesContextType = {
   profiles: Profile[]
   setProfiles: React.Dispatch<React.SetStateAction<Profile[]>>
   logs: ProfileLog[]
+  getProfileById: (id: string) => Profile | undefined
   addLog: (
     action: ProfileLog["action"],
     profileId: string,
@@ -57,10 +58,52 @@ export function ProfilesProvider({ children }: { children: React.ReactNode }) {
       try {
         return JSON.parse(savedLogs);
       } catch {
-        return [];
+        return [
+          {
+            id: "profile-log-001",
+            userId: "user-001",
+            userName: "Admin",
+            action: "criação",
+            profileId: "generaladmin-0",
+            profileLabel: "Administrador Geral",
+            timestamp: new Date().toISOString(),
+            details: "Perfil criado com sucesso",
+          },
+          {
+            id: "profile-log-002",
+            userId: "user-001",
+            userName: "Admin",
+            action: "edição",
+            profileId: "generaladmin-0",
+            profileLabel: "Administrador Geral",
+            timestamp: new Date().toISOString(),
+            details: "Permissões do perfil atualizadas",
+          },
+        ];
       }
     }
-    return [];
+    return [
+      {
+        id: "profile-log-001",
+        userId: "user-001",
+        userName: "Admin",
+        action: "criação",
+        profileId: "generaladmin-0",
+        profileLabel: "Administrador Geral",
+        timestamp: new Date().toISOString(),
+        details: "Perfil criado com sucesso",
+      },
+      {
+        id: "profile-log-002",
+        userId: "user-001",
+        userName: "Admin",
+        action: "edição",
+        profileId: "generaladmin-0",
+        profileLabel: "Administrador Geral",
+        timestamp: new Date().toISOString(),
+        details: "Permissões do perfil atualizadas",
+      },
+    ];
   });
 
   useEffect(() => {
@@ -88,8 +131,10 @@ export function ProfilesProvider({ children }: { children: React.ReactNode }) {
     console.log(`[PROFILE LOG] ${action.toUpperCase()}:`, newLog);
   };
 
+  const getProfileById = (id: string) => profiles.find((profile) => profile.id === id)
+
   return (
-    <ProfilesContext value={{ open, setOpen, currentRow, setCurrentRow, profiles, setProfiles, logs, addLog }}>
+    <ProfilesContext value={{ open, setOpen, currentRow, setCurrentRow, profiles, setProfiles, logs, getProfileById, addLog }}>
       {children}
     </ProfilesContext>
   )

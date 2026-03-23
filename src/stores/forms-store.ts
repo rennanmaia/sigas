@@ -29,10 +29,52 @@ export const useFormsStore = create<FormsStore>((set) => ({
       try {
         return JSON.parse(saved);
       } catch {
-        return [];
+        return [
+          {
+            id: "form-log-001",
+            userId: "user-001",
+            userName: "Admin",
+            action: "criação",
+            targetFormId: "form-001",
+            targetFormTitle: "Formulário de Avaliação",
+            timestamp: new Date().toISOString(),
+            details: "Formulário criado com sucesso",
+          },
+          {
+            id: "form-log-002",
+            userId: "user-001",
+            userName: "Admin",
+            action: "edição",
+            targetFormId: "form-001",
+            targetFormTitle: "Formulário de Avaliação",
+            timestamp: new Date().toISOString(),
+            details: "Campos do formulário atualizados",
+          },
+        ];
       }
     }
-    return [];
+    return [
+      {
+        id: "form-log-001",
+        userId: "user-001",
+        userName: "Admin",
+        action: "criação",
+        targetFormId: "form-001",
+        targetFormTitle: "Formulário de Avaliação",
+        timestamp: new Date().toISOString(),
+        details: "Formulário criado com sucesso",
+      },
+      {
+        id: "form-log-002",
+        userId: "user-001",
+        userName: "Admin",
+        action: "edição",
+        targetFormId: "form-001",
+        targetFormTitle: "Formulário de Avaliação",
+        timestamp: new Date().toISOString(),
+        details: "Campos do formulário atualizados",
+      },
+    ];
   })(),
 
   addLog: (action, targetFormId, targetFormTitle, details, userName) => {

@@ -47,10 +47,52 @@ export const useUsersStore = create<UsersStore>((set) => ({
         try {
           return JSON.parse(savedLogs);
         } catch {
-          return [];
+          return [
+            {
+              id: "log-001",
+              userId: "user-001",
+              userName: "Admin",
+              action: "criação",
+              targetUserId: "user-002",
+              targetUserName: "João Silva",
+              timestamp: new Date().toISOString(),
+              details: "Usuário criado com sucesso",
+            },
+            {
+              id: "log-002",
+              userId: "user-001",
+              userName: "Admin",
+              action: "edição",
+              targetUserId: "user-002",
+              targetUserName: "João Silva",
+              timestamp: new Date().toISOString(),
+              details: "Dados do usuário atualizados",
+            },
+          ];
         }
       }
-      return [];
+      return [
+        {
+          id: "log-001",
+          userId: "user-001",
+          userName: "Admin",
+          action: "criação",
+          targetUserId: "user-002",
+          targetUserName: "João Silva",
+          timestamp: new Date().toISOString(),
+          details: "Usuário criado com sucesso",
+        },
+        {
+          id: "log-002",
+          userId: "user-001",
+          userName: "Admin",
+          action: "edição",
+          targetUserId: "user-002",
+          targetUserName: "João Silva",
+          timestamp: new Date().toISOString(),
+          details: "Dados do usuário atualizados",
+        },
+      ];
     })(),
 
     setUsers: (users) => {
