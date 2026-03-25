@@ -15,6 +15,7 @@ export const ptBR: I18nResource = {
           chats: "Mensagens",
           profiles: "Perfis",
           users: "Usuários",
+          audit: "Auditoria",
         },
         title: "Geral",
       },

@@ -15,6 +15,7 @@ export const enUS: I18nResource = {
           chats: "Messages",
           profiles: "Profiles",
           users: "Users",
+          audit: "Audit",
         },
         title: "General",
       },

@@ -12,7 +12,7 @@ export function FormsPrimaryButtons() {
   return (
     <div className="flex gap-2">
       <Button variant="outline" className="space-x-0" asChild>
-        <Link to={"/forms/logs" as any}>
+        <Link to="/audit" search={{ filter: "forms" }}>
           <History size={18} />
           <span>{t("list.buttons.logs")}</span>
         </Link>

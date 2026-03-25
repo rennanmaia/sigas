@@ -14,6 +14,7 @@ export type I18nResource = {
           chats: string;
           users: string;
           profiles: string;
+          audit: string;
         };
       };
       others: {

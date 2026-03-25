@@ -8,7 +8,7 @@ export function UsersPrimaryButtons() {
   return (
     <div className='flex gap-2'>
       <Button variant="outline" className="space-x-0" asChild>
-        <Link to="/profiles/logs">
+        <Link to="/audit" search={{ filter: "profiles" }}>
           <History size={18} />
           <span>{t("list.buttons.logs")}</span>
         </Link>
