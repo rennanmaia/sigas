@@ -10,6 +10,7 @@ type DataTableToolbarProps<TData> = {
   searchPlaceholder?: string;
   searchKey?: string;
   columnLabels?: Record<string, string>;
+  extraFilters?: React.ReactNode;
   filters?: {
     columnId: string;
     title: string;
@@ -26,6 +27,7 @@ export function DataTableToolbar<TData>({
   searchPlaceholder = "Filter...",
   searchKey,
   columnLabels,
+  extraFilters,
   filters = [],
 }: DataTableToolbarProps<TData>) {
   const isFiltered =
@@ -53,7 +55,7 @@ export function DataTableToolbar<TData>({
             className="h-8 w-[150px] lg:w-[250px]"
           />
         )}
-        <div className="flex gap-x-2">
+        <div className="flex flex-wrap items-center gap-2">
           {filters.map((filter) => {
             const column = table.getColumn(filter.columnId);
             if (!column) return null;
@@ -66,6 +68,7 @@ export function DataTableToolbar<TData>({
               />
             );
           })}
+          {extraFilters}
         </div>
         {isFiltered && (
           <Button

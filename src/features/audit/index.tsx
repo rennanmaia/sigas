@@ -10,6 +10,14 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   ProjectsProvider,
   useProjects,
@@ -21,7 +29,7 @@ import {
   useProfiles,
 } from "@/features/profiles/components/profiles-provider";
 import { useUsersStore } from "@/stores/users-store";
-import { Link, useSearch } from "@tanstack/react-router";
+import { Link, getRouteApi } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
@@ -76,6 +84,27 @@ const moduleLabels = {
   profiles: "Perfis",
 };
 
+const monthOptions = [
+  { value: "01", label: "Janeiro" },
+  { value: "02", label: "Fevereiro" },
+  { value: "03", label: "Março" },
+  { value: "04", label: "Abril" },
+  { value: "05", label: "Maio" },
+  { value: "06", label: "Junho" },
+  { value: "07", label: "Julho" },
+  { value: "08", label: "Agosto" },
+  { value: "09", label: "Setembro" },
+  { value: "10", label: "Outubro" },
+  { value: "11", label: "Novembro" },
+  { value: "12", label: "Dezembro" },
+];
+
+const normalizeText = (value: unknown) =>
+  String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+
 type AuditLog = {
   id: string;
   userId: string;
@@ -88,8 +117,10 @@ type AuditLog = {
   details?: string;
 };
 
+const route = getRouteApi("/_authenticated/audit/");
+
 function AuditContent() {
-  const search = useSearch({ strict: false }) as { filter?: string };
+  const search = route.useSearch();
   const { logs: projectLogs } = useProjects();
   const { logs: formLogs } = useFormsStore();
   const { logs: profileLogs } = useProfiles();
@@ -119,6 +150,11 @@ function AuditContent() {
     pageSize: 10,
   });
 
+  const [dateMode, setDateMode] = useState<"none" | "month-year" | "range">(
+    "none",
+  );
+  const [selectedMonth, setSelectedMonth] = useState("all");
+  const [selectedYear, setSelectedYear] = useState("all");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
 
@@ -157,6 +193,61 @@ function AuditContent() {
       )
       .slice(0, 3000); // limitar para evitar crash em memória grande
   }, [projectLogs, formLogs, userLogs, profileLogs]);
+
+  const availableYears = useMemo(() => {
+    const years = new Set<string>();
+    for (const log of allLogs) {
+      const date = new Date(log.timestamp);
+      if (!Number.isNaN(date.getTime())) {
+        years.add(String(date.getFullYear()));
+      }
+    }
+    return Array.from(years).sort((a, b) => Number(b) - Number(a));
+  }, [allLogs]);
+
+  const dateFilteredLogs = useMemo(() => {
+    if (dateMode === "none") {
+      return allLogs;
+    }
+
+    if (dateMode === "month-year") {
+      return allLogs.filter((log) => {
+        const date = new Date(log.timestamp);
+        if (Number.isNaN(date.getTime())) {
+          return false;
+        }
+
+        const logMonth = String(date.getMonth() + 1).padStart(2, "0");
+        const logYear = String(date.getFullYear());
+        const monthMatches = selectedMonth === "all" || logMonth === selectedMonth;
+        const yearMatches = selectedYear === "all" || logYear === selectedYear;
+        return monthMatches && yearMatches;
+      });
+    }
+
+    return allLogs.filter((log) => {
+      const logDate = new Date(log.timestamp);
+      if (Number.isNaN(logDate.getTime())) {
+        return false;
+      }
+
+      if (fromDate) {
+        const from = new Date(`${fromDate}T00:00:00`);
+        if (logDate < from) {
+          return false;
+        }
+      }
+
+      if (toDate) {
+        const to = new Date(`${toDate}T23:59:59.999`);
+        if (logDate > to) {
+          return false;
+        }
+      }
+
+      return true;
+    });
+  }, [allLogs, dateMode, selectedMonth, selectedYear, fromDate, toDate]);
 
   const columns: ColumnDef<AuditLog>[] = [
     {
@@ -271,7 +362,7 @@ function AuditContent() {
   ];
 
   const table = useReactTable({
-    data: allLogs,
+    data: dateFilteredLogs,
     columns,
     state: {
       sorting,
@@ -279,22 +370,40 @@ function AuditContent() {
       pagination,
     },
     globalFilterFn: (row, _columnId, filterValue) => {
-      const search = String(filterValue).toLowerCase();
+      const search = normalizeText(filterValue);
       if (!search) return true;
-      const fields = [
-        "timestamp",
-        "module",
-        "action",
-        "userName",
-        "entityName",
-        "userId",
-        "entityId",
-      ];
 
-      return fields.some((field) => {
-        const value = String(row.getValue(field) ?? "").toLowerCase();
-        return value.includes(search);
-      });
+      const timestamp = String(row.getValue("timestamp") ?? "");
+      const timestampDate = new Date(timestamp);
+      const formattedTimestamp = Number.isNaN(timestampDate.getTime())
+        ? ""
+        : format(timestampDate, "dd/MM/yyyy HH:mm:ss", { locale: ptBR });
+
+      const moduleValue = String(row.getValue("module") ?? "") as keyof typeof moduleLabels;
+      const moduleLabel = moduleLabels[moduleValue] ?? "";
+      const actionValue = String(row.getValue("action") ?? "");
+      const userName = String(row.getValue("userName") ?? "");
+      const userId = String(row.getValue("userId") ?? "");
+      const entityName = String(row.getValue("entityName") ?? "");
+      const entityId = String(row.getValue("entityId") ?? "");
+      const details = String(row.original.details ?? "");
+
+      const haystack = normalizeText(
+        [
+          timestamp,
+          formattedTimestamp,
+          moduleValue,
+          moduleLabel,
+          actionValue,
+          userName,
+          userId,
+          entityName,
+          entityId,
+          details,
+        ].join(" "),
+      );
+
+      return haystack.includes(search);
     },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -313,6 +422,10 @@ function AuditContent() {
       setPagination((prev) => ({ ...prev, pageIndex: totalPages - 1 }));
     }
   }, [table, pagination.pageIndex]);
+
+  useEffect(() => {
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+  }, [dateMode, selectedMonth, selectedYear, fromDate, toDate]);
 
   return (
     <>
@@ -358,6 +471,105 @@ function AuditContent() {
               },
             ]}
           />
+
+          <div className="flex flex-wrap items-end gap-2 rounded-md border bg-muted/30 p-3">
+            <div className="space-y-1">
+              <p className="text-xs font-medium text-muted-foreground">Modo de Data</p>
+              <Select
+                value={dateMode}
+                onValueChange={(value) =>
+                  setDateMode(value as "none" | "month-year" | "range")
+                }
+              >
+                <SelectTrigger className="h-8 w-[180px]">
+                  <SelectValue placeholder="Selecione o modo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Sem filtro de data</SelectItem>
+                  <SelectItem value="month-year">Mês / Ano</SelectItem>
+                  <SelectItem value="range">Período específico</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {dateMode === "month-year" && (
+              <>
+                <div className="space-y-1">
+                  <p className="text-xs font-medium text-muted-foreground">Mês</p>
+                  <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+                    <SelectTrigger className="h-8 w-[150px]">
+                      <SelectValue placeholder="Todos os meses" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos os meses</SelectItem>
+                      {monthOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-1">
+                  <p className="text-xs font-medium text-muted-foreground">Ano</p>
+                  <Select value={selectedYear} onValueChange={setSelectedYear}>
+                    <SelectTrigger className="h-8 w-[130px]">
+                      <SelectValue placeholder="Todos os anos" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todos os anos</SelectItem>
+                      {availableYears.map((year) => (
+                        <SelectItem key={year} value={year}>
+                          {year}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </>
+            )}
+
+            {dateMode === "range" && (
+              <>
+                <div className="space-y-1">
+                  <p className="text-xs font-medium text-muted-foreground">Data inicial</p>
+                  <Input
+                    type="date"
+                    className="h-8 w-[170px]"
+                    value={fromDate}
+                    onChange={(event) => setFromDate(event.target.value)}
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <p className="text-xs font-medium text-muted-foreground">Data final</p>
+                  <Input
+                    type="date"
+                    className="h-8 w-[170px]"
+                    value={toDate}
+                    onChange={(event) => setToDate(event.target.value)}
+                  />
+                </div>
+              </>
+            )}
+
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-8"
+              onClick={() => {
+                setDateMode("none");
+                setSelectedMonth("all");
+                setSelectedYear("all");
+                setFromDate("");
+                setToDate("");
+              }}
+            >
+              Limpar Data
+            </Button>
+          </div>
+
           <div className="overflow-hidden rounded-md border bg-card">
             <Table>
               <TableHeader>
