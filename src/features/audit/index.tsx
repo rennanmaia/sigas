@@ -105,6 +105,36 @@ const normalizeText = (value: unknown) =>
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
 
+const getModuleTarget = (log: AuditLog) => {
+  switch (log.module) {
+    case "projects":
+      return {
+        to: "/projects/$projectId" as const,
+        params: { projectId: log.entityId },
+      };
+    case "users":
+      return {
+        to: "/users/$id" as const,
+        params: { id: log.entityId },
+      };
+    case "profiles":
+      return {
+        to: "/profiles/$profileId" as const,
+        params: { profileId: log.entityId },
+      };
+    case "forms":
+      return {
+        to: "/forms/edit/$id" as const,
+        params: { id: log.entityId },
+      };
+    default:
+      return {
+        to: "/audit" as const,
+        params: {},
+      };
+  }
+};
+
 type AuditLog = {
   id: string;
   userId: string;
@@ -264,12 +294,28 @@ function AuditContent() {
     {
       accessorKey: "module",
       header: "Módulo",
-      cell: ({ row }) => (
-        <Badge variant="outline" className="gap-1.5">
-          {moduleIcons[row.original.module]}
-          {moduleLabels[row.original.module]}
-        </Badge>
-      ),
+      cell: ({ row }) => {
+        const target = getModuleTarget(row.original);
+        const moduleLabel = moduleLabels[row.original.module];
+        const tooltip = `Abrir ${moduleLabel}: ${row.original.entityName}`;
+        return (
+          <Link
+            to={target.to}
+            params={target.params as never}
+            className="inline-flex"
+            title={tooltip}
+            aria-label={`${tooltip}. Use Ctrl/Cmd + clique para abrir em nova aba.`}
+          >
+            <Badge
+              variant="outline"
+              className="gap-1.5 transition-colors hover:border-primary hover:text-primary"
+            >
+              {moduleIcons[row.original.module]}
+              {moduleLabel}
+            </Badge>
+          </Link>
+        );
+      },
       filterFn: (row, id, value) => {
         return value.includes(row.getValue(id));
       },
@@ -277,15 +323,29 @@ function AuditContent() {
     {
       accessorKey: "action",
       header: "Ação",
-      cell: ({ row }) => (
-        <Badge
-          variant="outline"
-          className={`gap-1.5 ${actionColors[row.original.action]}`}
-        >
-          {actionIcons[row.original.action]}
-          {row.original.action}
-        </Badge>
-      ),
+      cell: ({ row }) => {
+        const target = getModuleTarget(row.original);
+        const moduleLabel = moduleLabels[row.original.module];
+        const tooltip = `Abrir ${moduleLabel}: ${row.original.entityName}`;
+
+        return (
+          <Link
+            to={target.to}
+            params={target.params as never}
+            className="inline-flex"
+            title={tooltip}
+            aria-label={`${tooltip}. Use Ctrl/Cmd + clique para abrir em nova aba.`}
+          >
+            <Badge
+              variant="outline"
+              className={`gap-1.5 transition-colors hover:border-primary hover:text-primary ${actionColors[row.original.action]}`}
+            >
+              {actionIcons[row.original.action]}
+              {row.original.action}
+            </Badge>
+          </Link>
+        );
+      },
       filterFn: (row, id, value) => {
         return value.includes(row.getValue(id));
       },
@@ -295,31 +355,6 @@ function AuditContent() {
       header: "Nome do Usuário",
       cell: ({ row }) => (
         <div className="text-sm font-medium">{row.original.userName}</div>
-      ),
-    },
-    {
-      accessorKey: "userId",
-      header: "ID do Usuário",
-      cell: ({ row }) => (
-        <div className="text-xs font-mono text-muted-foreground">
-          {row.original.userId}
-        </div>
-      ),
-    },
-    {
-      accessorKey: "entityName",
-      header: "Entidade",
-      cell: ({ row }) => (
-        <div className="font-medium">{row.original.entityName}</div>
-      ),
-    },
-    {
-      accessorKey: "entityId",
-      header: "ID da Entidade",
-      cell: ({ row }) => (
-        <div className="text-xs font-mono text-muted-foreground">
-          {row.original.entityId}
-        </div>
       ),
     },
     {
@@ -383,9 +418,9 @@ function AuditContent() {
       const moduleLabel = moduleLabels[moduleValue] ?? "";
       const actionValue = String(row.getValue("action") ?? "");
       const userName = String(row.getValue("userName") ?? "");
-      const userId = String(row.getValue("userId") ?? "");
-      const entityName = String(row.getValue("entityName") ?? "");
-      const entityId = String(row.getValue("entityId") ?? "");
+      const userId = String(row.original.userId ?? "");
+      const entityName = String(row.original.entityName ?? "");
+      const entityId = String(row.original.entityId ?? "");
       const details = String(row.original.details ?? "");
 
       const haystack = normalizeText(
