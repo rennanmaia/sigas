@@ -37,6 +37,7 @@ import {
   PenLine,
   Trash2,
   Eye,
+  ExternalLink,
   BriefcaseBusiness,
   ClipboardList,
   Users,
@@ -294,28 +295,12 @@ function AuditContent() {
     {
       accessorKey: "module",
       header: "Módulo",
-      cell: ({ row }) => {
-        const target = getModuleTarget(row.original);
-        const moduleLabel = moduleLabels[row.original.module];
-        const tooltip = `Abrir ${moduleLabel}: ${row.original.entityName}`;
-        return (
-          <Link
-            to={target.to}
-            params={target.params as never}
-            className="inline-flex"
-            title={tooltip}
-            aria-label={`${tooltip}. Use Ctrl/Cmd + clique para abrir em nova aba.`}
-          >
-            <Badge
-              variant="outline"
-              className="gap-1.5 transition-colors hover:border-primary hover:text-primary"
-            >
-              {moduleIcons[row.original.module]}
-              {moduleLabel}
-            </Badge>
-          </Link>
-        );
-      },
+      cell: ({ row }) => (
+        <Badge variant="outline" className="gap-1.5">
+          {moduleIcons[row.original.module]}
+          {moduleLabels[row.original.module]}
+        </Badge>
+      ),
       filterFn: (row, id, value) => {
         return value.includes(row.getValue(id));
       },
@@ -323,29 +308,15 @@ function AuditContent() {
     {
       accessorKey: "action",
       header: "Ação",
-      cell: ({ row }) => {
-        const target = getModuleTarget(row.original);
-        const moduleLabel = moduleLabels[row.original.module];
-        const tooltip = `Abrir ${moduleLabel}: ${row.original.entityName}`;
-
-        return (
-          <Link
-            to={target.to}
-            params={target.params as never}
-            className="inline-flex"
-            title={tooltip}
-            aria-label={`${tooltip}. Use Ctrl/Cmd + clique para abrir em nova aba.`}
-          >
-            <Badge
-              variant="outline"
-              className={`gap-1.5 transition-colors hover:border-primary hover:text-primary ${actionColors[row.original.action]}`}
-            >
-              {actionIcons[row.original.action]}
-              {row.original.action}
-            </Badge>
-          </Link>
-        );
-      },
+      cell: ({ row }) => (
+        <Badge
+          variant="outline"
+          className={`gap-1.5 ${actionColors[row.original.action]}`}
+        >
+          {actionIcons[row.original.action]}
+          {row.original.action}
+        </Badge>
+      ),
       filterFn: (row, id, value) => {
         return value.includes(row.getValue(id));
       },
@@ -356,6 +327,48 @@ function AuditContent() {
       cell: ({ row }) => (
         <div className="text-sm font-medium">{row.original.userName}</div>
       ),
+    },
+    {
+      accessorKey: "entityName",
+      header: "Entidade",
+      cell: ({ row }) => {
+        if (row.original.action === "exclusão") {
+          return (
+            <div
+              className="max-w-[140px] sm:max-w-[220px] lg:max-w-[280px] truncate text-sm text-muted-foreground"
+              title={row.original.entityName}
+            >
+              {row.original.entityName}
+            </div>
+          );
+        }
+
+        const target = getModuleTarget(row.original);
+        const moduleLabel = moduleLabels[row.original.module];
+        const tooltip = `Abrir ${moduleLabel}: ${row.original.entityName}`;
+
+        return (
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
+            className="h-7 max-w-[140px] sm:max-w-[220px] lg:max-w-[280px] px-2 justify-start"
+          >
+            <Link
+              to={target.to}
+              params={target.params as never}
+              title={tooltip}
+              aria-label={`${tooltip}. Use Ctrl/Cmd + clique para abrir em nova aba.`}
+              className="inline-flex w-full items-center"
+            >
+              <ExternalLink className="h-4 w-4 mr-1 shrink-0" />
+              <span className="truncate" title={row.original.entityName}>
+                {row.original.entityName}
+              </span>
+            </Link>
+          </Button>
+        );
+      },
     },
     {
       accessorKey: "details",
@@ -516,7 +529,7 @@ function AuditContent() {
                   setDateMode(value as "none" | "month-year" | "range")
                 }
               >
-                <SelectTrigger className="h-8 w-[180px]">
+                <SelectTrigger className="h-8 w-full min-w-[140px] sm:w-[180px]">
                   <SelectValue placeholder="Selecione o modo" />
                 </SelectTrigger>
                 <SelectContent>
@@ -532,7 +545,7 @@ function AuditContent() {
                 <div className="space-y-1">
                   <p className="text-xs font-medium text-muted-foreground">Mês</p>
                   <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-                    <SelectTrigger className="h-8 w-[150px]">
+                    <SelectTrigger className="h-8 w-full min-w-[130px] sm:w-[150px]">
                       <SelectValue placeholder="Todos os meses" />
                     </SelectTrigger>
                     <SelectContent>
@@ -549,7 +562,7 @@ function AuditContent() {
                 <div className="space-y-1">
                   <p className="text-xs font-medium text-muted-foreground">Ano</p>
                   <Select value={selectedYear} onValueChange={setSelectedYear}>
-                    <SelectTrigger className="h-8 w-[130px]">
+                    <SelectTrigger className="h-8 w-full min-w-[110px] sm:w-[130px]">
                       <SelectValue placeholder="Todos os anos" />
                     </SelectTrigger>
                     <SelectContent>
@@ -571,7 +584,7 @@ function AuditContent() {
                   <p className="text-xs font-medium text-muted-foreground">Data inicial</p>
                   <Input
                     type="date"
-                    className="h-8 w-[170px]"
+                    className="h-8 w-full min-w-[150px] sm:w-[170px]"
                     value={fromDate}
                     onChange={(event) => setFromDate(event.target.value)}
                   />
@@ -581,7 +594,7 @@ function AuditContent() {
                   <p className="text-xs font-medium text-muted-foreground">Data final</p>
                   <Input
                     type="date"
-                    className="h-8 w-[170px]"
+                    className="h-8 w-full min-w-[150px] sm:w-[170px]"
                     value={toDate}
                     onChange={(event) => setToDate(event.target.value)}
                   />
@@ -605,7 +618,7 @@ function AuditContent() {
             </Button>
           </div>
 
-          <div className="overflow-hidden rounded-md border bg-card">
+          <div className="overflow-x-auto rounded-md border bg-card">
             <Table>
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (

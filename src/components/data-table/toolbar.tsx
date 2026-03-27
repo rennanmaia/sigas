@@ -34,8 +34,8 @@ export function DataTableToolbar<TData>({
     table.getState().columnFilters.length > 0 || table.getState().globalFilter;
 
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex flex-1 flex-col-reverse items-start gap-y-2 sm:flex-row sm:items-center sm:space-x-2">
+    <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
+      <div className="flex w-full flex-col-reverse items-start gap-2 sm:flex-row sm:items-center sm:gap-2">
         {searchKey ? (
           <Input
             placeholder={searchPlaceholder}
@@ -45,17 +45,17 @@ export function DataTableToolbar<TData>({
             onChange={(event) =>
               table.getColumn(searchKey)?.setFilterValue(event.target.value)
             }
-            className="h-8 w-[150px] lg:w-[250px]"
+            className="h-8 w-full sm:w-[220px] lg:w-[280px]"
           />
         ) : (
           <Input
             placeholder={searchPlaceholder}
             value={table.getState().globalFilter ?? ""}
             onChange={(event) => table.setGlobalFilter(event.target.value)}
-            className="h-8 w-[150px] lg:w-[250px]"
+            className="h-8 w-full sm:w-[220px] lg:w-[280px]"
           />
         )}
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
           {filters.map((filter) => {
             const column = table.getColumn(filter.columnId);
             if (!column) return null;
@@ -84,7 +84,9 @@ export function DataTableToolbar<TData>({
           </Button>
         )}
       </div>
-      <DataTableViewOptions table={table} columnLabels={columnLabels} />
+      <div className="self-end">
+        <DataTableViewOptions table={table} columnLabels={columnLabels} />
+      </div>
     </div>
   );
 }
