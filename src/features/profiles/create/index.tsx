@@ -31,7 +31,7 @@ export function CreateProfile() {
 		}
 		addProfile(newProfile)
 		addLog("criação", newProfile.id, newProfile.label, `Perfil "${newProfile.label}" foi criado com ${values.permissions.length} permissões.`)
-		toast.success('Profile created')
+		toast.success('Perfil criado')
 		navigate({ to: '/profiles' })
 	}
 
