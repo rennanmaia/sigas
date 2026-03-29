@@ -10,7 +10,7 @@ import {
   type Project,
 } from "../data/projects-mock";
 
-interface ProjectLog {
+export interface ProjectLog {
   id: string;
   userId: string;
   userName: string;
@@ -69,10 +69,52 @@ export function ProjectsProvider({ children }: { children: ReactNode }) {
       try {
         return JSON.parse(savedLogs);
       } catch {
-        return [];
+        return [
+          {
+            id: "project-log-001",
+            userId: "user-001",
+            userName: "Admin",
+            action: "criação",
+            projectId: "proj-001",
+            projectTitle: "Projeto Ambiental ABC",
+            timestamp: new Date().toISOString(),
+            details: "Projeto criado com sucesso",
+          },
+          {
+            id: "project-log-002",
+            userId: "user-001",
+            userName: "Admin",
+            action: "edição",
+            projectId: "proj-001",
+            projectTitle: "Projeto Ambiental ABC",
+            timestamp: new Date().toISOString(),
+            details: "Dados do projeto atualizados",
+          },
+        ];
       }
     }
-    return [];
+    return [
+      {
+        id: "project-log-001",
+        userId: "user-001",
+        userName: "Admin",
+        action: "criação",
+        projectId: "proj-001",
+        projectTitle: "Projeto Ambiental ABC",
+        timestamp: new Date().toISOString(),
+        details: "Projeto criado com sucesso",
+      },
+      {
+        id: "project-log-002",
+        userId: "user-001",
+        userName: "Admin",
+        action: "edição",
+        projectId: "proj-001",
+        projectTitle: "Projeto Ambiental ABC",
+        timestamp: new Date().toISOString(),
+        details: "Dados do projeto atualizados",
+      },
+    ];
   });
 
   useEffect(() => {

@@ -1,0 +1,98 @@
+import { create } from "zustand";
+
+interface FormLog {
+  id: string;
+  userId: string;
+  userName: string;
+  action: "criação" | "edição" | "exclusão";
+  targetFormId: string;
+  targetFormTitle: string;
+  timestamp: string;
+  details?: string;
+}
+
+interface FormsStore {
+  logs: FormLog[];
+  addLog: (
+    action: FormLog["action"],
+    targetFormId: string,
+    targetFormTitle: string,
+    details?: string,
+    userName?: string,
+  ) => void;
+}
+
+export const useFormsStore = create<FormsStore>((set) => ({
+  logs: (() => {
+    const saved = localStorage.getItem("form-logs");
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return [
+          {
+            id: "form-log-001",
+            userId: "user-001",
+            userName: "Admin",
+            action: "criação",
+            targetFormId: "form-001",
+            targetFormTitle: "Formulário de Avaliação",
+            timestamp: new Date().toISOString(),
+            details: "Formulário criado com sucesso",
+          },
+          {
+            id: "form-log-002",
+            userId: "user-001",
+            userName: "Admin",
+            action: "edição",
+            targetFormId: "form-001",
+            targetFormTitle: "Formulário de Avaliação",
+            timestamp: new Date().toISOString(),
+            details: "Campos do formulário atualizados",
+          },
+        ];
+      }
+    }
+    return [
+      {
+        id: "form-log-001",
+        userId: "user-001",
+        userName: "Admin",
+        action: "criação",
+        targetFormId: "form-001",
+        targetFormTitle: "Formulário de Avaliação",
+        timestamp: new Date().toISOString(),
+        details: "Formulário criado com sucesso",
+      },
+      {
+        id: "form-log-002",
+        userId: "user-001",
+        userName: "Admin",
+        action: "edição",
+        targetFormId: "form-001",
+        targetFormTitle: "Formulário de Avaliação",
+        timestamp: new Date().toISOString(),
+        details: "Campos do formulário atualizados",
+      },
+    ];
+  })(),
+
+  addLog: (action, targetFormId, targetFormTitle, details, userName) => {
+    const newLog: FormLog = {
+      id: crypto.randomUUID(),
+      userId: "user-001",
+      userName: userName || "Usuário Sistema",
+      action,
+      targetFormId,
+      targetFormTitle,
+      timestamp: new Date().toISOString(),
+      details,
+    };
+    set((state) => {
+      const newLogs = [newLog, ...state.logs];
+      localStorage.setItem("form-logs", JSON.stringify(newLogs));
+      return { logs: newLogs };
+    });
+    console.log(`[FORM LOG] ${action.toUpperCase()}:`, newLog);
+  },
+}));

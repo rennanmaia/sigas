@@ -1,5 +1,6 @@
-import { UserPlus } from 'lucide-react'
+import { UserPlus, History } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Link } from '@tanstack/react-router'
 import { useUsers } from './users-provider'
 import { useAuthStore } from '@/stores/auth-store'
 import { useTranslation } from 'react-i18next'
@@ -11,6 +12,12 @@ export function UsersPrimaryButtons() {
   const roles = auth.user?.role ?? []
   return (
     <div className='flex gap-2'>
+      <Button variant="outline" className="space-x-0" asChild>
+        <Link to="/audit" search={{ filter: "users" }}>
+          <History size={18} />
+          <span>{t("list.buttons.logs")}</span>
+        </Link>
+      </Button>
       {(roles.includes('general_administrator') || roles.includes('project_administrator')) && (
         <Button
           className='space-x-1'

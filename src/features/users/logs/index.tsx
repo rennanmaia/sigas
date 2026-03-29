@@ -10,8 +10,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useProjects } from "../components/projects-provider";
-import { Link } from "@tanstack/react-router";
+import { useUsersStore } from "@/stores/users-store";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
@@ -21,6 +20,7 @@ import {
   ArrowLeft,
   Eye,
 } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
   type SortingState,
@@ -49,19 +49,19 @@ const actionColors = {
   exclusão: "border-red-200 bg-red-50 text-red-700",
 };
 
-type ProjectLog = {
+type UserLog = {
   id: string;
   userId: string;
   userName: string;
   action: "criação" | "edição" | "exclusão";
-  projectId: string;
-  projectTitle: string;
+  targetUserId: string;
+  targetUserName: string;
   timestamp: string;
   details?: string;
 };
 
-export default function ProjectLogs() {
-  const { logs } = useProjects();
+export default function UserLogs() {
+  const { logs } = useUsersStore();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [pagination, setPagination] = useState({
@@ -69,7 +69,7 @@ export default function ProjectLogs() {
     pageSize: 10,
   });
 
-  const columns: ColumnDef<ProjectLog>[] = [
+  const columns: ColumnDef<UserLog>[] = [
     {
       accessorKey: "timestamp",
       header: "Data/Hora",
@@ -114,29 +114,13 @@ export default function ProjectLogs() {
       ),
     },
     {
-      accessorKey: "projectTitle",
-      header: "Projeto",
-      cell: ({ row }) => (
-        <div className="font-medium">{row.original.projectTitle}</div>
-      ),
-    },
-    {
-      accessorKey: "projectId",
-      header: "ID do Projeto",
-      cell: ({ row }) => (
-        <div className="text-xs font-mono text-muted-foreground">
-          {row.original.projectId}
-        </div>
-      ),
-    },
-    {
       accessorKey: "details",
       header: "Detalhes",
       cell: ({ row }) => {
         const log = row.original;
         return (
           <Button asChild variant="ghost" size="sm" className="h-7 px-2">
-            <Link to="/projects/logs/$logId" params={{ logId: log.id }}>
+            <Link to="/users/logs/$logId" params={{ logId: log.id }}>
               <Eye className="h-4 w-4 mr-1" />
               Ver detalhes
             </Link>
@@ -176,7 +160,7 @@ export default function ProjectLogs() {
     <>
       <Header fixed>
         <Button asChild variant="ghost" size="sm">
-          <Link to="/projects" className="flex items-center gap-2">
+          <Link to="/users" className="flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
             <span className="text-sm font-medium">Voltar</span>
           </Link>
@@ -186,18 +170,18 @@ export default function ProjectLogs() {
         <div className="flex flex-wrap items-end justify-between gap-2">
           <div>
             <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-              Histórico de Projetos
+              Histórico de Usuários
             </h2>
             <p className="text-muted-foreground">
-              Registro de todas as ações realizadas nos projetos
+              Registro de todas as ações realizadas nos usuários
             </p>
           </div>
         </div>
         <div className="flex flex-1 flex-col gap-4">
           <DataTableToolbar
             table={table}
-            searchPlaceholder="Filtrar por usuário ou projeto..."
-            searchKey="projectTitle"
+            searchPlaceholder="Filtrar por usuário..."
+            searchKey="targetUserName"
             filters={[
               {
                 columnId: "action",

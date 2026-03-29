@@ -103,7 +103,7 @@ function ProjectsList() {
           </div>
           <div className="flex gap-2">
             <Button variant="outline" className="space-x-0" asChild>
-              <Link to="/projects/logs">
+              <Link to="/audit" search={{ filter: "projects" }}>
                 <History size={18} />
                 <span>{t("list.buttons.logs")}</span>
               </Link>

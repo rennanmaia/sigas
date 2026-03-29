@@ -10,8 +10,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useProjects } from "../components/projects-provider";
-import { Link } from "@tanstack/react-router";
+import { useProfiles } from "@/features/profiles/components/profiles-provider";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
@@ -21,6 +20,7 @@ import {
   ArrowLeft,
   Eye,
 } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
   type SortingState,
@@ -48,20 +48,19 @@ const actionColors = {
   edição: "border-blue-200 bg-blue-50 text-blue-700",
   exclusão: "border-red-200 bg-red-50 text-red-700",
 };
-
-type ProjectLog = {
+type ProfileLog = {
   id: string;
   userId: string;
   userName: string;
   action: "criação" | "edição" | "exclusão";
-  projectId: string;
-  projectTitle: string;
+  profileId: string;
+  profileLabel: string;
   timestamp: string;
   details?: string;
 };
 
-export default function ProjectLogs() {
-  const { logs } = useProjects();
+export default function ProfileLogs() {
+  const { logs } = useProfiles();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [pagination, setPagination] = useState({
@@ -69,7 +68,7 @@ export default function ProjectLogs() {
     pageSize: 10,
   });
 
-  const columns: ColumnDef<ProjectLog>[] = [
+  const columns: ColumnDef<ProfileLog>[] = [
     {
       accessorKey: "timestamp",
       header: "Data/Hora",
@@ -114,19 +113,10 @@ export default function ProjectLogs() {
       ),
     },
     {
-      accessorKey: "projectTitle",
-      header: "Projeto",
+      accessorKey: "profileLabel",
+      header: "Perfil",
       cell: ({ row }) => (
-        <div className="font-medium">{row.original.projectTitle}</div>
-      ),
-    },
-    {
-      accessorKey: "projectId",
-      header: "ID do Projeto",
-      cell: ({ row }) => (
-        <div className="text-xs font-mono text-muted-foreground">
-          {row.original.projectId}
-        </div>
+        <div className="text-sm font-medium">{row.original.profileLabel}</div>
       ),
     },
     {
@@ -136,7 +126,7 @@ export default function ProjectLogs() {
         const log = row.original;
         return (
           <Button asChild variant="ghost" size="sm" className="h-7 px-2">
-            <Link to="/projects/logs/$logId" params={{ logId: log.id }}>
+            <Link to="/profiles/logs/$logId" params={{ logId: log.id }}>
               <Eye className="h-4 w-4 mr-1" />
               Ver detalhes
             </Link>
@@ -176,7 +166,7 @@ export default function ProjectLogs() {
     <>
       <Header fixed>
         <Button asChild variant="ghost" size="sm">
-          <Link to="/projects" className="flex items-center gap-2">
+          <Link to="/profiles" className="flex items-center gap-2">
             <ArrowLeft className="h-4 w-4" />
             <span className="text-sm font-medium">Voltar</span>
           </Link>
@@ -186,18 +176,18 @@ export default function ProjectLogs() {
         <div className="flex flex-wrap items-end justify-between gap-2">
           <div>
             <h2 className="text-2xl font-bold tracking-tight flex items-center gap-2">
-              Histórico de Projetos
+              Histórico de Perfis
             </h2>
             <p className="text-muted-foreground">
-              Registro de todas as ações realizadas nos projetos
+              Registro de todas as ações realizadas nos perfis
             </p>
           </div>
         </div>
         <div className="flex flex-1 flex-col gap-4">
           <DataTableToolbar
             table={table}
-            searchPlaceholder="Filtrar por usuário ou projeto..."
-            searchKey="projectTitle"
+            searchPlaceholder="Filtrar por usuário ou perfil..."
+            searchKey="profileLabel"
             filters={[
               {
                 columnId: "action",

@@ -1,6 +1,7 @@
 import { toast } from "sonner";
 import { DeleteDialog, type DeleteDialogConfig } from "@/components/delete-dialog";
 import { useForms } from "./forms-provider";
+import { useFormsStore } from "@/stores/forms-store";
 import type { FormItem } from "../data/forms-mock";
 
 type FormDeleteDialogProps = {
@@ -15,6 +16,7 @@ export function FormDeleteDialog({
   currentRow,
 }: FormDeleteDialogProps) {
   const { deleteForms } = useForms();
+  const { addLog } = useFormsStore();
 
   const config: DeleteDialogConfig = {
     mode: "single",
@@ -25,8 +27,10 @@ export function FormDeleteDialog({
     namespace: "forms",
     confirmStrategy: "typed",
     onDelete: (id) => {
+      const questionCount = currentRow.questions?.length || 0;
       deleteForms([id as string]);
-      toast.success(`Form "${currentRow.title}" deleted successfully`);
+      addLog("exclusão", id as string, currentRow.title, `Formulário "${currentRow.title}" foi excluído (contendo ${questionCount} pergunta(s)).`);
+      toast.success(`Formulário "${currentRow.title}" deletado com sucesso`);
     },
   };
 

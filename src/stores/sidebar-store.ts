@@ -12,6 +12,7 @@ import {
   ClipboardList,
   Banknote,
   Shield,
+  FileText,
 } from "lucide-react";
 import type { SidebarData } from "@/components/layout/types";
 
@@ -71,6 +72,11 @@ export const useSidebarStore = create<SidebarsStore>((set, get) => ({
             url: "/profiles",
             icon: Shield,
             allowedRoles: ["general_administrator"],
+          },
+          {
+            title: "sidebar.groups.items.audit",
+            url: "/audit",
+            icon: FileText,
           },
         ],
       },

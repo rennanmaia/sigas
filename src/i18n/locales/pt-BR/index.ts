@@ -15,6 +15,7 @@ export const ptBR: I18nResource = {
           chats: "Mensagens",
           profiles: "Perfis",
           users: "Usuários",
+          audit: "Auditoria",
         },
         title: "Geral",
       },
@@ -227,6 +228,10 @@ export const ptBR: I18nResource = {
     list: {
       title: "Formulários",
       description: "Gerencie e publique seus formulários",
+      buttons: {
+        add: "Adicionar Formulário",
+        logs: "Histórico",
+      },
       table: {
         searchPlaceholder: "Filtrar por título...",
         noResults: "Nenhum resultado encontrado.",
@@ -245,6 +250,10 @@ export const ptBR: I18nResource = {
         },
       },
     },
+    logs: {
+      title: "Logs de formulários",
+      empty: "Nada criado",
+    },
   },
   profiles: {
     view: {
@@ -259,6 +268,7 @@ export const ptBR: I18nResource = {
     list: {
       buttons: {
         add: "Adicionar Novo Perfil",
+        logs: "Histórico",
       },
       title: "Lista de Perfis",
       description: "Gerencie seus perfis e suas funções aqui.",
@@ -330,6 +340,7 @@ export const ptBR: I18nResource = {
       description: "Gerencie seus usuários e suas funções aqui.",
       buttons: {
         add: "Adicionar Novo Usuário",
+        logs: "Histórico",
       },
       table: {
         searchPlaceholder: "Buscar por nome",
@@ -405,6 +416,10 @@ export const ptBR: I18nResource = {
         cancel: "Cancelar",
         create: "Criar",
       },
+    },
+    logs: {
+      title: "Logs de usuários",
+      empty: "Nada criado",
     },
   },
   projects: {

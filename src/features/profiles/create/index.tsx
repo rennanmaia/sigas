@@ -18,7 +18,7 @@ const route = getRouteApi('/_authenticated/profiles/')
 export function CreateProfile() {
 	const { t } = useTranslation('profiles');
 	const { t: tCommon } = useTranslation('common');
-	const { addProfile } = useProfilesStore()
+	const { addProfile, addLog } = useProfilesStore()
 	const navigate = route.useNavigate();
 
 	const onCreate = (values: FormValues) => {
@@ -30,7 +30,8 @@ export function CreateProfile() {
 			permissions: values.permissions,
 		}
 		addProfile(newProfile)
-		toast.success('Profile created')
+		addLog("criação", newProfile.id, newProfile.label, `Perfil "${newProfile.label}" foi criado com ${values.permissions.length} permissões.`)
+		toast.success('Perfil criado')
 		navigate({ to: '/profiles' })
 	}
 

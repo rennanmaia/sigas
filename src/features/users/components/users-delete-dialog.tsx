@@ -16,7 +16,7 @@ export function UsersDeleteDialog({
   onOpenChange,
   currentRow,
 }: UserDeleteDialogProps) {
-  const { deleteUser } = useUsersStore();
+  const { deleteUser, addLog } = useUsersStore();
 
   const config: DeleteDialogConfig = {
     mode: "single",
@@ -28,7 +28,8 @@ export function UsersDeleteDialog({
     confirmStrategy: "typed",
     onDelete: (id) => {
       deleteUser(id as string);
-      toast.success("User deleted successfully");
+      addLog("exclusão", id as string, currentRow.username, `Usuário "${currentRow.username}" foi excluído.`);
+      toast.success("Usuário deletado com sucesso");
     },
   };
 
