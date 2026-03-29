@@ -1,3 +1,28 @@
+# [1.3.0-beta.1](https://github.com/rennanmaia/sigas/compare/v1.2.0...v1.3.0-beta.1) (2026-03-29)
+
+
+### Bug Fixes
+
+* update meta tags for correct title and description in index.html ([b3a7973](https://github.com/rennanmaia/sigas/commit/b3a7973b5229a0957223417fb83b0428e128e00a))
+* update mock form data with corrected response count and last updated date ([b2ad68d](https://github.com/rennanmaia/sigas/commit/b2ad68dc3a14191e261b621bdfb3f9ff74a4df53))
+* update recharts to version 2.15.4 and add i18next dependency ([654d381](https://github.com/rennanmaia/sigas/commit/654d381d39a1a78f0f9a59449984d4c1eb5cc4dd))
+
+
+### Features
+
+* add IndividualResponses component for displaying and managing form responses ([61b2c32](https://github.com/rennanmaia/sigas/commit/61b2c32859e7e25474a5ee984be58ed446ee636c))
+* add Leaflet and React-Leaflet dependencies for enhanced mapping capabilities ([364eb33](https://github.com/rennanmaia/sigas/commit/364eb33acabaeb057c21eab6a4cc6348bd380b21))
+* **charts:** add bar, line, pie, and radar chart components with data handling ([49cee6a](https://github.com/rennanmaia/sigas/commit/49cee6aef41dbc6ca24105db8512b7fd02d13aec))
+* enhance Chats component with file attachment support and conversation handling ([c12d55e](https://github.com/rennanmaia/sigas/commit/c12d55e1f402c0e3aed3fcbfa35d627bcefa3e5b))
+* enhance SummaryResponses component with map view modes and heatmap integration ([8663144](https://github.com/rennanmaia/sigas/commit/8663144b842aae4c80ebc65f448f8dfaaeff5e78))
+* implement ChartContainer, ChartTooltip, and ChartLegend components with context support ([320cf17](https://github.com/rennanmaia/sigas/commit/320cf17a97f5fd8b49d7400f08592701b0390486))
+* implement HeatMap component with heatmap and pins layers for enhanced data visualization ([7109074](https://github.com/rennanmaia/sigas/commit/71090745051d2036bd9c71047b006d29d7dea1a4))
+* implement ResponseProvider for managing user view preferences with cookie persistence ([8929c15](https://github.com/rennanmaia/sigas/commit/8929c15af271344d03bf3da77202eb0b5ca366dc))
+* implement SummaryResponses component for displaying response statistics and charts ([97a8aa0](https://github.com/rennanmaia/sigas/commit/97a8aa0f7d75c37ec58eecb54fbfdd30ce74fabf))
+* integrate response preferences for chart tab and map mode saving in SummaryResponses component ([4a8042b](https://github.com/rennanmaia/sigas/commit/4a8042b432298029064cd1c2f1b0d0511f7e2128))
+* update mock responses with new geographical coordinates and additional entries ([a795d39](https://github.com/rennanmaia/sigas/commit/a795d39633e178d9c145225309e096de577e6828))
+* wrap layout providers with ResponseProvider for improved state management ([0928278](https://github.com/rennanmaia/sigas/commit/09282787251ae52756953fbcf78a4d4f2fca0793))
+
 # [1.2.0](https://github.com/rennanmaia/sigas/compare/v1.1.0...v1.2.0) (2026-03-02)
 
 
