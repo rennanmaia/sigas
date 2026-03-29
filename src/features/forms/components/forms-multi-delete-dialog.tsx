@@ -3,18 +3,19 @@ import { toast } from "sonner";
 import { DeleteDialog, type DeleteDialogConfig } from "@/components/delete-dialog";
 import { useForms } from "./forms-provider";
 import { useFormsStore } from "@/stores/forms-store";
+import type { Question } from "./form-builder/types/question";
 
-type FormsMultiDeleteDialogProps<TData> = {
+type FormsMultiDeleteDialogProps<
+  TData extends { id: string; title: string; questions: Question[] },
+> = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   table: Table<TData>;
 };
 
-export function FormsMultiDeleteDialog<TData>({
-  open,
-  onOpenChange,
-  table,
-}: FormsMultiDeleteDialogProps<TData>) {
+export function FormsMultiDeleteDialog<
+  TData extends { id: string; title: string; questions: Question[] },
+>({ open, onOpenChange, table }: FormsMultiDeleteDialogProps<TData>) {
   const { deleteForms } = useForms();
   const { addLog } = useFormsStore();
 
@@ -29,10 +30,15 @@ export function FormsMultiDeleteDialog<TData>({
       const idArray = Array.isArray(ids) ? ids : [ids];
       deleteForms(idArray);
       idArray.forEach((fid) => {
-        const row = selectedRows.find((r) => (r.original as any).id === fid);
-        const title = row ? ((row.original as any).title || "") : "";
-        const questionCount = row ? ((row.original as any).questions?.length || 0) : 0;
-        addLog("exclusão", fid as string, title, `Formulário "${title}" foi excluído (contendo ${questionCount} pergunta(s)).`);
+        const row = selectedRows.find((r) => r.original.id === fid);
+        const title = row ? row.original.title : "";
+        const questionCount = row ? row.original.questions.length : 0;
+        addLog(
+          "exclusão",
+          fid as string,
+          title,
+          `Formulário "${title}" foi excluído (contendo ${questionCount} pergunta(s)).`,
+        );
       });
       toast.success(
         `${selectedRows.length} formulário(s) deletado(s) com successo`
