@@ -30,7 +30,7 @@ export function FormDeleteDialog({
       const questionCount = currentRow.questions?.length || 0;
       deleteForms([id as string]);
       addLog("exclusão", id as string, currentRow.title, `Formulário "${currentRow.title}" foi excluído (contendo ${questionCount} pergunta(s)).`);
-      toast.success(`Form "${currentRow.title}" deleted successfully`);
+      toast.success(`Formulário "${currentRow.title}" deletado com sucesso`);
     },
   };
 
