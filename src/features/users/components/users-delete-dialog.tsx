@@ -29,7 +29,7 @@ export function UsersDeleteDialog({
     onDelete: (id) => {
       deleteUser(id as string);
       addLog("exclusão", id as string, currentRow.username, `Usuário "${currentRow.username}" foi excluído.`);
-      toast.success("User deleted successfully");
+      toast.success("Usuário deletado com sucesso");
     },
   };
 
