@@ -209,10 +209,10 @@ export default function HeatMap({
       {(mode === "pins" || mode === "highlight") && (
         <PinsLayer
           points={validPoints}
-          selectedIndex={mode === "highlight" ? selectedIndex : undefined}
+          selectedIndex={mode === "pins" ? selectedIndex : undefined}
         />
       )}
-      {mode === "highlight" && <FlyToPoint point={selectedPoint} />}
+      {mode === "pins" && <FlyToPoint point={selectedPoint} />}
       <ResetViewButton center={center} zoom={16} />
       <TileLayer
         url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
