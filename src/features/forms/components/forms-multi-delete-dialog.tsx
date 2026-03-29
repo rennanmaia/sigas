@@ -35,7 +35,7 @@ export function FormsMultiDeleteDialog<TData>({
         addLog("exclusão", fid as string, title, `Formulário "${title}" foi excluído (contendo ${questionCount} pergunta(s)).`);
       });
       toast.success(
-        `${selectedRows.length} form(s) deleted successfully`
+        `${selectedRows.length} formulário(s) deletado(s) com successo`
       );
     },
     onBeforeClose: () => {
