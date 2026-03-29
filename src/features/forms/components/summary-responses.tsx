@@ -36,6 +36,7 @@ import { ChartPieLabel } from "./charts/chart-pie";
 import { ChartLineInteractive } from "./charts/chart-line";
 import { ChartRadar } from "./charts/chart-radar";
 import { useResponsePreferences } from "@/context/response-provider";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const HeatMap = lazy(() => import("./form-builder/heatmap"));
 
@@ -67,7 +68,11 @@ export function SummaryResponses({
   const [mapViewModes, setMapViewModes] =
     useState<Record<string, MapViewMode>>(savedMapModes);
 
-  const [selectedMapPoints, setSelectedMapPoints] = useState<
+  const [mapCheckedPoints, setMapCheckedPoints] = useState<
+    Record<string, Set<number> | undefined>
+  >({});
+
+  const [selectedPinsPoints, setSelectedPinsPoints] = useState<
     Record<string, number | undefined>
   >({});
 
@@ -94,18 +99,74 @@ export function SummaryResponses({
 
   const setMapViewMode = (questionId: string, value: MapViewMode) => {
     setMapViewModes((prev) => ({ ...prev, [questionId]: value }));
-    if (value !== "highlight") {
-      setSelectedMapPoints((prev) => ({ ...prev, [questionId]: undefined }));
-    }
     saveMapMode(questionId, value);
   };
 
-  const getSelectedMapPoint = (questionId: string) =>
-    selectedMapPoints[questionId];
+  const getSelectedPinsPoint = (questionId: string) =>
+    selectedPinsPoints[questionId];
 
-  const setSelectedMapPoint = (questionId: string, index: number) => {
-    setSelectedMapPoints((prev) => ({ ...prev, [questionId]: index }));
-    setMapViewModes((prev) => ({ ...prev, [questionId]: "highlight" }));
+  const setSelectedPinsPoint = (questionId: string, index: number) => {
+    setSelectedPinsPoints((prev) => ({
+      ...prev,
+      [questionId]: prev[questionId] === index ? undefined : index,
+    }));
+  };
+
+  const isMapPointChecked = (questionId: string, index: number): boolean => {
+    const checked = mapCheckedPoints[questionId];
+    return checked === undefined || checked.has(index);
+  };
+
+  const getMapCheckedState = (
+    questionId: string,
+    totalPoints: number,
+  ): boolean | "indeterminate" => {
+    const checked = mapCheckedPoints[questionId];
+    if (checked === undefined || checked.size === totalPoints) return true;
+    if (checked.size === 0) return false;
+    return "indeterminate";
+  };
+
+  const toggleMapPoint = (
+    questionId: string,
+    index: number,
+    totalPoints: number,
+  ) => {
+    setMapCheckedPoints((prev) => {
+      const current = prev[questionId];
+      let newSet: Set<number>;
+      if (current === undefined) {
+        newSet = new Set(Array.from({ length: totalPoints }, (_, i) => i));
+        newSet.delete(index);
+      } else {
+        newSet = new Set(current);
+        if (newSet.has(index)) {
+          newSet.delete(index);
+        } else {
+          newSet.add(index);
+        }
+      }
+      if (newSet.size === totalPoints) {
+        return { ...prev, [questionId]: undefined };
+      }
+      return { ...prev, [questionId]: newSet };
+    });
+  };
+
+  const toggleAllMapPoints = (questionId: string, checkAll: boolean) => {
+    setMapCheckedPoints((prev) => ({
+      ...prev,
+      [questionId]: checkAll ? undefined : new Set<number>(),
+    }));
+  };
+
+  const getVisibleMapPoints = (
+    questionId: string,
+    allPoints: ReturnType<typeof getMapPoints>,
+  ) => {
+    const checked = mapCheckedPoints[questionId];
+    if (checked === undefined) return allPoints;
+    return allPoints.filter((_, i) => checked.has(i));
   };
 
   const parseMapCoords = (
@@ -290,7 +351,9 @@ export function SummaryResponses({
             if (question.type === "map") {
               const mapPoints = getMapPoints(question.id);
               const mapMode = getMapViewMode(question.id);
-              const selectedIdx = getSelectedMapPoint(question.id);
+              const isHighlightMode = mapMode === "highlight";
+              const isPinsMode = mapMode === "pins";
+              const selectedPinsIdx = getSelectedPinsPoint(question.id);
 
               const mapResponses = responses.filter((r) => {
                 const answer = r.answers[question.id];
@@ -300,6 +363,10 @@ export function SummaryResponses({
                   answer.includes("lat:")
                 );
               });
+
+              const visiblePoints = isHighlightMode
+                ? getVisibleMapPoints(question.id, mapPoints)
+                : mapPoints;
 
               return (
                 <Card key={question.id}>
@@ -323,7 +390,7 @@ export function SummaryResponses({
                               {
                                 value: "highlight" as MapViewMode,
                                 icon: <ScanSearch className="h-4 w-4" />,
-                                title: "Ponto individual",
+                                title: "Seleção por pontos",
                               },
                             ] as const
                           ).map((item) => (
@@ -357,43 +424,154 @@ export function SummaryResponses({
                   </CardHeader>
                   <CardContent>
                     {mapPoints.length > 0 ? (
-                      <div className="flex gap-4 min-h-[280px]">
+                      <div className="flex gap-4 min-h-[280px] max-h-[440px]">
                         <ScrollArea className="w-1/2 rounded-md border">
+                          {isHighlightMode && (
+                            <div className="sticky top-0 z-10 bg-background px-3 py-2 border-b flex items-center gap-2">
+                              <Checkbox
+                                id={`select-all-${question.id}`}
+                                checked={getMapCheckedState(
+                                  question.id,
+                                  mapResponses.length,
+                                )}
+                                onCheckedChange={(checked) =>
+                                  toggleAllMapPoints(question.id, !!checked)
+                                }
+                              />
+                              <label
+                                htmlFor={`select-all-${question.id}`}
+                                className="text-xs text-muted-foreground cursor-pointer select-none"
+                              >
+                                Selecionar todos
+                              </label>
+                            </div>
+                          )}
                           <div className="p-2 space-y-1">
                             {mapResponses.map((r, index) => {
                               const answer = r.answers[question.id] as string;
                               const coords = parseMapCoords(answer);
-                              const isSelected = selectedIdx === index;
+
+                              if (isHighlightMode) {
+                                const isChecked = isMapPointChecked(
+                                  question.id,
+                                  index,
+                                );
+                                return (
+                                  <div
+                                    key={r.id}
+                                    role="button"
+                                    tabIndex={0}
+                                    onClick={() =>
+                                      toggleMapPoint(
+                                        question.id,
+                                        index,
+                                        mapResponses.length,
+                                      )
+                                    }
+                                    onKeyDown={(e) => {
+                                      if (e.key === "Enter" || e.key === " ") {
+                                        e.preventDefault();
+                                        toggleMapPoint(
+                                          question.id,
+                                          index,
+                                          mapResponses.length,
+                                        );
+                                      }
+                                    }}
+                                    className={`flex items-start gap-2 rounded-md px-3 py-2 text-sm transition-colors cursor-pointer ${
+                                      isChecked
+                                        ? "bg-muted/50 hover:bg-muted/70"
+                                        : "opacity-50 hover:opacity-70 bg-muted/20"
+                                    }`}
+                                  >
+                                    <Checkbox
+                                      checked={isChecked}
+                                      onCheckedChange={() =>
+                                        toggleMapPoint(
+                                          question.id,
+                                          index,
+                                          mapResponses.length,
+                                        )
+                                      }
+                                      onClick={(e) => e.stopPropagation()}
+                                      className="mt-0.5 shrink-0"
+                                    />
+                                    <div className="flex flex-col min-w-0">
+                                      <span className="font-medium truncate">
+                                        {r.submittedBy}
+                                      </span>
+                                      {coords && (
+                                        <span className="text-xs font-mono truncate text-muted-foreground">
+                                          {coords.lat.toFixed(4)},{" "}
+                                          {coords.lng.toFixed(4)}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </div>
+                                );
+                              }
+
+                              if (isPinsMode) {
+                                const isSelected = selectedPinsIdx === index;
+                                return (
+                                  <button
+                                    key={r.id}
+                                    type="button"
+                                    onClick={() =>
+                                      setSelectedPinsPoint(question.id, index)
+                                    }
+                                    className={`w-full text-left flex items-start gap-2 rounded-md px-3 py-2 text-sm transition-colors cursor-pointer ${
+                                      isSelected
+                                        ? "bg-primary text-primary-foreground"
+                                        : "hover:bg-muted/70 bg-muted/30"
+                                    }`}
+                                  >
+                                    <MapPin
+                                      className={`h-4 w-4 shrink-0 mt-0.5 ${
+                                        isSelected
+                                          ? "text-primary-foreground"
+                                          : "text-muted-foreground"
+                                      }`}
+                                    />
+                                    <div className="flex flex-col min-w-0">
+                                      <span className="font-medium truncate">
+                                        {r.submittedBy}
+                                      </span>
+                                      {coords && (
+                                        <span
+                                          className={`text-xs font-mono truncate ${
+                                            isSelected
+                                              ? "text-primary-foreground/75"
+                                              : "text-muted-foreground"
+                                          }`}
+                                        >
+                                          {coords.lat.toFixed(4)},{" "}
+                                          {coords.lng.toFixed(4)}
+                                        </span>
+                                      )}
+                                    </div>
+                                  </button>
+                                );
+                              }
+
                               return (
-                                <button
+                                <div
                                   key={r.id}
-                                  type="button"
-                                  onClick={() =>
-                                    setSelectedMapPoint(question.id, index)
-                                  }
-                                  className={`w-full text-left flex items-start gap-2 rounded-md px-3 py-2 text-sm transition-colors cursor-pointer ${
-                                    isSelected
-                                      ? "bg-primary text-primary-foreground"
-                                      : "hover:bg-muted/70 bg-muted/30"
-                                  }`}
+                                  className="flex items-start gap-2 rounded-md px-3 py-2 text-sm bg-muted/30"
                                 >
-                                  <MapPin
-                                    className={`h-4 w-4 shrink-0 mt-0.5 ${isSelected ? "text-primary-foreground" : "text-muted-foreground"}`}
-                                  />
+                                  <MapPin className="h-4 w-4 shrink-0 mt-0.5 text-muted-foreground" />
                                   <div className="flex flex-col min-w-0">
                                     <span className="font-medium truncate">
                                       {r.submittedBy}
                                     </span>
                                     {coords && (
-                                      <span
-                                        className={`text-xs font-mono truncate ${isSelected ? "text-primary-foreground/75" : "text-muted-foreground"}`}
-                                      >
+                                      <span className="text-xs font-mono truncate text-muted-foreground">
                                         {coords.lat.toFixed(4)},{" "}
                                         {coords.lng.toFixed(4)}
                                       </span>
                                     )}
                                   </div>
-                                </button>
+                                </div>
                               );
                             })}
                           </div>
@@ -407,9 +585,11 @@ export function SummaryResponses({
                             }
                           >
                             <HeatMap
-                              points={mapPoints}
+                              points={visiblePoints}
                               mode={mapMode}
-                              selectedIndex={selectedIdx}
+                              selectedIndex={
+                                isPinsMode ? selectedPinsIdx : undefined
+                              }
                               className="h-full"
                             />
                           </Suspense>
