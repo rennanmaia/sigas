@@ -15,7 +15,7 @@ export function SignUp() {
     <AuthLayout>
       <Card className="gap-4">
         <CardHeader>
-          <CardTitle className="text-lg tracking-tight">Criar conta</CardTitle>
+          <CardTitle className="text-lg tracking-tight">Finalizar cadastro</CardTitle>
           <CardDescription>
             Insira seu email e senha para criar uma conta.
           </CardDescription>
