@@ -1,6 +1,4 @@
-import { isValidCpf } from '@/lib/utils';
 import { authenticate } from '@/features/auth/services/auth';
-import { CpfField } from '@/features/auth/components/cpf-field';
 import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -20,12 +18,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { PasswordInput } from "@/components/password-input";
+import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
-  cpf: z
+  email: z
     .string()
-    .min(11, { message: 'Por favor, insira seu CPF' })
-    .refine((v) => isValidCpf(v), { message: 'CPF inválido' }),
+    .min(1, { message: 'Por favor, insira seu e-mail' })
+    .email({ message: 'E-mail inválido' }),
   password: z
     .string()
     .min(1, 'Por favor insira sua senha')
@@ -48,7 +47,7 @@ export function UserAuthForm({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      cpf: "",
+      email: "",
       password: "",
     },
   });
@@ -58,15 +57,15 @@ export function UserAuthForm({
     setIsLoading(true);
     console.log('Submitting form with data:', data);
 
-    const res = await authenticate(data.cpf, data.password);
+    const res = await authenticate(data.email, data.password);
     if (res.status === 'error') {
       setIsLoading(false);
       if (res.reason === 'cpf_not_found') {
-        form.setError('cpf', { type: 'manual', message: 'CPF não encontrado.' });
+        form.setError('email', { type: 'manual', message: 'E-mail não encontrado.' });
         try {
-          form.setFocus('cpf')
+          form.setFocus('email')
         } catch {}
-        toast.error('CPF não encontrado.')
+        toast.error('E-mail não encontrado.')
       } else if (res.reason === 'invalid_password') {
         form.setError('password', { type: 'manual', message: 'Senha incorreta.' });
         try {
@@ -102,7 +101,19 @@ export function UserAuthForm({
         className={cn("grid gap-3", className)}
         {...props}
       >
-        <CpfField control={form.control} name="cpf" />
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input type="email" placeholder="usuario@sigas.com" {...field} />
+              </FormControl>
+              <FormMessage className="mt-1" />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="password"
