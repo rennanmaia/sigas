@@ -116,130 +116,132 @@ function ProjectsList() {
           </div>
         </div>
 
-        <div className="my-4 flex items-end justify-between sm:my-0 sm:items-center">
-          <div className="flex flex-col gap-4 sm:my-4 sm:flex-row">
-            <Input
-              placeholder={t("list.searchPlaceholder")}
-              className="h-9 w-40 lg:w-[250px]"
-              value={searchTerm}
-              onChange={handleSearch}
-            />
+        <div className="space-y-2">
+          <div className="my-4 flex items-end justify-between sm:my-0 sm:items-center">
+            <div className="flex flex-col gap-4 sm:my-4 sm:flex-row">
+              <Input
+                placeholder={t("list.searchPlaceholder")}
+                className="h-9 w-40 lg:w-[250px]"
+                value={searchTerm}
+                onChange={handleSearch}
+              />
+              <Select
+                value={projectType}
+                onValueChange={(v) =>
+                  handleTypeChange(v as ProjectStatus | "all")
+                }
+              >
+                <SelectTrigger className="w-36">
+                  <SelectValue>{t(`list.filters.${projectType}`)}</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{t("list.filters.all")}</SelectItem>
+                  <SelectItem value="ativo">
+                    {t("list.filters.active")}
+                  </SelectItem>
+                  <SelectItem value="pausado">
+                    {t("list.filters.paused")}
+                  </SelectItem>
+                  <SelectItem value="finalizado">
+                    {t("list.filters.finished")}
+                  </SelectItem>
+                  <SelectItem value="cancelado">
+                    {t("list.filters.canceled")}
+                  </SelectItem>
+                  <SelectItem value="expirado">
+                    {t("list.filters.expired")}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             <Select
-              value={projectType}
-              onValueChange={(v) =>
-                handleTypeChange(v as ProjectStatus | "all")
-              }
+              value={sort}
+              onValueChange={(v) => handleSortChange(v as "asc" | "desc")}
             >
-              <SelectTrigger className="w-36">
-                <SelectValue>{t(`list.filters.${projectType}`)}</SelectValue>
+              <SelectTrigger className="w-16">
+                <SelectValue>
+                  <SlidersHorizontal size={18} />
+                </SelectValue>
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">{t("list.filters.all")}</SelectItem>
-                <SelectItem value="ativo">
-                  {t("list.filters.active")}
+              <SelectContent align="end">
+                <SelectItem value="asc">
+                  <div className="flex items-center gap-4">
+                    <ArrowUpAZ size={16} />
+                    <span>Crescente</span>
+                  </div>
                 </SelectItem>
-                <SelectItem value="pausado">
-                  {t("list.filters.paused")}
-                </SelectItem>
-                <SelectItem value="finalizado">
-                  {t("list.filters.finished")}
-                </SelectItem>
-                <SelectItem value="cancelado">
-                  {t("list.filters.canceled")}
-                </SelectItem>
-                <SelectItem value="expirado">
-                  {t("list.filters.expired")}
+                <SelectItem value="desc">
+                  <div className="flex items-center gap-4">
+                    <ArrowDownAZ size={16} />
+                    <span>Decrescente</span>
+                  </div>
                 </SelectItem>
               </SelectContent>
             </Select>
           </div>
+          <Separator className="shadow-sm" />
 
-          <Select
-            value={sort}
-            onValueChange={(v) => handleSortChange(v as "asc" | "desc")}
-          >
-            <SelectTrigger className="w-16">
-              <SelectValue>
-                <SlidersHorizontal size={18} />
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent align="end">
-              <SelectItem value="asc">
-                <div className="flex items-center gap-4">
-                  <ArrowUpAZ size={16} />
-                  <span>Crescente</span>
-                </div>
-              </SelectItem>
-              <SelectItem value="desc">
-                <div className="flex items-center gap-4">
-                  <ArrowDownAZ size={16} />
-                  <span>Decrescente</span>
-                </div>
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <Separator className="shadow-sm" />
-
-        <ul className="faded-bottom no-scrollbar grid gap-4 overflow-auto pt-4 pb-16 md:grid-cols-2 lg:grid-cols-3">
-          {filteredProjects.map((project) => {
-            const isExpired =
-              project.status === PROJECT_STATUS.active &&
-              new Date(project.endDate) < new Date();
-            return (
-              <li key={project.id}>
-                <Link
-                  to="/projects/$projectId"
-                  params={{ projectId: project.id }}
-                  className="group block h-full rounded-lg border p-4 transition-all hover:border-primary/50 hover:shadow-md"
-                >
-                  <div className="mb-8 flex items-center justify-between">
-                    <div className="flex size-10 items-center justify-center rounded-lg bg-muted p-2 transition-colors group-hover:bg-primary/10">
-                      {project.logo}
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className={
-                        isExpired
-                          ? "border-orange-300 bg-orange-50 text-orange-700"
+          <ul className="faded-bottom no-scrollbar grid gap-4 overflow-auto pt-4 pb-16 md:grid-cols-2 lg:grid-cols-3">
+            {filteredProjects.map((project) => {
+              const isExpired =
+                project.status === PROJECT_STATUS.active &&
+                new Date(project.endDate) < new Date();
+              return (
+                <li key={project.id}>
+                  <Link
+                    to="/projects/$projectId"
+                    params={{ projectId: project.id }}
+                    className="group block h-full rounded-lg border p-4 transition-all hover:border-primary/50 hover:shadow-md"
+                  >
+                    <div className="mb-8 flex items-center justify-between">
+                      <div className="flex size-10 items-center justify-center rounded-lg bg-muted p-2 transition-colors group-hover:bg-primary/10">
+                        {project.logo}
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className={
+                          isExpired
+                            ? "border-orange-300 bg-orange-50 text-orange-700"
+                            : project.status === PROJECT_STATUS.finished
+                              ? "border-green-300 bg-green-50 text-green-700"
+                              : project.status === PROJECT_STATUS.active
+                                ? "border-blue-300 bg-blue-50 text-blue-700"
+                                : project.status === PROJECT_STATUS.paused
+                                  ? "border-yellow-300 bg-yellow-50 text-yellow-700"
+                                  : project.status === PROJECT_STATUS.canceled
+                                    ? "border-red-300 bg-red-50 text-red-700"
+                                    : ""
+                        }
+                      >
+                        {isExpired
+                          ? "Expirado"
                           : project.status === PROJECT_STATUS.finished
-                            ? "border-green-300 bg-green-50 text-green-700"
+                            ? "Finalizado"
                             : project.status === PROJECT_STATUS.active
-                              ? "border-blue-300 bg-blue-50 text-blue-700"
+                              ? "Ativo"
                               : project.status === PROJECT_STATUS.paused
-                                ? "border-yellow-300 bg-yellow-50 text-yellow-700"
+                                ? "Pausado"
                                 : project.status === PROJECT_STATUS.canceled
-                                  ? "border-red-300 bg-red-50 text-red-700"
-                                  : ""
-                      }
-                    >
-                      {isExpired
-                        ? "Expirado"
-                        : project.status === PROJECT_STATUS.finished
-                          ? "Finalizado"
-                          : project.status === PROJECT_STATUS.active
-                            ? "Ativo"
-                            : project.status === PROJECT_STATUS.paused
-                              ? "Pausado"
-                              : project.status === PROJECT_STATUS.canceled
-                                ? "Cancelado"
-                                : project.status}
-                    </Button>
-                  </div>
-                  <div>
-                    <h2 className="mb-1 font-semibold group-hover:text-primary">
-                      {project.title}
-                    </h2>
-                    <p className="line-clamp-2 text-sm text-muted-foreground">
-                      {project.description}
-                    </p>
-                  </div>
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+                                  ? "Cancelado"
+                                  : project.status}
+                      </Button>
+                    </div>
+                    <div>
+                      <h2 className="mb-1 font-semibold group-hover:text-primary">
+                        {project.title}
+                      </h2>
+                      <p className="line-clamp-2 text-sm text-muted-foreground">
+                        {project.description}
+                      </p>
+                    </div>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </Main>
     </>
   );

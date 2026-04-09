@@ -1,21 +1,30 @@
 import { type Table } from "@tanstack/react-table";
 import { toast } from "sonner";
-import { DeleteDialog, type DeleteDialogConfig } from "@/components/delete-dialog";
+import {
+  DeleteDialog,
+  type DeleteDialogConfig,
+} from "@/components/delete-dialog";
 import { useForms } from "./forms-provider";
 import { useFormsStore } from "@/stores/forms-store";
 import type { Question } from "./form-builder/types/question";
 
-type FormsMultiDeleteDialogProps<
-  TData extends { id: string; title: string; questions: Question[] },
-> = {
+type DeletedFormData = {
+  id: string;
+  title: string;
+  questions: Question[];
+};
+
+type FormsMultiDeleteDialogProps<TData> = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   table: Table<TData>;
 };
 
-export function FormsMultiDeleteDialog<
-  TData extends { id: string; title: string; questions: Question[] },
->({ open, onOpenChange, table }: FormsMultiDeleteDialogProps<TData>) {
+export function FormsMultiDeleteDialog<TData>({
+  open,
+  onOpenChange,
+  table,
+}: FormsMultiDeleteDialogProps<TData>) {
   const { deleteForms } = useForms();
   const { addLog } = useFormsStore();
 
@@ -27,21 +36,25 @@ export function FormsMultiDeleteDialog<
     namespace: "forms",
     confirmStrategy: "keyword",
     onDelete: (ids) => {
-      const idArray = Array.isArray(ids) ? ids : [ids];
+      const idArray = (Array.isArray(ids) ? ids : [ids]) as string[];
       deleteForms(idArray);
       idArray.forEach((fid) => {
-        const row = selectedRows.find((r) => r.original.id === fid);
-        const title = row ? row.original.title : "";
-        const questionCount = row ? row.original.questions.length : 0;
+        const row = selectedRows.find(
+          (r) => (r.original as DeletedFormData).id === fid,
+        );
+        const title = row ? (row.original as DeletedFormData).title : "";
+        const questionCount = row
+          ? (row.original as DeletedFormData).questions.length
+          : 0;
         addLog(
           "exclusão",
-          fid as string,
+          fid,
           title,
           `Formulário "${title}" foi excluído (contendo ${questionCount} pergunta(s)).`,
         );
       });
       toast.success(
-        `${selectedRows.length} formulário(s) deletado(s) com successo`
+        `${selectedRows.length} formulário(s) deletado(s) com sucesso`,
       );
     },
     onBeforeClose: () => {
@@ -50,10 +63,6 @@ export function FormsMultiDeleteDialog<
   };
 
   return (
-    <DeleteDialog
-      open={open}
-      onOpenChange={onOpenChange}
-      config={config}
-    />
+    <DeleteDialog open={open} onOpenChange={onOpenChange} config={config} />
   );
 }

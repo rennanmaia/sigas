@@ -53,6 +53,9 @@ import type { FormItem } from "@/features/forms/data/forms-mock";
 import { users } from "@/features/users/data/users";
 import { roles } from "@/features/users/data/data";
 import { UserProfileDialog } from "./components/user-profile-dialog";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { RoutesTab } from "./components/routes-tab";
+import { PassivesTab } from "./components/passives-tab";
 
 const getRoleLabel = (roleValue: string): string => {
   const roleLabels: Record<string, string> = {
@@ -105,6 +108,9 @@ function ProjectDetailsContent() {
   const [openUserProfile, setOpenUserProfile] = useState(false);
   const [availableForms, setAvailableForms] =
     useState<FormItem[]>(allAvailableForms);
+  const [activeTab, setActiveTab] = useState<
+    "overview" | "routes" | "passives"
+  >("overview");
 
   const { projectId } = useParams({
     from: "/_authenticated/projects/$projectId/",
@@ -360,7 +366,7 @@ function ProjectDetailsContent() {
         </div>
       </Header>
 
-      <Main className="space-y-6">
+      <Main className="flex flex-col gap-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex gap-4">
             <div className="flex size-12 items-center justify-center rounded-lg bg-primary/10 text-primary p-2">
@@ -441,290 +447,329 @@ function ProjectDetailsContent() {
             </Button>
           </div>
         </div>
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base font-semibold flex items-center gap-2">
-              Empresa Responsável e Campos Extras
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              <div className="space-y-1">
-                <Label className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
-                  Empresa Responsável
-                </Label>
-                <p className="text-sm font-medium text-foreground">
-                  {project.company || "Não informada"}
-                </p>
-              </div>
 
-              {project.customFields && project.customFields.length > 0 ? (
-                project.customFields.map((field, idx) => (
-                  <div
-                    key={idx}
-                    className="space-y-1 border-l pl-4 sm:border-l-0 sm:pl-0 lg:border-l lg:pl-4"
-                  >
+        <Tabs
+          value={activeTab}
+          onValueChange={(v) => setActiveTab(v as typeof activeTab)}
+          className="space-y-4"
+        >
+          <TabsList>
+            <TabsTrigger value="overview">Visão Geral</TabsTrigger>
+            <TabsTrigger value="routes">Rotas</TabsTrigger>
+            <TabsTrigger value="passives">Passivos</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview" className="space-y-6 mt-0">
+            <Card>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-base font-semibold flex items-center gap-2">
+                  Empresa Responsável e Campos Extras
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                  <div className="space-y-1">
                     <Label className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
-                      {field.label}
+                      Empresa Responsável
                     </Label>
                     <p className="text-sm font-medium text-foreground">
-                      {field.value}
+                      {project.company || "Não informada"}
                     </p>
                   </div>
-                ))
-              ) : (
-                <div className="sm:col-span-1 lg:col-span-3">
-                  <p className="text-xs text-muted-foreground italic mt-5">
-                    Nenhum campo personalizado adicionado.
-                  </p>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card className="lg:col-span-2">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Cronograma (Início / Término)
-              </CardTitle>
-              <Calendar className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex justify-between text-sm font-bold ">
-                <span>{project.startDate}</span>
-                <span>{project.endDate}</span>
-              </div>
-              <Progress value={timeProgress} className="h-2" />
-              <p className="text-muted-foreground text-xs">
-                {timeProgress}% do prazo total consumido
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                Total de Respostas
-              </CardTitle>
-              <List className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{totalResponses}</div>
-              <p className="text-muted-foreground text-xs">Dados coletados</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Orçamento</CardTitle>
-              <Wallet className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {new Intl.NumberFormat("pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
-                }).format(project.budget)}
-              </div>
-              <p className="text-muted-foreground text-xs">Total investido</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-          <Card className="lg:col-span-4">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Formulários do Projeto</CardTitle>
-                <CardDescription>
-                  Gerencie os questionários vinculados.
-                </CardDescription>
-              </div>
-              <Badge variant="outline">
-                {currentProjectForms.length} Total
-              </Badge>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {currentProjectForms.length > 0 ? (
-                  currentProjectForms.map((form) => (
-                    <div
-                      key={form.id}
-                      className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors group"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="bg-primary/10 p-2 rounded">
-                          <FileText size={18} className="text-primary" />
-                        </div>
-                        <div>
-                          <p className="text-sm font-medium group-hover:text-primary transition-colors">
-                            {form.title}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {form.responses} respostas
-                          </p>
-                        </div>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        asChild
+                  {project.customFields && project.customFields.length > 0 ? (
+                    project.customFields.map((field, idx) => (
+                      <div
+                        key={idx}
+                        className="space-y-1 border-l pl-4 sm:border-l-0 sm:pl-0 lg:border-l lg:pl-4"
                       >
-                        <Link to="/forms/edit/$id" params={{ id: form.id }}>
-                          <ExternalLink size={14} />
-                        </Link>
-                      </Button>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-sm text-muted-foreground italic">
-                    Nenhum formulário vinculado.
-                  </p>
-                )}
-                <Button
-                  variant="outline"
-                  className="w-full border-dashed"
-                  onClick={() => setOpenFormDialog(true)}
-                >
-                  + Vincular Novo Formulário
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="lg:col-span-3">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div>
-                <CardTitle>Equipe</CardTitle>
-                <CardDescription>Usuários ativos no campo.</CardDescription>
-              </div>
-              <Button
-                variant="outline"
-                className="gap-2"
-                onClick={() => setOpenMemberDialog(true)}
-              >
-                <UserPlus size={16} /> Alocar Membro
-              </Button>
-            </CardHeader>
-            <CardContent>
-              {currentProjectTeam.length > 6 ? (
-                <ScrollArea className="h-[350px] pr-4">
-                  <div className="space-y-5">
-                    {currentProjectTeam.map((member) => {
-                      const isResponsible = project.responsible === member.name;
-                      return (
-                        <div
-                          key={member.id}
-                          className="flex items-center justify-between group"
-                        >
-                          <div className="flex items-center gap-3">
-                            <Avatar className="h-9 w-9">
-                              <AvatarFallback>{member.initial}</AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <p className="text-sm font-medium leading-none">
-                                {member.name}
-                              </p>
-                              <p className="text-xs text-muted-foreground mt-1">
-                                {member.role}
-                              </p>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center">
-                            <Badge
-                              variant="secondary"
-                              className="text-[10px] cursor-pointer"
-                              onClick={() => handleViewProfile(member.id)}
-                            >
-                              Ver Perfil
-                            </Badge>
-                            {!isResponsible ? (
-                              <div className="flex justify-end w-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out group-hover:w-8 group-hover:opacity-100">
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-6 w-6 shrink-0 text-destructive hover:bg-destructive/10"
-                                  onClick={() => handleRemoveMember(member.id)}
-                                  title="Remover membro"
-                                >
-                                  <X size={14} />
-                                </Button>
-                              </div>
-                            ) : (
-                              <div className="w-0 overflow-hidden" />
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </ScrollArea>
-              ) : (
-                <div className="space-y-5">
-                  {currentProjectTeam.length > 0 ? (
-                    currentProjectTeam.map((member) => {
-                      const isResponsible = project.responsible === member.name;
-
-                      return (
-                        <div
-                          key={member.id}
-                          className="flex items-center justify-between group"
-                        >
-                          <div className="flex items-center gap-3">
-                            <Avatar className="h-9 w-9">
-                              <AvatarFallback>{member.initial}</AvatarFallback>
-                            </Avatar>
-                            <div>
-                              <p className="text-sm font-medium leading-none">
-                                {member.name}
-                              </p>
-                              <p className="text-xs text-muted-foreground mt-1">
-                                {member.role}
-                              </p>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-2">
-                            <Badge
-                              variant="secondary"
-                              className="text-[10px] cursor-pointer"
-                              onClick={() => handleViewProfile(member.id)}
-                            >
-                              Ver Perfil
-                            </Badge>
-                            {!isResponsible ? (
-                              <div className="flex justify-end w-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out group-hover:w-8 group-hover:opacity-100">
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-6 w-6 shrink-0 text-destructive hover:bg-destructive/10"
-                                  onClick={() => handleRemoveMember(member.id)}
-                                  title="Remover membro"
-                                >
-                                  <X size={14} />
-                                </Button>
-                              </div>
-                            ) : (
-                              <div className="w-0 overflow-hidden" />
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })
+                        <Label className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
+                          {field.label}
+                        </Label>
+                        <p className="text-sm font-medium text-foreground">
+                          {field.value}
+                        </p>
+                      </div>
+                    ))
                   ) : (
-                    <p className="text-sm text-muted-foreground italic">
-                      Nenhum membro alocado.
-                    </p>
+                    <div className="sm:col-span-1 lg:col-span-3">
+                      <p className="text-xs text-muted-foreground italic mt-5">
+                        Nenhum campo personalizado adicionado.
+                      </p>
+                    </div>
                   )}
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+              </CardContent>
+            </Card>
+
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <Card className="lg:col-span-2">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Cronograma (Início / Término)
+                  </CardTitle>
+                  <Calendar className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="flex justify-between text-sm font-bold ">
+                    <span>{project.startDate}</span>
+                    <span>{project.endDate}</span>
+                  </div>
+                  <Progress value={timeProgress} className="h-2" />
+                  <p className="text-muted-foreground text-xs">
+                    {timeProgress}% do prazo total consumido
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Total de Respostas
+                  </CardTitle>
+                  <List className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{totalResponses}</div>
+                  <p className="text-muted-foreground text-xs">
+                    Dados coletados
+                  </p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Orçamento
+                  </CardTitle>
+                  <Wallet className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {new Intl.NumberFormat("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    }).format(project.budget)}
+                  </div>
+                  <p className="text-muted-foreground text-xs">
+                    Total investido
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+              <Card className="lg:col-span-4">
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <div>
+                    <CardTitle>Formulários do Projeto</CardTitle>
+                    <CardDescription>
+                      Gerencie os questionários vinculados.
+                    </CardDescription>
+                  </div>
+                  <Badge variant="outline">
+                    {currentProjectForms.length} Total
+                  </Badge>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {currentProjectForms.length > 0 ? (
+                      currentProjectForms.map((form) => (
+                        <div
+                          key={form.id}
+                          className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors group"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="bg-primary/10 p-2 rounded">
+                              <FileText size={18} className="text-primary" />
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium group-hover:text-primary transition-colors">
+                                {form.title}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {form.responses} respostas
+                              </p>
+                            </div>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            asChild
+                          >
+                            <Link to="/forms/edit/$id" params={{ id: form.id }}>
+                              <ExternalLink size={14} />
+                            </Link>
+                          </Button>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-sm text-muted-foreground italic">
+                        Nenhum formulário vinculado.
+                      </p>
+                    )}
+                    <Button
+                      variant="outline"
+                      className="w-full border-dashed"
+                      onClick={() => setOpenFormDialog(true)}
+                    >
+                      + Vincular Novo Formulário
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="lg:col-span-3">
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <div>
+                    <CardTitle>Equipe</CardTitle>
+                    <CardDescription>Usuários ativos no campo.</CardDescription>
+                  </div>
+                  <Button
+                    variant="outline"
+                    className="gap-2"
+                    onClick={() => setOpenMemberDialog(true)}
+                  >
+                    <UserPlus size={16} /> Alocar Membro
+                  </Button>
+                </CardHeader>
+                <CardContent>
+                  {currentProjectTeam.length > 6 ? (
+                    <ScrollArea className="h-[350px] pr-4">
+                      <div className="space-y-5">
+                        {currentProjectTeam.map((member) => {
+                          const isResponsible =
+                            project.responsible === member.name;
+                          return (
+                            <div
+                              key={member.id}
+                              className="flex items-center justify-between group"
+                            >
+                              <div className="flex items-center gap-3">
+                                <Avatar className="h-9 w-9">
+                                  <AvatarFallback>
+                                    {member.initial}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <div>
+                                  <p className="text-sm font-medium leading-none">
+                                    {member.name}
+                                  </p>
+                                  <p className="text-xs text-muted-foreground mt-1">
+                                    {member.role}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center">
+                                <Badge
+                                  variant="secondary"
+                                  className="text-[10px] cursor-pointer"
+                                  onClick={() => handleViewProfile(member.id)}
+                                >
+                                  Ver Perfil
+                                </Badge>
+                                {!isResponsible ? (
+                                  <div className="flex justify-end w-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out group-hover:w-8 group-hover:opacity-100">
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-6 w-6 shrink-0 text-destructive hover:bg-destructive/10"
+                                      onClick={() =>
+                                        handleRemoveMember(member.id)
+                                      }
+                                      title="Remover membro"
+                                    >
+                                      <X size={14} />
+                                    </Button>
+                                  </div>
+                                ) : (
+                                  <div className="w-0 overflow-hidden" />
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </ScrollArea>
+                  ) : (
+                    <div className="space-y-5">
+                      {currentProjectTeam.length > 0 ? (
+                        currentProjectTeam.map((member) => {
+                          const isResponsible =
+                            project.responsible === member.name;
+
+                          return (
+                            <div
+                              key={member.id}
+                              className="flex items-center justify-between group"
+                            >
+                              <div className="flex items-center gap-3">
+                                <Avatar className="h-9 w-9">
+                                  <AvatarFallback>
+                                    {member.initial}
+                                  </AvatarFallback>
+                                </Avatar>
+                                <div>
+                                  <p className="text-sm font-medium leading-none">
+                                    {member.name}
+                                  </p>
+                                  <p className="text-xs text-muted-foreground mt-1">
+                                    {member.role}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-2">
+                                <Badge
+                                  variant="secondary"
+                                  className="text-[10px] cursor-pointer"
+                                  onClick={() => handleViewProfile(member.id)}
+                                >
+                                  Ver Perfil
+                                </Badge>
+                                {!isResponsible ? (
+                                  <div className="flex justify-end w-0 opacity-0 overflow-hidden transition-all duration-300 ease-in-out group-hover:w-8 group-hover:opacity-100">
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-6 w-6 shrink-0 text-destructive hover:bg-destructive/10"
+                                      onClick={() =>
+                                        handleRemoveMember(member.id)
+                                      }
+                                      title="Remover membro"
+                                    >
+                                      <X size={14} />
+                                    </Button>
+                                  </div>
+                                ) : (
+                                  <div className="w-0 overflow-hidden" />
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })
+                      ) : (
+                        <p className="text-sm text-muted-foreground italic">
+                          Nenhum membro alocado.
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="routes" className="mt-0">
+            <RoutesTab projectId={projectId} />
+          </TabsContent>
+
+          <TabsContent value="passives" className="mt-0">
+            <PassivesTab />
+          </TabsContent>
+        </Tabs>
       </Main>
       <ProjectAllocateDialog
         open={openFormDialog}
