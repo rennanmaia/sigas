@@ -1,3 +1,33 @@
+# [1.3.0-beta.2](https://github.com/rennanmaia/sigas/compare/v1.3.0-beta.1...v1.3.0-beta.2) (2026-04-09)
+
+
+### Bug Fixes
+
+* change success message for profile creation ([579fc3e](https://github.com/rennanmaia/sigas/commit/579fc3eb3f250225f02d4b66b0bb7b02fac11b70))
+* change success message to Portuguese for user deletion ([26143bd](https://github.com/rennanmaia/sigas/commit/26143bd0ea61c143908ee321c6b107009f22c18b))
+* update route path for FormLogs component ([777a038](https://github.com/rennanmaia/sigas/commit/777a038d55bb448b2c3866575634a37eb4e824bc))
+* update success message for form deletion ([1413809](https://github.com/rennanmaia/sigas/commit/1413809aef00336b10c445d25001d51556394e68))
+* update success message for multi deleted forms ([8de0945](https://github.com/rennanmaia/sigas/commit/8de09457589ab9cc9fadcd7532ca25a328014005))
+
+
+### Features
+
+* add date filtering options and validation for audit logs ([6f500a2](https://github.com/rennanmaia/sigas/commit/6f500a2e90ecc62feefc9443519458e1687cf7ab))
+* add dialog for viewing user log details and implement role/status labels ([37bb273](https://github.com/rennanmaia/sigas/commit/37bb2738ff36298ec36718906f3b74387df550e2))
+* add mock data for collection routes and route waypoints ([1faa9e9](https://github.com/rennanmaia/sigas/commit/1faa9e9e9661d0757de75aeed3f423f4d500ead5))
+* add PassivesTab component with overview, critical, and create views ([8a30056](https://github.com/rennanmaia/sigas/commit/8a3005673bda3fcf14b9be9303b03945a60d72c8))
+* add profile logging functionality and create logs page ([4bcc701](https://github.com/rennanmaia/sigas/commit/4bcc701a50e128c41b7320d86aa8c2f9bcec53f6))
+* add RouteCreatePanel component for creating and editing routes ([e1817ec](https://github.com/rennanmaia/sigas/commit/e1817ecfb315cc5339145040baa0951a8766ed51))
+* add RouteDetailPanel component for displaying route details and actions ([36407c3](https://github.com/rennanmaia/sigas/commit/36407c369682a1523b736a7ad97afae94827ca96))
+* add RouteListPanel component for displaying and selecting routes ([34024b1](https://github.com/rennanmaia/sigas/commit/34024b173923d74ee709bf9483c65103ebe3671c))
+* enhance DataTableToolbar layout and improve responsiveness; add entity name link in AuditContent ([734ba44](https://github.com/rennanmaia/sigas/commit/734ba44871d6ef2eeb20f85299452bd050ecbbfa))
+* implement form logging functionality and create logs page ([4d34900](https://github.com/rennanmaia/sigas/commit/4d34900a1c117480704f951234ec48e2c844a2cd))
+* implement module navigation links in audit logs ([a949477](https://github.com/rennanmaia/sigas/commit/a949477368b401d5e4e0b90ccf6f1a62fddfc327))
+* implement RouteMapPanel component for interactive route mapping ([d393537](https://github.com/rennanmaia/sigas/commit/d39353737fe18ad6667700db17d1919c4ccb8900))
+* implement RoutesTab component with list, create, and detail views ([96a2e56](https://github.com/rennanmaia/sigas/commit/96a2e5653781caf978a3b5a9f8895d3c1bf83aca))
+* implement user logging functionality and create logs page ([b6f2684](https://github.com/rennanmaia/sigas/commit/b6f268418573e1eff36106e8ebd8c49250ad4e7c))
+* implement useRoutesState hook for managing route data and interactions ([5d1bdd9](https://github.com/rennanmaia/sigas/commit/5d1bdd9680cee47499f10386b5de6e853c27a419))
+
 # [1.3.0-beta.1](https://github.com/rennanmaia/sigas/compare/v1.2.0...v1.3.0-beta.1) (2026-03-29)
 
 
