@@ -9,6 +9,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { Loader2, LogIn } from "lucide-react";
 import { toast } from "sonner";
 import { useAuthStore } from "@/stores/auth-store";
+import { useAuditStore } from "@/stores/audit-store";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -62,12 +63,41 @@ export function UserAuthForm({
     if (res.status === 'error') {
       setIsLoading(false);
       if (res.reason === 'cpf_not_found') {
+        useAuditStore.getState().addEvent({
+          userId: 'anonymous',
+          userName: 'Usuário não autenticado',
+          action: 'outros',
+          module: 'system',
+          entityId: data.cpf,
+          entityName: 'Tentativa de login com CPF inexistente',
+          details: `Falha de login: CPF ${data.cpf} não encontrado.`,
+        });
         form.setError('cpf', { type: 'manual', message: 'CPF não encontrado.' });
         try {
           form.setFocus('cpf')
         } catch {}
         toast.error('CPF não encontrado.')
+      } else if (res.reason === 'account_blocked') {
+        useAuditStore.getState().addEvent({
+          userId: 'anonymous',
+          userName: 'Usuário não autenticado',
+          action: 'outros',
+          module: 'system',
+          entityId: data.cpf,
+          entityName: 'Conta bloqueada',
+          details: `Tentativa de login bloqueada para CPF ${data.cpf}`,
+        });
+        toast.error('Conta bloqueada. Entre em contato com o administrador.')
       } else if (res.reason === 'invalid_password') {
+        useAuditStore.getState().addEvent({
+          userId: 'anonymous',
+          userName: 'Usuário não autenticado',
+          action: 'outros',
+          module: 'system',
+          entityId: data.cpf,
+          entityName: 'Tentativa de login com senha inválida',
+          details: `Falha de login por senha inválida para CPF ${data.cpf}.`,
+        });
         form.setError('password', { type: 'manual', message: 'Senha incorreta.' });
         try {
           form.setFocus('password')
@@ -88,6 +118,16 @@ export function UserAuthForm({
 
     auth.setUser(mockUser);
     auth.setAccessToken('mock-access-token');
+
+    useAuditStore.getState().addEvent({
+      userId: mockUser.accountNo,
+      userName: mockUser.email,
+      action: 'outros',
+      module: 'system',
+      entityId: mockUser.accountNo,
+      entityName: 'Login realizado',
+      details: `Login bem-sucedido para ${mockUser.email}`,
+    });
 
     setIsLoading(false);
     const targetPath = redirectTo || '/';

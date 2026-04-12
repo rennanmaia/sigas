@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from '@tanstack/react-router'
 import { useAuthStore } from '@/stores/auth-store'
+import { useAuditStore } from '@/stores/audit-store'
 import { useTranslation } from 'react-i18next'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 
@@ -15,6 +16,17 @@ export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
   const { t } = useTranslation("common")
 
   const handleSignOut = () => {
+    const currentUser = auth.user
+    useAuditStore.getState().addEvent({
+      userId: currentUser?.accountNo || 'anonymous',
+      userName: currentUser?.email || 'Usuário não autenticado',
+      action: 'outros',
+      module: 'system',
+      entityId: currentUser?.accountNo || 'anonymous',
+      entityName: 'Logout realizado',
+      details: `Logout executado para ${currentUser?.email || 'usuário desconhecido'}`,
+    })
+
     auth.reset()
     // Preserve current location for redirect after sign-in
     const currentPath = location.href

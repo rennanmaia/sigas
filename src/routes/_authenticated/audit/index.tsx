@@ -5,7 +5,7 @@ import z from "zod";
 const auditSearchSchema = z
   .object({
     filter: z
-      .enum(["projects", "forms", "users", "profiles"])
+      .enum(["projects", "forms", "users", "profiles", "system"])
       .optional()
       .catch(undefined),
     mode: z.enum(["none", "month-year", "range"]).optional().catch("none"),
