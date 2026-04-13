@@ -1,43 +1,63 @@
 import { sleep } from '@/lib/utils'
 
 type MockUser = {
-  cpf: string
   email: string
   role: string[]
 }
+
+type AuthLocalUser = {
+  email: string
+  password: string
+  status?: string
+  role?: string[]
+}
+
 export type AuthenticateResult =
   | { status: 'ok'; user: Omit<MockUser & { password: string }, 'password'> }
-  | { status: 'error'; reason: 'cpf_not_found' | 'invalid_password' | 'account_blocked' }
+  | { status: 'error'; reason: 'email_not_found' | 'invalid_password' | 'account_blocked' }
 
-export async function authenticate(cpf: string, password: string): Promise<AuthenticateResult> {
+export async function authenticate(email: string, password: string): Promise<AuthenticateResult> {
   await sleep(500)
 
-  const normalizedCpf = cpf.replace(/\D/g, '')
-  const storedUsersRaw = localStorage.getItem('local-users')
-  if (storedUsersRaw) {
+  const normalizedEmail = email.trim().toLowerCase()
+  const registeredUsersRaw = localStorage.getItem('auth-users')
+
+  if (registeredUsersRaw) {
     try {
-      const users = JSON.parse(storedUsersRaw) as Array<{ cpf?: string; status?: string }>
-      const matched = users.find((user) => String(user.cpf ?? '').replace(/\D/g, '') === normalizedCpf)
-      if (matched && ['inactive', 'suspended'].includes(String(matched.status))) {
+      const users = JSON.parse(registeredUsersRaw) as AuthLocalUser[]
+      const found = users.find((user) => user.email.trim().toLowerCase() === normalizedEmail)
+
+      if (!found) {
+        return { status: 'error', reason: 'email_not_found' }
+      }
+
+      if (['inactive', 'suspended'].includes(String(found.status ?? 'active'))) {
         return { status: 'error', reason: 'account_blocked' }
+      }
+
+      if (found.password !== password) {
+        return { status: 'error', reason: 'invalid_password' }
+      }
+
+      return {
+        status: 'ok',
+        user: {
+          email: found.email,
+          role: found.role && found.role.length > 0 ? found.role : ['general_administrator'],
+        },
       }
     } catch {
       // Keep auth flow resilient if local users cache is malformed.
     }
   }
 
-//   const found = mockUsers.find((u) => u.cpf === cpf)
-//   if (!found) return { status: 'error', reason: 'cpf_not_found' }
-
-//   if (found.password !== password) return { status: 'error', reason: 'invalid_password' }
+  // Fallback para ambiente sem cadastro prévio.
   if (!password) return { status: 'error', reason: 'invalid_password' }
 
-//   const { password: _p, ...rest } = found
   return { 
     status: 'ok', 
     user: {
-        cpf,
-        email: 'user@sigas.com',
+        email: normalizedEmail || 'user@sigas.com',
         role: ['general_administrator'],
     }
   }

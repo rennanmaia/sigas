@@ -2,6 +2,8 @@ import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,6 +39,7 @@ export function SignUpForm({
   ...props
 }: React.HTMLAttributes<HTMLFormElement>) {
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -49,12 +52,40 @@ export function SignUpForm({
 
   function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    // eslint-disable-next-line no-console
-    console.log(data);
 
-    setTimeout(() => {
+    try {
+      const stored = localStorage.getItem('auth-users');
+      const users = stored
+        ? (JSON.parse(stored) as Array<{ email: string; password: string; status?: string; role?: string[] }>)
+        : [];
+
+      const normalizedEmail = data.email.trim().toLowerCase();
+      const alreadyExists = users.some((user) => user.email.trim().toLowerCase() === normalizedEmail);
+
+      if (alreadyExists) {
+        form.setError('email', { type: 'manual', message: 'Este email já está cadastrado.' });
+        toast.error('Este email já está cadastrado.');
+        setIsLoading(false);
+        return;
+      }
+
+      users.push({
+        email: normalizedEmail,
+        password: data.password,
+        status: 'active',
+        role: ['general_administrator'],
+      });
+
+      localStorage.setItem('auth-users', JSON.stringify(users));
+
+      toast.success('Cadastro finalizado com sucesso! Faça login para continuar.');
+      form.reset();
+      navigate({ to: '/sign-in' });
+    } catch {
+      toast.error('Não foi possível finalizar o cadastro. Tente novamente.');
+    } finally {
       setIsLoading(false);
-    }, 3000);
+    }
   }
 
   return (

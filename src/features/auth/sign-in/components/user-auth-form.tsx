@@ -1,12 +1,11 @@
-import { isValidCpf } from '@/lib/utils';
 import { authenticate } from '@/features/auth/services/auth';
-import { CpfField } from '@/features/auth/components/cpf-field';
+import { useLoginAttempts } from "@/hooks/use-login-attempts";
 import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Loader2, LogIn } from "lucide-react";
+import { Loader2, LogIn, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useAuthStore } from "@/stores/auth-store";
 import { useAuditStore } from "@/stores/audit-store";
@@ -21,12 +20,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { PasswordInput } from "@/components/password-input";
+import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
-  cpf: z
-    .string()
-    .min(11, { message: 'Por favor, insira seu CPF' })
-    .refine((v) => isValidCpf(v), { message: 'CPF inválido' }),
+  email: z.email({
+    error: (issue) => (issue.input === '' ? 'Por favor, insira seu email' : 'Email inválido'),
+  }),
   password: z
     .string()
     .min(1, 'Por favor insira sua senha')
@@ -45,11 +44,12 @@ export function UserAuthForm({
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { auth } = useAuthStore();
+  const loginAttempts = useLoginAttempts();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      cpf: "",
+      email: "",
       password: "",
     },
   });
@@ -59,50 +59,67 @@ export function UserAuthForm({
     setIsLoading(true);
     console.log('Submitting form with data:', data);
 
-    const res = await authenticate(data.cpf, data.password);
+    // Verifica se a conta está bloqueada
+    if (loginAttempts.isAccountBlocked(data.email)) {
+      setIsLoading(false);
+      const warningMsg = loginAttempts.getWarningMessage(data.email);
+      toast.error(warningMsg || 'Sua conta foi desativada. Entre em contato com o administrador.');
+      return;
+    }
+
+    const res = await authenticate(data.email, data.password);
     if (res.status === 'error') {
       setIsLoading(false);
-      if (res.reason === 'cpf_not_found') {
+      if (res.reason === 'email_not_found') {
         useAuditStore.getState().addEvent({
           userId: 'anonymous',
           userName: 'Usuário não autenticado',
           action: 'outros',
           module: 'system',
-          entityId: data.cpf,
-          entityName: 'Tentativa de login com CPF inexistente',
-          details: `Falha de login: CPF ${data.cpf} não encontrado.`,
+          entityId: data.email,
+          entityName: 'Tentativa de login com email inexistente',
+          details: `Falha de login: email ${data.email} não encontrado.`,
         });
-        form.setError('cpf', { type: 'manual', message: 'CPF não encontrado.' });
+        form.setError('email', { type: 'manual', message: 'Email não encontrado.' });
         try {
-          form.setFocus('cpf')
+          form.setFocus('email')
         } catch {}
-        toast.error('CPF não encontrado.')
+        toast.error('Email não encontrado.')
       } else if (res.reason === 'account_blocked') {
         useAuditStore.getState().addEvent({
           userId: 'anonymous',
           userName: 'Usuário não autenticado',
           action: 'outros',
           module: 'system',
-          entityId: data.cpf,
+          entityId: data.email,
           entityName: 'Conta bloqueada',
-          details: `Tentativa de login bloqueada para CPF ${data.cpf}`,
+          details: `Tentativa de login bloqueada para email ${data.email}`,
         });
         toast.error('Conta bloqueada. Entre em contato com o administrador.')
       } else if (res.reason === 'invalid_password') {
+        // Registra a tentativa falha
+        loginAttempts.recordFailedAttempt(data.email);
+        const warningMsg = loginAttempts.getWarningMessage(data.email);
+        
         useAuditStore.getState().addEvent({
           userId: 'anonymous',
           userName: 'Usuário não autenticado',
           action: 'outros',
           module: 'system',
-          entityId: data.cpf,
+          entityId: data.email,
           entityName: 'Tentativa de login com senha inválida',
-          details: `Falha de login por senha inválida para CPF ${data.cpf}.`,
+          details: `Falha de login por senha inválida para email ${data.email}.`,
         });
         form.setError('password', { type: 'manual', message: 'Senha incorreta.' });
         try {
           form.setFocus('password')
         } catch {}
         toast.error('Senha incorreta.')
+        
+        // Mostra aviso se atingiu o limite de tentativas
+        if (warningMsg) {
+          toast.error(warningMsg);
+        }
       }
       return;
     }
@@ -118,6 +135,9 @@ export function UserAuthForm({
 
     auth.setUser(mockUser);
     auth.setAccessToken('mock-access-token');
+
+    // Reset das tentativas falhas em caso de sucesso
+    loginAttempts.resetFailedAttempts(data.email);
 
     useAuditStore.getState().addEvent({
       userId: mockUser.accountNo,
@@ -135,6 +155,10 @@ export function UserAuthForm({
     toast.success(`Bem-vindo(a) de volta, ${user.email}!`);
   }
 
+  const currentEmail = form.watch('email');
+  const warningMsg = loginAttempts.getWarningMessage(currentEmail) || '';
+  const showWarning = loginAttempts.isWarningVisible(currentEmail);
+
   return (
     <Form {...form}>
       <form
@@ -142,7 +166,19 @@ export function UserAuthForm({
         className={cn("grid gap-3", className)}
         {...props}
       >
-        <CpfField control={form.control} name="cpf" />
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input type="email" placeholder="usuario@sigas.com" {...field} />
+              </FormControl>
+              <FormMessage className="mt-1" />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="password"
@@ -166,6 +202,13 @@ export function UserAuthForm({
           {isLoading ? <Loader2 className="animate-spin" /> : <LogIn />}
           Entrar
         </Button>
+
+        {showWarning && (
+          <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-md animate-in fade-in slide-in-from-top-2">
+            <AlertCircle className="h-4 w-4 text-red-600 shrink-0 mt-0.5" />
+            <p className="text-sm text-red-600 font-medium">{warningMsg}</p>
+          </div>
+        )}
       </form>
     </Form>
   );
