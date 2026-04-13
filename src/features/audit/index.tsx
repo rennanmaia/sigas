@@ -33,6 +33,11 @@ import {
   FileText,
   PenLine,
   Trash2,
+  LogIn,
+  LogOut,
+  KeyRound,
+  UserX,
+  UserCheck,
   Eye,
   ExternalLink,
   CalendarDays,
@@ -140,6 +145,74 @@ const normalizeAction = (action: string): AuditLog["action"] => {
     return action;
   }
   return "outros";
+};
+
+const getOtherActionKind = (log: AuditLog) => {
+  const raw = normalizeText(`${log.entityName} ${log.details ?? ""}`);
+
+  if (raw.includes("logout")) return "logout";
+  if (raw.includes("desbloque")) return "desbloqueio";
+  if (
+    raw.includes("suspens") ||
+    raw.includes("bloquead") ||
+    raw.includes("inactive")
+  ) {
+    return "suspensão";
+  }
+  if (raw.includes("senha")) return "senha";
+  if (raw.includes("login")) return "login";
+
+  return "outros";
+};
+
+const getActionDisplay = (log: AuditLog) => {
+  if (log.action !== "outros") {
+    return {
+      label: log.action,
+      icon: actionIcons[log.action],
+      className: actionColors[log.action],
+    };
+  }
+
+  const kind = getOtherActionKind(log);
+  switch (kind) {
+    case "login":
+      return {
+        label: "Login",
+        icon: <LogIn className="h-4 w-4" />,
+        className: "border-emerald-200 bg-emerald-50 text-emerald-700",
+      };
+    case "logout":
+      return {
+        label: "Logout",
+        icon: <LogOut className="h-4 w-4" />,
+        className: "border-amber-200 bg-amber-50 text-amber-700",
+      };
+    case "senha":
+      return {
+        label: "Senha",
+        icon: <KeyRound className="h-4 w-4" />,
+        className: "border-orange-200 bg-orange-50 text-orange-700",
+      };
+    case "suspensão":
+      return {
+        label: "Suspensão",
+        icon: <UserX className="h-4 w-4" />,
+        className: "border-rose-200 bg-rose-50 text-rose-700",
+      };
+    case "desbloqueio":
+      return {
+        label: "Desbloqueio",
+        icon: <UserCheck className="h-4 w-4" />,
+        className: "border-sky-200 bg-sky-50 text-sky-700",
+      };
+    default:
+      return {
+        label: "Outros",
+        icon: actionIcons.outros,
+        className: actionColors.outros,
+      };
+  }
 };
 
 const route = getRouteApi("/_authenticated/audit/");
@@ -290,15 +363,16 @@ function AuditContent() {
     {
       accessorKey: "action",
       header: "Ação",
-      cell: ({ row }) => (
-        <Badge
-          variant="outline"
-          className={`gap-1.5 ${actionColors[row.original.action]}`}
-        >
-          {actionIcons[row.original.action]}
-          {row.original.action}
-        </Badge>
-      ),
+      cell: ({ row }) => {
+        const display = getActionDisplay(row.original);
+
+        return (
+          <Badge variant="outline" className={`gap-1.5 ${display.className}`}>
+            {display.icon}
+            {display.label}
+          </Badge>
+        );
+      },
       filterFn: (row, id, value) => {
         return value.includes(row.getValue(id));
       },
@@ -416,6 +490,7 @@ function AuditContent() {
       const moduleValue = String(row.getValue("module") ?? "") as keyof typeof moduleLabels;
       const moduleLabel = moduleLabels[moduleValue] ?? "";
       const actionValue = String(row.getValue("action") ?? "");
+      const actionDisplayLabel = getActionDisplay(row.original).label;
       const userName = String(row.getValue("userName") ?? "");
       const userId = String(row.original.userId ?? "");
       const entityName = String(row.original.entityName ?? "");
@@ -429,6 +504,7 @@ function AuditContent() {
           moduleValue,
           moduleLabel,
           actionValue,
+          actionDisplayLabel,
           userName,
           userId,
           entityName,
