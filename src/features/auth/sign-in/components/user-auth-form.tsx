@@ -1,5 +1,5 @@
 import { authenticate } from '@/features/auth/services/auth';
-import { useLoginAttempts } from "@/hooks/use-login-attempts";
+import { useLoginAttempts } from '@/hooks/use-login-attempts';
 import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -23,9 +23,10 @@ import { PasswordInput } from "@/components/password-input";
 import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
-  email: z.email({
-    error: (issue) => (issue.input === '' ? 'Por favor, insira seu email' : 'Email inválido'),
-  }),
+  email: z
+    .string()
+    .min(1, { message: 'Por favor, insira seu e-mail' })
+    .email({ message: 'E-mail inválido' }),
   password: z
     .string()
     .min(1, 'Por favor insira sua senha')
@@ -59,11 +60,10 @@ export function UserAuthForm({
     setIsLoading(true);
     console.log('Submitting form with data:', data);
 
-    // Verifica se a conta está bloqueada
     if (loginAttempts.isAccountBlocked(data.email)) {
       setIsLoading(false);
-      const warningMsg = loginAttempts.getWarningMessage(data.email);
-      toast.error(warningMsg || 'Sua conta foi desativada. Entre em contato com o administrador.');
+      const warning = loginAttempts.getWarningMessage(data.email);
+      toast.error(warning || 'Sua conta foi desativada. Entre em contato com o administrador.');
       return;
     }
 
@@ -73,50 +73,48 @@ export function UserAuthForm({
       if (res.reason === 'email_not_found') {
         useAuditStore.getState().addEvent({
           userId: 'anonymous',
-          userName: 'Usuário não autenticado',
+          userName: 'Sistema',
           action: 'outros',
           module: 'system',
           entityId: data.email,
-          entityName: 'Tentativa de login com email inexistente',
-          details: `Falha de login: email ${data.email} não encontrado.`,
+          entityName: 'Tentativa de login com e-mail inexistente',
+          details: `Falha de login: e-mail ${data.email} não encontrado.`,
         });
-        form.setError('email', { type: 'manual', message: 'Email não encontrado.' });
+        form.setError('email', { type: 'manual', message: 'E-mail não encontrado.' });
         try {
           form.setFocus('email')
         } catch {}
-        toast.error('Email não encontrado.')
+        toast.error('E-mail não encontrado.')
       } else if (res.reason === 'account_blocked') {
         useAuditStore.getState().addEvent({
           userId: 'anonymous',
-          userName: 'Usuário não autenticado',
+          userName: 'Sistema',
           action: 'outros',
           module: 'system',
           entityId: data.email,
           entityName: 'Conta bloqueada',
-          details: `Tentativa de login bloqueada para email ${data.email}`,
+          details: `Tentativa de login bloqueada para e-mail ${data.email}`,
         });
         toast.error('Conta bloqueada. Entre em contato com o administrador.')
       } else if (res.reason === 'invalid_password') {
-        // Registra a tentativa falha
         loginAttempts.recordFailedAttempt(data.email);
         const warningMsg = loginAttempts.getWarningMessage(data.email);
-        
+
         useAuditStore.getState().addEvent({
           userId: 'anonymous',
-          userName: 'Usuário não autenticado',
+          userName: 'Sistema',
           action: 'outros',
           module: 'system',
           entityId: data.email,
           entityName: 'Tentativa de login com senha inválida',
-          details: `Falha de login por senha inválida para email ${data.email}.`,
+          details: `Falha de login por senha inválida para e-mail ${data.email}.`,
         });
         form.setError('password', { type: 'manual', message: 'Senha incorreta.' });
         try {
           form.setFocus('password')
         } catch {}
         toast.error('Senha incorreta.')
-        
-        // Mostra aviso se atingiu o limite de tentativas
+
         if (warningMsg) {
           toast.error(warningMsg);
         }
@@ -125,9 +123,38 @@ export function UserAuthForm({
     }
 
     const user = res.user;
+  const normalizedEmail = data.email.trim().toLowerCase();
+    const storedUsersRaw = localStorage.getItem('local-users');
+
+    let userId = 'ACC001';
+    let userName = user.email;
+
+    if (storedUsersRaw) {
+      try {
+        const users = JSON.parse(storedUsersRaw) as Array<{
+          id?: string;
+          email?: string;
+          firstName?: string;
+          lastName?: string;
+          username?: string;
+        }>;
+        const matched = users.find(
+          (item) => String(item.email ?? '').trim().toLowerCase() === normalizedEmail,
+        );
+
+        if (matched) {
+          userId = matched.id || userId;
+          const fullName = `${matched.firstName || ''} ${matched.lastName || ''}`.trim();
+          userName = fullName || matched.username || user.email;
+        }
+      } catch {
+        // Keep login resilient even if local user cache is malformed.
+      }
+    }
 
     const mockUser = {
-      accountNo: 'ACC001',
+      accountNo: userId,
+      name: userName,
       email: user.email,
       role: user.role,
       exp: Date.now() + 24 * 60 * 60 * 1000,
@@ -136,16 +163,15 @@ export function UserAuthForm({
     auth.setUser(mockUser);
     auth.setAccessToken('mock-access-token');
 
-    // Reset das tentativas falhas em caso de sucesso
     loginAttempts.resetFailedAttempts(data.email);
 
     useAuditStore.getState().addEvent({
       userId: mockUser.accountNo,
-      userName: mockUser.email,
+      userName: mockUser.name,
       action: 'outros',
       module: 'system',
-      entityId: mockUser.accountNo,
-      entityName: 'Login realizado',
+      entityId: mockUser.email,
+      entityName: mockUser.email,
       details: `Login bem-sucedido para ${mockUser.email}`,
     });
 
@@ -155,7 +181,7 @@ export function UserAuthForm({
     toast.success(`Bem-vindo(a) de volta, ${user.email}!`);
   }
 
-  const currentEmail = form.watch('email');
+  const currentEmail = String(form.watch('email') || '');
   const warningMsg = loginAttempts.getWarningMessage(currentEmail) || '';
   const showWarning = loginAttempts.isWarningVisible(currentEmail);
 

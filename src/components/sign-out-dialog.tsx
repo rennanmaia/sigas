@@ -19,11 +19,11 @@ export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
     const currentUser = auth.user
     useAuditStore.getState().addEvent({
       userId: currentUser?.accountNo || 'anonymous',
-      userName: currentUser?.email || 'Usuário não autenticado',
+      userName: currentUser?.name || currentUser?.email || 'Sistema',
       action: 'outros',
       module: 'system',
-      entityId: currentUser?.accountNo || 'anonymous',
-      entityName: 'Logout realizado',
+      entityId: currentUser?.email || 'email-desconhecido',
+      entityName: currentUser?.email || 'email-desconhecido',
       details: `Logout executado para ${currentUser?.email || 'usuário desconhecido'}`,
     })
 

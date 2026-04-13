@@ -56,6 +56,7 @@ import { Route as AuthenticatedProjectsLogsLogIdIndexRouteImport } from './route
 import { Route as AuthenticatedProfilesLogsLogIdIndexRouteImport } from './routes/_authenticated/profiles/logs/$logId/index'
 import { Route as AuthenticatedProfilesEditIdIndexRouteImport } from './routes/_authenticated/profiles/edit/$id/index'
 import { Route as AuthenticatedFormsLogsLogIdIndexRouteImport } from './routes/_authenticated/forms/logs/$logId/index'
+import { Route as AuthenticatedAuditLogsLogIdIndexRouteImport } from './routes/_authenticated/audit/logs/$logId/index'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
@@ -322,6 +323,12 @@ const AuthenticatedFormsLogsLogIdIndexRoute =
     path: '/forms/logs/$logId/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAuditLogsLogIdIndexRoute =
+  AuthenticatedAuditLogsLogIdIndexRouteImport.update({
+    id: '/audit/logs/$logId/',
+    path: '/audit/logs/$logId/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
@@ -365,6 +372,7 @@ export interface FileRoutesByFullPath {
   '/projects/logs': typeof AuthenticatedProjectsLogsIndexRoute
   '/users/$id': typeof AuthenticatedUsersIdIndexRoute
   '/users/logs': typeof AuthenticatedUsersLogsIndexRoute
+  '/audit/logs/$logId': typeof AuthenticatedAuditLogsLogIdIndexRoute
   '/forms/logs/$logId': typeof AuthenticatedFormsLogsLogIdIndexRoute
   '/profiles/edit/$id': typeof AuthenticatedProfilesEditIdIndexRoute
   '/profiles/logs/$logId': typeof AuthenticatedProfilesLogsLogIdIndexRoute
@@ -412,6 +420,7 @@ export interface FileRoutesByTo {
   '/projects/logs': typeof AuthenticatedProjectsLogsIndexRoute
   '/users/$id': typeof AuthenticatedUsersIdIndexRoute
   '/users/logs': typeof AuthenticatedUsersLogsIndexRoute
+  '/audit/logs/$logId': typeof AuthenticatedAuditLogsLogIdIndexRoute
   '/forms/logs/$logId': typeof AuthenticatedFormsLogsLogIdIndexRoute
   '/profiles/edit/$id': typeof AuthenticatedProfilesEditIdIndexRoute
   '/profiles/logs/$logId': typeof AuthenticatedProfilesLogsLogIdIndexRoute
@@ -462,6 +471,7 @@ export interface FileRoutesById {
   '/_authenticated/projects/logs/': typeof AuthenticatedProjectsLogsIndexRoute
   '/_authenticated/users/$id/': typeof AuthenticatedUsersIdIndexRoute
   '/_authenticated/users/logs/': typeof AuthenticatedUsersLogsIndexRoute
+  '/_authenticated/audit/logs/$logId/': typeof AuthenticatedAuditLogsLogIdIndexRoute
   '/_authenticated/forms/logs/$logId/': typeof AuthenticatedFormsLogsLogIdIndexRoute
   '/_authenticated/profiles/edit/$id/': typeof AuthenticatedProfilesEditIdIndexRoute
   '/_authenticated/profiles/logs/$logId/': typeof AuthenticatedProfilesLogsLogIdIndexRoute
@@ -512,6 +522,7 @@ export interface FileRouteTypes {
     | '/projects/logs'
     | '/users/$id'
     | '/users/logs'
+    | '/audit/logs/$logId'
     | '/forms/logs/$logId'
     | '/profiles/edit/$id'
     | '/profiles/logs/$logId'
@@ -559,6 +570,7 @@ export interface FileRouteTypes {
     | '/projects/logs'
     | '/users/$id'
     | '/users/logs'
+    | '/audit/logs/$logId'
     | '/forms/logs/$logId'
     | '/profiles/edit/$id'
     | '/profiles/logs/$logId'
@@ -608,6 +620,7 @@ export interface FileRouteTypes {
     | '/_authenticated/projects/logs/'
     | '/_authenticated/users/$id/'
     | '/_authenticated/users/logs/'
+    | '/_authenticated/audit/logs/$logId/'
     | '/_authenticated/forms/logs/$logId/'
     | '/_authenticated/profiles/edit/$id/'
     | '/_authenticated/profiles/logs/$logId/'
@@ -960,6 +973,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFormsLogsLogIdIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/audit/logs/$logId/': {
+      id: '/_authenticated/audit/logs/$logId/'
+      path: '/audit/logs/$logId'
+      fullPath: '/audit/logs/$logId'
+      preLoaderRoute: typeof AuthenticatedAuditLogsLogIdIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -1013,6 +1033,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProjectsLogsIndexRoute: typeof AuthenticatedProjectsLogsIndexRoute
   AuthenticatedUsersIdIndexRoute: typeof AuthenticatedUsersIdIndexRoute
   AuthenticatedUsersLogsIndexRoute: typeof AuthenticatedUsersLogsIndexRoute
+  AuthenticatedAuditLogsLogIdIndexRoute: typeof AuthenticatedAuditLogsLogIdIndexRoute
   AuthenticatedFormsLogsLogIdIndexRoute: typeof AuthenticatedFormsLogsLogIdIndexRoute
   AuthenticatedProfilesEditIdIndexRoute: typeof AuthenticatedProfilesEditIdIndexRoute
   AuthenticatedProfilesLogsLogIdIndexRoute: typeof AuthenticatedProfilesLogsLogIdIndexRoute
@@ -1052,6 +1073,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProjectsLogsIndexRoute: AuthenticatedProjectsLogsIndexRoute,
   AuthenticatedUsersIdIndexRoute: AuthenticatedUsersIdIndexRoute,
   AuthenticatedUsersLogsIndexRoute: AuthenticatedUsersLogsIndexRoute,
+  AuthenticatedAuditLogsLogIdIndexRoute: AuthenticatedAuditLogsLogIdIndexRoute,
   AuthenticatedFormsLogsLogIdIndexRoute: AuthenticatedFormsLogsLogIdIndexRoute,
   AuthenticatedProfilesEditIdIndexRoute: AuthenticatedProfilesEditIdIndexRoute,
   AuthenticatedProfilesLogsLogIdIndexRoute:
