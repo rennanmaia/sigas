@@ -1,6 +1,4 @@
-import { isValidCpf } from '@/lib/utils';
 import { authenticate } from '@/features/auth/services/auth';
-import { CpfField } from '@/features/auth/components/cpf-field';
 import { useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -21,12 +19,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { PasswordInput } from "@/components/password-input";
+import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
-  cpf: z
+  email: z
     .string()
-    .min(11, { message: 'Por favor, insira seu CPF' })
-    .refine((v) => isValidCpf(v), { message: 'CPF inválido' }),
+    .min(1, { message: 'Por favor, insira seu e-mail' })
+    .email({ message: 'E-mail inválido' }),
   password: z
     .string()
     .min(1, 'Por favor insira sua senha')
@@ -49,7 +48,7 @@ export function UserAuthForm({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      cpf: "",
+      email: "",
       password: "",
     },
   });
@@ -59,33 +58,33 @@ export function UserAuthForm({
     setIsLoading(true);
     console.log('Submitting form with data:', data);
 
-    const res = await authenticate(data.cpf, data.password);
+    const res = await authenticate(data.email, data.password);
     if (res.status === 'error') {
       setIsLoading(false);
-      if (res.reason === 'cpf_not_found') {
+      if (res.reason === 'email_not_found') {
         useAuditStore.getState().addEvent({
           userId: 'anonymous',
           userName: 'Sistema',
           action: 'outros',
           module: 'system',
-          entityId: data.cpf,
-          entityName: 'Tentativa de login com CPF inexistente',
-          details: `Falha de login: CPF ${data.cpf} não encontrado.`,
+          entityId: data.email,
+          entityName: 'Tentativa de login com e-mail inexistente',
+          details: `Falha de login: e-mail ${data.email} não encontrado.`,
         });
-        form.setError('cpf', { type: 'manual', message: 'CPF não encontrado.' });
+        form.setError('email', { type: 'manual', message: 'E-mail não encontrado.' });
         try {
-          form.setFocus('cpf')
+          form.setFocus('email')
         } catch {}
-        toast.error('CPF não encontrado.')
+        toast.error('E-mail não encontrado.')
       } else if (res.reason === 'account_blocked') {
         useAuditStore.getState().addEvent({
           userId: 'anonymous',
           userName: 'Sistema',
           action: 'outros',
           module: 'system',
-          entityId: data.cpf,
+          entityId: data.email,
           entityName: 'Conta bloqueada',
-          details: `Tentativa de login bloqueada para CPF ${data.cpf}`,
+          details: `Tentativa de login bloqueada para e-mail ${data.email}`,
         });
         toast.error('Conta bloqueada. Entre em contato com o administrador.')
       } else if (res.reason === 'invalid_password') {
@@ -94,9 +93,9 @@ export function UserAuthForm({
           userName: 'Sistema',
           action: 'outros',
           module: 'system',
-          entityId: data.cpf,
+          entityId: data.email,
           entityName: 'Tentativa de login com senha inválida',
-          details: `Falha de login por senha inválida para CPF ${data.cpf}.`,
+          details: `Falha de login por senha inválida para e-mail ${data.email}.`,
         });
         form.setError('password', { type: 'manual', message: 'Senha incorreta.' });
         try {
@@ -108,7 +107,7 @@ export function UserAuthForm({
     }
 
     const user = res.user;
-    const normalizedCpf = data.cpf.replace(/\D/g, '');
+  const normalizedEmail = data.email.trim().toLowerCase();
     const storedUsersRaw = localStorage.getItem('local-users');
 
     let userId = 'ACC001';
@@ -118,13 +117,13 @@ export function UserAuthForm({
       try {
         const users = JSON.parse(storedUsersRaw) as Array<{
           id?: string;
-          cpf?: string;
+          email?: string;
           firstName?: string;
           lastName?: string;
           username?: string;
         }>;
         const matched = users.find(
-          (item) => String(item.cpf ?? '').replace(/\D/g, '') === normalizedCpf,
+          (item) => String(item.email ?? '').trim().toLowerCase() === normalizedEmail,
         );
 
         if (matched) {
@@ -171,7 +170,19 @@ export function UserAuthForm({
         className={cn("grid gap-3", className)}
         {...props}
       >
-        <CpfField control={form.control} name="cpf" />
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input type="email" placeholder="usuario@sigas.com" {...field} />
+              </FormControl>
+              <FormMessage className="mt-1" />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="password"
