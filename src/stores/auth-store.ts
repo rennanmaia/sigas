@@ -5,6 +5,7 @@ const ACCESS_TOKEN = "thisisjustarandomstring";
 
 interface AuthUser {
   accountNo: string;
+  name: string;
   email: string;
   role: string[];
   exp: number;
@@ -28,6 +29,7 @@ export const useAuthStore = create<AuthState>()((set) => {
     auth: {
       user: {
         accountNo: "",
+        name: "Usuário Sistema",
         email: "sigas@gmail.com",
         role: ['general_administrator'],
         exp: 0,

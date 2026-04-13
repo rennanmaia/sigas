@@ -25,6 +25,7 @@ const auditSearchSchema = z
       .regex(/^\d{4}-\d{2}-\d{2}$/)
       .optional()
       .catch(undefined),
+    eventId: z.string().optional().catch(undefined),
   })
   .superRefine((value, ctx) => {
     if (value.from && value.to && value.from > value.to) {

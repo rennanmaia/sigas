@@ -65,7 +65,7 @@ export function UserAuthForm({
       if (res.reason === 'cpf_not_found') {
         useAuditStore.getState().addEvent({
           userId: 'anonymous',
-          userName: 'Usuário não autenticado',
+          userName: 'Sistema',
           action: 'outros',
           module: 'system',
           entityId: data.cpf,
@@ -80,7 +80,7 @@ export function UserAuthForm({
       } else if (res.reason === 'account_blocked') {
         useAuditStore.getState().addEvent({
           userId: 'anonymous',
-          userName: 'Usuário não autenticado',
+          userName: 'Sistema',
           action: 'outros',
           module: 'system',
           entityId: data.cpf,
@@ -91,7 +91,7 @@ export function UserAuthForm({
       } else if (res.reason === 'invalid_password') {
         useAuditStore.getState().addEvent({
           userId: 'anonymous',
-          userName: 'Usuário não autenticado',
+          userName: 'Sistema',
           action: 'outros',
           module: 'system',
           entityId: data.cpf,
@@ -108,9 +108,38 @@ export function UserAuthForm({
     }
 
     const user = res.user;
+    const normalizedCpf = data.cpf.replace(/\D/g, '');
+    const storedUsersRaw = localStorage.getItem('local-users');
+
+    let userId = 'ACC001';
+    let userName = user.email;
+
+    if (storedUsersRaw) {
+      try {
+        const users = JSON.parse(storedUsersRaw) as Array<{
+          id?: string;
+          cpf?: string;
+          firstName?: string;
+          lastName?: string;
+          username?: string;
+        }>;
+        const matched = users.find(
+          (item) => String(item.cpf ?? '').replace(/\D/g, '') === normalizedCpf,
+        );
+
+        if (matched) {
+          userId = matched.id || userId;
+          const fullName = `${matched.firstName || ''} ${matched.lastName || ''}`.trim();
+          userName = fullName || matched.username || user.email;
+        }
+      } catch {
+        // Keep login resilient even if local user cache is malformed.
+      }
+    }
 
     const mockUser = {
-      accountNo: 'ACC001',
+      accountNo: userId,
+      name: userName,
       email: user.email,
       role: user.role,
       exp: Date.now() + 24 * 60 * 60 * 1000,
@@ -121,11 +150,11 @@ export function UserAuthForm({
 
     useAuditStore.getState().addEvent({
       userId: mockUser.accountNo,
-      userName: mockUser.email,
+      userName: mockUser.name,
       action: 'outros',
       module: 'system',
-      entityId: mockUser.accountNo,
-      entityName: 'Login realizado',
+      entityId: mockUser.email,
+      entityName: mockUser.email,
       details: `Login bem-sucedido para ${mockUser.email}`,
     });
 

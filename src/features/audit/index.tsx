@@ -261,6 +261,7 @@ function AuditContent() {
     });
   }, [allLogs, fromDate, toDate]);
 
+
   const columns: ColumnDef<AuditLog>[] = [
     {
       accessorKey: "timestamp",
@@ -376,6 +377,10 @@ function AuditContent() {
             detailRoute = "/profiles/logs/$logId";
             detailParams = { logId: log.id };
             break;
+          case "system":
+            detailRoute = "/audit/logs/$logId";
+            detailParams = { logId: log.id };
+            break;
         }
 
         return (
@@ -476,6 +481,7 @@ function AuditContent() {
             </p>
           </div>
         </div>
+
         <div className="flex flex-1 flex-col gap-4">
           <DataTableToolbar
             table={table}
