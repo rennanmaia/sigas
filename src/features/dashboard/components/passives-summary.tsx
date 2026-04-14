@@ -7,46 +7,43 @@ export function PassivesSummary() {
   const { liabilities } = useLiabilitiesStore();
 
   const passivesData = useMemo(() => {
-    const concluidos = liabilities.filter(
-      (l) => l.statusPlano === "Concluído",
+    const ativos = liabilities.filter((l) => l.status === "Ativo").length;
+    const inativos = liabilities.filter((l) => l.status === "Inativo").length;
+    const indisponiveis = liabilities.filter(
+      (l) => l.status === "Indisponível",
     ).length;
-    const emAndamento = liabilities.filter(
-      (l) =>
-        l.statusPlano === "Em Execução" || l.statusPlano === "Em Planejamento",
-    ).length;
-    const criticos = liabilities.filter((l) => l.risco === "Crítico").length;
-    const atrasados = liabilities.filter(
-      (l) => l.statusPlano === "Atrasado",
+    const comEvidencias = liabilities.filter(
+      (l) => l.documentos.length > 0,
     ).length;
 
     return [
       {
-        title: "Passivos Concluídos",
-        value: concluidos,
-        description: "Com plano finalizado",
+        title: "Passivos Ativos",
+        value: ativos,
+        description: "Em monitoramento",
         icon: CheckCircle2,
         iconClass: "text-green-500",
       },
       {
-        title: "Em Andamento",
-        value: emAndamento,
-        description: "Com tratativa ativa",
+        title: "Inativos",
+        value: inativos,
+        description: "Não monitorados",
         icon: Clock,
         iconClass: "text-blue-500",
       },
       {
-        title: "Críticos",
-        value: criticos,
-        description: "Requer ação imediata",
+        title: "Indisponíveis",
+        value: indisponiveis,
+        description: "Requer atenção",
         icon: AlertTriangle,
         iconClass: "text-yellow-500",
       },
       {
-        title: "Atrasados",
-        value: atrasados,
-        description: "Prazo expirado",
+        title: "Com Evidências",
+        value: comEvidencias,
+        description: "Documentados",
         icon: XCircle,
-        iconClass: "text-red-500",
+        iconClass: "text-blue-500",
       },
     ];
   }, [liabilities]);
