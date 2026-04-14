@@ -1,4 +1,4 @@
-import type { Question } from "../components/form-builder/types/question";
+import type { Section } from "../components/form-builder/types/question";
 
 export type FormStatus = "Ativo" | "Rascunho" | "Arquivado" | "Concluído";
 
@@ -13,7 +13,7 @@ export interface FormItem {
   createdAt: string;
   owner: string;
   projectId: string;
-  questions: Question[];
+  sections: Section[];
   collectors?: [];
 }
 
@@ -30,36 +30,43 @@ export const forms: FormItem[] = [
     createdAt: "2025-10-10",
     owner: "Carlos Silva",
     projectId: "proj-001",
-    questions: [
+    sections: [
       {
-        id: "q1",
-        type: "text",
-        label: "Nome Científico da Espécie",
-        required: true,
-        validations: {
-          min: 3,
-          max: 50,
-        },
-      },
-      {
-        id: "q2",
-        type: "select",
-        label: "Estado do Animal",
-        required: true,
-        options: [
-          { id: "opt1", label: "Vivo (Saudável)" },
-          { id: "opt2", label: "Vivo (Ferido)" },
-          { id: "opt3", label: "Óbito" },
+        id: "sec-frm1-1",
+        title: "Identificação",
+        questions: [
+          {
+            id: "q1",
+            type: "text",
+            label: "Nome Científico da Espécie",
+            required: true,
+            validations: { min: 3, max: 50 },
+          },
+          {
+            id: "q2",
+            type: "select",
+            label: "Estado do Animal",
+            required: true,
+            options: [
+              { id: "opt1", label: "Vivo (Saudável)" },
+              { id: "opt2", label: "Vivo (Ferido)" },
+              { id: "opt3", label: "Óbito" },
+            ],
+          },
         ],
       },
       {
-        id: "q3",
-        type: "text",
-        label: "CPF do Observador",
-        required: false,
-        validations: {
-          mask: "cpf",
-        },
+        id: "sec-frm1-2",
+        title: "Observador",
+        questions: [
+          {
+            id: "q3",
+            type: "text",
+            label: "CPF do Observador",
+            required: false,
+            validations: { mask: "cpf" },
+          },
+        ],
       },
     ],
   },
@@ -75,25 +82,26 @@ export const forms: FormItem[] = [
     createdAt: "2025-11-02",
     owner: "Carlos Silva",
     projectId: "proj-001",
-    questions: [
+    sections: [
       {
-        id: "q4",
-        type: "number",
-        label: "Nível de Erosão (1-5)",
-        required: true,
-        validations: {
-          min: 1,
-          max: 5,
-        },
-      },
-      {
-        id: "q5",
-        type: "photo",
-        label: "Registro Fotográfico da Área",
-        required: true,
-        validations: {
-          max: 10,
-        },
+        id: "sec-frm2-1",
+        title: "Avaliação",
+        questions: [
+          {
+            id: "q4",
+            type: "number",
+            label: "Nível de Erosão (1-5)",
+            required: true,
+            validations: { min: 1, max: 5 },
+          },
+          {
+            id: "q5",
+            type: "photo",
+            label: "Registro Fotográfico da Área",
+            required: true,
+            validations: { max: 10 },
+          },
+        ],
       },
     ],
   },
@@ -109,99 +117,110 @@ export const forms: FormItem[] = [
     createdAt: "2026-01-15",
     owner: "Carlos Silva",
     projectId: "proj-002",
-    questions: [
+    sections: [
       {
-        id: "q-text",
-        type: "text",
-        label: "Nome Completo",
-        required: true,
-        validations: {
-          min: 3,
-          max: 100,
-          placeholder: "Digite seu nome completo",
-        },
-      },
-      {
-        id: "q-textarea",
-        type: "textarea",
-        label: "Observações Gerais",
-        required: false,
-        validations: {
-          max: 500,
-          placeholder: "Descreva suas observações...",
-        },
-      },
-      {
-        id: "q-number",
-        type: "number",
-        label: "Quantidade de Amostras",
-        required: true,
-        validations: {
-          min: 1,
-          max: 100,
-        },
-      },
-      {
-        id: "q-select",
-        type: "select",
-        label: "Região de Atuação",
-        required: true,
-        options: [
-          { id: "norte", label: "Norte" },
-          { id: "nordeste", label: "Nordeste" },
-          { id: "centro-oeste", label: "Centro-Oeste" },
-          { id: "sudeste", label: "Sudeste" },
-          { id: "sul", label: "Sul" },
+        id: "sec-frm3-1",
+        title: "Identificação",
+        questions: [
+          {
+            id: "q-text",
+            type: "text",
+            label: "Nome Completo",
+            required: true,
+            validations: {
+              min: 3,
+              max: 100,
+              placeholder: "Digite seu nome completo",
+            },
+          },
+          {
+            id: "q-textarea",
+            type: "textarea",
+            label: "Observações Gerais",
+            required: false,
+            validations: {
+              max: 500,
+              placeholder: "Descreva suas observações...",
+            },
+          },
+          {
+            id: "q-number",
+            type: "number",
+            label: "Quantidade de Amostras",
+            required: true,
+            validations: { min: 1, max: 100 },
+          },
+          {
+            id: "q-select",
+            type: "select",
+            label: "Região de Atuação",
+            required: true,
+            options: [
+              { id: "norte", label: "Norte" },
+              { id: "nordeste", label: "Nordeste" },
+              { id: "centro-oeste", label: "Centro-Oeste" },
+              { id: "sudeste", label: "Sudeste" },
+              { id: "sul", label: "Sul" },
+            ],
+          },
+          {
+            id: "q-checkbox",
+            type: "checkbox",
+            label: "Equipamentos Utilizados",
+            required: true,
+            options: [
+              { id: "gps", label: "GPS" },
+              { id: "camera", label: "Câmera" },
+              { id: "drone", label: "Drone" },
+              { id: "termometro", label: "Termômetro" },
+              { id: "medidor-ph", label: "Medidor de pH" },
+            ],
+          },
         ],
+        navigation: {
+          defaultNext: "sec-frm3-2",
+        },
       },
       {
-        id: "q-checkbox",
-        type: "checkbox",
-        label: "Equipamentos Utilizados",
-        required: true,
-        options: [
-          { id: "gps", label: "GPS" },
-          { id: "camera", label: "Câmera" },
-          { id: "drone", label: "Drone" },
-          { id: "termometro", label: "Termômetro" },
-          { id: "medidor-ph", label: "Medidor de pH" },
+        id: "sec-frm3-2",
+        title: "Coleta de Dados",
+        questions: [
+          {
+            id: "q-date",
+            type: "date",
+            label: "Data da Coleta",
+            required: true,
+          },
+          {
+            id: "q-photo",
+            type: "photo",
+            label: "Foto do Local",
+            required: false,
+            validations: { max: 5 },
+          },
+          {
+            id: "q-map",
+            type: "map",
+            label: "Localização da Coleta",
+            required: true,
+          },
+          {
+            id: "q-file",
+            type: "file",
+            label: "Documento de Autorização",
+            required: false,
+            validations: { max: 3 },
+          },
+          {
+            id: "q-audio",
+            type: "audio",
+            label: "Gravação de Áudio (Notas de Campo)",
+            required: false,
+          },
         ],
-      },
-      {
-        id: "q-date",
-        type: "date",
-        label: "Data da Coleta",
-        required: true,
-      },
-      {
-        id: "q-photo",
-        type: "photo",
-        label: "Foto do Local",
-        required: false,
-        validations: {
-          max: 5,
+        navigation: {
+          defaultNext: "end",
         },
-      },
-      {
-        id: "q-map",
-        type: "map",
-        label: "Localização da Coleta",
-        required: true,
-      },
-      {
-        id: "q-file",
-        type: "file",
-        label: "Documento de Autorização",
-        required: false,
-        validations: {
-          max: 3,
-        },
-      },
-      {
-        id: "q-audio",
-        type: "audio",
-        label: "Gravação de Áudio (Notas de Campo)",
-        required: false,
       },
     ],
   },
@@ -217,18 +236,24 @@ export const forms: FormItem[] = [
     createdAt: "2025-12-01",
     owner: "Carlos Silva",
     projectId: "proj-002",
-    questions: [
+    sections: [
       {
-        id: "q10",
-        type: "select",
-        label: "Nível de Satisfação",
-        required: true,
-        options: [
-          { id: "opt1", label: "Muito Satisfeito" },
-          { id: "opt2", label: "Satisfeito" },
-          { id: "opt3", label: "Neutro" },
-          { id: "opt4", label: "Insatisfeito" },
-          { id: "opt5", label: "Muito Insatisfeito" },
+        id: "sec-frm4-1",
+        title: "Satisfação",
+        questions: [
+          {
+            id: "q10",
+            type: "select",
+            label: "Nível de Satisfação",
+            required: true,
+            options: [
+              { id: "opt1", label: "Muito Satisfeito" },
+              { id: "opt2", label: "Satisfeito" },
+              { id: "opt3", label: "Neutro" },
+              { id: "opt4", label: "Insatisfeito" },
+              { id: "opt5", label: "Muito Insatisfeito" },
+            ],
+          },
         ],
       },
     ],
@@ -244,12 +269,18 @@ export const forms: FormItem[] = [
     createdAt: "2026-01-10",
     owner: "Carlos Silva",
     projectId: "",
-    questions: [
+    sections: [
       {
-        id: "q11",
-        type: "text",
-        label: "Nome da Espécie",
-        required: true,
+        id: "sec-frm5-1",
+        title: "Registro",
+        questions: [
+          {
+            id: "q11",
+            type: "text",
+            label: "Nome da Espécie",
+            required: true,
+          },
+        ],
       },
     ],
   },
@@ -264,13 +295,19 @@ export const forms: FormItem[] = [
     createdAt: "2026-01-25",
     owner: "Carlos Silva",
     projectId: "",
-    questions: [
+    sections: [
       {
-        id: "q12",
-        type: "number",
-        label: "pH",
-        required: true,
-        validations: { min: 0, max: 14 },
+        id: "sec-frm6-1",
+        title: "Medições",
+        questions: [
+          {
+            id: "q12",
+            type: "number",
+            label: "pH",
+            required: true,
+            validations: { min: 0, max: 14 },
+          },
+        ],
       },
     ],
   },
@@ -285,16 +322,22 @@ export const forms: FormItem[] = [
     createdAt: "2025-11-15",
     owner: "Carlos Silva",
     projectId: "",
-    questions: [
+    sections: [
       {
-        id: "q13",
-        type: "checkbox",
-        label: "EPIs Utilizados",
-        required: true,
-        options: [
-          { id: "capacete", label: "Capacete" },
-          { id: "luvas", label: "Luvas" },
-          { id: "botas", label: "Botas de Segurança" },
+        id: "sec-frm7-1",
+        title: "Equipamentos",
+        questions: [
+          {
+            id: "q13",
+            type: "checkbox",
+            label: "EPIs Utilizados",
+            required: true,
+            options: [
+              { id: "capacete", label: "Capacete" },
+              { id: "luvas", label: "Luvas" },
+              { id: "botas", label: "Botas de Segurança" },
+            ],
+          },
         ],
       },
     ],
