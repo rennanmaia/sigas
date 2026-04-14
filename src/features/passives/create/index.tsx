@@ -1,14 +1,14 @@
-import { useState } from 'react';
-import { Link, useNavigate } from '@tanstack/react-router';
-import { toast } from 'sonner';
-import { ArrowLeft } from 'lucide-react';
-import { PassiveWizard } from '../components/passive-wizard';
-import { LiabilityView } from '@/routes/_authenticated/passives';
-import type { Liability } from '../data/schema';
-import { Header } from '@/components/layout/header';
-import { Main } from '@/components/layout/main';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useLiabilitiesStore } from '@/stores/passives-store';
+import { useState } from "react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
+import { ArrowLeft } from "lucide-react";
+import { PassiveWizard } from "../components/passive-wizard";
+import { LiabilityView } from "@/routes/_authenticated/passives";
+import type { Liability } from "../data/schema";
+import { Header } from "@/components/layout/header";
+import { Main } from "@/components/layout/main";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useLiabilitiesStore } from "@/stores/passives-store";
 
 export function CreatePassive() {
   const navigate = useNavigate();
@@ -22,20 +22,24 @@ export function CreatePassive() {
       const passive: Liability = {
         ...values,
         id: `passivo-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        responsavel: "João da Silva", // TODO: substituir pelo usuário logado
         ultimaAtualizacao: new Date().toISOString(),
-        acoes: values.acoes || [],
         documentos: values.documentos || [],
+        customFields: values.customFields || [],
       };
 
       addLiability(passive);
 
-      toast.success('Passivo criado com sucesso!');
+      toast.success("Passivo criado com sucesso!");
 
       setTimeout(() => {
-        navigate({ to: '/passives', search: { tabs: LiabilityView.LIST, view: LiabilityView.OVERVIEW } });
+        navigate({
+          to: "/passives",
+          search: { tabs: LiabilityView.LIST, view: LiabilityView.OVERVIEW },
+        });
       }, 1500);
     } catch (error) {
-      toast.error('Erro ao criar passivo');
+      toast.error("Erro ao criar passivo");
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -47,7 +51,10 @@ export function CreatePassive() {
       <Header fixed>
         <div className="flex items-center gap-2">
           <Link
-            search={{tabs: LiabilityView.OVERVIEW, view: LiabilityView.OVERVIEW}}
+            search={{
+              tabs: LiabilityView.OVERVIEW,
+              view: LiabilityView.OVERVIEW,
+            }}
             to="/passives"
             className="inline-flex items-center gap-2 text-sm font-medium"
           >
