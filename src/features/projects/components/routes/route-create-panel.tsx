@@ -1,4 +1,15 @@
-import { ArrowLeft, MapPin, GripVertical, Edit2, X, Save } from "lucide-react";
+import { useState } from "react";
+import {
+  ArrowLeft,
+  MapPin,
+  ChevronUp,
+  ChevronDown,
+  X,
+  Save,
+  Search,
+  Users,
+  RefreshCcw,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -6,6 +17,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -14,9 +26,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { type RouteWaypoint } from "../../data/routes-mock";
+import type { Liability } from "@/features/passives/data/schema";
 import { type Project } from "../../data/projects-mock";
 import { type FormItem } from "@/features/forms/data/forms-mock";
+
+interface CollectorOption {
+  id: string;
+  label: string;
+}
 
 interface RouteCreatePanelProps {
   projectId?: string;
@@ -25,21 +42,20 @@ interface RouteCreatePanelProps {
   routeProjectId: string;
   routeName: string;
   routeDescription: string;
-  waypoints: RouteWaypoint[];
-  isAddingPoint: boolean;
+  availablePassives: Liability[];
+  selectedPassiveIds: string[];
+  availableCollectors: CollectorOption[];
+  selectedCollectorIds: string[];
   availableForms: FormItem[];
   selectedFormIds: string[];
-  editingWaypointIndex: number | null;
-  editingLabel: string;
   onProjectChange: (value: string) => void;
   onNameChange: (value: string) => void;
   onDescriptionChange: (value: string) => void;
-  onToggleAddPoint: () => void;
-  onRemoveWaypoint: (index: number) => void;
-  onStartEditWaypoint: (index: number) => void;
-  onEditLabelChange: (value: string) => void;
-  onSaveLabel: (index: number) => void;
-  onCancelEditWaypoint: () => void;
+  onTogglePassive: (id: string) => void;
+  onMovePassiveUp: (index: number) => void;
+  onMovePassiveDown: (index: number) => void;
+  onRemovePassive: (id: string) => void;
+  onToggleCollector: (id: string) => void;
   onToggleForm: (formId: string) => void;
   onSave: () => void;
   onBack: () => void;
@@ -52,28 +68,52 @@ export function RouteCreatePanel({
   routeProjectId,
   routeName,
   routeDescription,
-  waypoints,
-  isAddingPoint,
+  availablePassives,
+  selectedPassiveIds,
+  availableCollectors,
+  selectedCollectorIds,
   availableForms,
   selectedFormIds,
-  editingWaypointIndex,
-  editingLabel,
   onProjectChange,
   onNameChange,
   onDescriptionChange,
-  onToggleAddPoint,
-  onRemoveWaypoint,
-  onStartEditWaypoint,
-  onEditLabelChange,
-  onSaveLabel,
-  onCancelEditWaypoint,
+  onTogglePassive,
+  onMovePassiveUp,
+  onMovePassiveDown,
+  onRemovePassive,
+  onToggleCollector,
   onToggleForm,
   onSave,
   onBack,
 }: RouteCreatePanelProps) {
+  const MAX_PASSIVES = 20;
+  const [passiveSearch, setPassiveSearch] = useState("");
+  const [collectorSearch, setCollectorSearch] = useState("");
+  const [formSearch, setFormSearch] = useState("");
+
+  const filteredPassives = availablePassives.filter(
+    (p) =>
+      !passiveSearch ||
+      p.nome.toLowerCase().includes(passiveSearch.toLowerCase()) ||
+      p.codigo.toLowerCase().includes(passiveSearch.toLowerCase()),
+  );
+
+  const filteredCollectors = availableCollectors.filter(
+    (c) =>
+      !collectorSearch ||
+      c.label.toLowerCase().includes(collectorSearch.toLowerCase()),
+  );
+
+  const filteredForms = availableForms.filter(
+    (f) =>
+      !formSearch || f.title.toLowerCase().includes(formSearch.toLowerCase()),
+  );
+
+  function organizeMapPoints() {}
+
   return (
     <div className="flex flex-col flex-1 min-h-0 gap-3">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 shrink-0">
         <Button
           variant="ghost"
           size="icon"
@@ -88,8 +128,8 @@ export function RouteCreatePanel({
           </h3>
           <p className="text-xs text-muted-foreground">
             {editingRouteId
-              ? "Altere os dados ou os pontos no mapa."
-              : "Preencha os dados e marque os pontos no mapa."}
+              ? "Altere os dados da rota."
+              : "Selecione os passivos que compõem a rota."}
           </p>
         </div>
       </div>
@@ -97,7 +137,7 @@ export function RouteCreatePanel({
       <Separator className="shrink-0" />
 
       <ScrollArea className="flex-1 min-h-0 max-h-[50vh] lg:max-h-none">
-        <div className="space-y-4 pr-1">
+        <div className="space-y-5 pr-1">
           {!projectId && (
             <div className="space-y-1.5">
               <Label>Projeto *</Label>
@@ -140,149 +180,298 @@ export function RouteCreatePanel({
 
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <Label>
-                Pontos da Rota{" "}
+              <Label className="flex items-center gap-1.5">
+                <MapPin size={13} />
+                Pontos da Rota (Passivos){" "}
                 <span className="text-muted-foreground font-normal text-xs">
-                  (mín. 2)
+                  (mín. 2, máx. {MAX_PASSIVES})
                 </span>
               </Label>
-              <Button
-                variant={isAddingPoint ? "default" : "outline"}
-                size="sm"
-                className="h-7 gap-1.5 text-xs"
-                onClick={onToggleAddPoint}
-              >
-                <MapPin size={12} />
-                {isAddingPoint ? "Clique no mapa" : "Adicionar ponto"}
-              </Button>
+              {selectedPassiveIds.length > 0 && (
+                <Badge
+                  variant={
+                    selectedPassiveIds.length >= MAX_PASSIVES
+                      ? "destructive"
+                      : "secondary"
+                  }
+                  className="text-xs"
+                >
+                  {selectedPassiveIds.length}/{MAX_PASSIVES}
+                </Badge>
+              )}
             </div>
+            <Button
+              className="justify-end w-max self-end"
+              onClick={organizeMapPoints}
+            >
+              Organizar Rota <RefreshCcw />{" "}
+            </Button>
 
-            {isAddingPoint && (
-              <p className="text-xs bg-muted-foreground/10 rounded px-2 py-1.5 flex items-center gap-1.5">
-                <MapPin size={12} className="shrink-0" />
-                Clique em qualquer lugar do mapa para adicionar um ponto.
-              </p>
-            )}
-
-            {waypoints.length === 0 ? (
-              <p className="text-xs text-muted-foreground italic">
-                Nenhum ponto adicionado ainda.
-              </p>
-            ) : (
-              <div className="space-y-1">
-                {waypoints.map((wp, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center gap-2 rounded-md border px-2 py-1.5 bg-muted/30"
-                  >
-                    <GripVertical
-                      size={13}
-                      className="text-muted-foreground shrink-0"
-                    />
+            {selectedPassiveIds.length > 0 && (
+              <div className="space-y-1 rounded-md border p-2 bg-muted/20">
+                <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">
+                  Ordem da rota
+                </p>
+                {selectedPassiveIds.map((id, i) => {
+                  const p = availablePassives.find((a) => a.id === id);
+                  return (
                     <div
-                      className={cn(
-                        "flex size-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white",
-                        i === 0
-                          ? "bg-green-500"
-                          : i === waypoints.length - 1
-                            ? "bg-red-500"
-                            : "bg-blue-500",
-                      )}
+                      key={id}
+                      className="flex items-center gap-1.5 rounded border bg-background px-2 py-1"
                     >
-                      {i + 1}
-                    </div>
-
-                    {editingWaypointIndex === i ? (
-                      <div className="flex flex-1 items-center gap-1 min-w-0">
-                        <Input
-                          autoFocus
-                          className="h-6 text-xs flex-1"
-                          value={editingLabel}
-                          onChange={(e) => onEditLabelChange(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") onSaveLabel(i);
-                            if (e.key === "Escape") onCancelEditWaypoint();
-                          }}
-                        />
+                      <div
+                        className={cn(
+                          "flex size-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white",
+                          i === 0
+                            ? "bg-green-500"
+                            : i === selectedPassiveIds.length - 1
+                              ? "bg-red-500"
+                              : "bg-blue-500",
+                        )}
+                      >
+                        {i + 1}
+                      </div>
+                      <span className="flex-1 text-xs truncate">
+                        {p?.nome ?? id}
+                      </span>
+                      <div className="flex gap-0.5 shrink-0">
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-6 w-6 shrink-0"
-                          onClick={() => onSaveLabel(i)}
+                          className="h-5 w-5"
+                          disabled={i === 0}
+                          onClick={() => onMovePassiveUp(i)}
                         >
-                          <Save size={11} />
+                          <ChevronUp size={11} />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-5 w-5"
+                          disabled={i === selectedPassiveIds.length - 1}
+                          onClick={() => onMovePassiveDown(i)}
+                        >
+                          <ChevronDown size={11} />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-5 w-5 text-destructive hover:text-destructive hover:bg-destructive/10"
+                          onClick={() => onRemovePassive(id)}
+                        >
+                          <X size={11} />
                         </Button>
                       </div>
-                    ) : (
-                      <span
-                        className="flex-1 text-xs truncate cursor-pointer hover:text-primary"
-                        onClick={() => onStartEditWaypoint(i)}
-                      >
-                        {wp.label ||
-                          `${wp.lat.toFixed(4)}, ${wp.lng.toFixed(4)}`}
-                      </span>
-                    )}
-
-                    <div className="flex shrink-0 gap-0.5">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6"
-                        onClick={() => onStartEditWaypoint(i)}
-                      >
-                        <Edit2 size={11} />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6 text-destructive hover:text-destructive hover:bg-destructive/10"
-                        onClick={() => onRemoveWaypoint(i)}
-                      >
-                        <X size={11} />
-                      </Button>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
+
+            <div className="space-y-1.5">
+              <div className="relative">
+                <Search
+                  size={12}
+                  className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+                />
+                <Input
+                  className="pl-7 h-7 text-xs"
+                  placeholder="Buscar passivos..."
+                  value={passiveSearch}
+                  onChange={(e) => setPassiveSearch(e.target.value)}
+                />
+              </div>
+              {availablePassives.length === 0 ? (
+                <p className="text-xs text-muted-foreground italic text-center py-2">
+                  Nenhum passivo com coordenadas cadastradas.
+                </p>
+              ) : (
+                <div className="max-h-36 overflow-y-auto space-y-1 rounded-md border p-1">
+                  {filteredPassives.map((passive) => {
+                    const checked = selectedPassiveIds.includes(passive.id!);
+                    const atLimit =
+                      !checked && selectedPassiveIds.length >= MAX_PASSIVES;
+                    return (
+                      <div
+                        key={passive.id}
+                        className={cn(
+                          "flex items-center gap-2 rounded px-2 py-1.5 transition-colors",
+                          atLimit
+                            ? "opacity-40 cursor-not-allowed"
+                            : "cursor-pointer hover:bg-muted/40",
+                          checked && "bg-primary/5",
+                        )}
+                        onClick={() => !atLimit && onTogglePassive(passive.id!)}
+                      >
+                        <Checkbox
+                          checked={checked}
+                          disabled={atLimit}
+                          onCheckedChange={() =>
+                            !atLimit && onTogglePassive(passive.id!)
+                          }
+                          onClick={(e) => e.stopPropagation()}
+                          className="shrink-0"
+                        />
+                        <div className="min-w-0 flex-1">
+                          <p className="text-xs font-medium truncate">
+                            {passive.nome}
+                          </p>
+                          <p className="text-[10px] text-muted-foreground">
+                            {passive.codigo}
+                          </p>
+                        </div>
+                        <MapPin
+                          size={10}
+                          className="shrink-0 text-muted-foreground"
+                        />
+                      </div>
+                    );
+                  })}
+                  {filteredPassives.length === 0 && (
+                    <p className="text-xs text-muted-foreground italic text-center py-2">
+                      Nenhum passivo encontrado.
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
 
-          {availableForms.length > 0 && (
+          <div className="space-y-2">
+            <Label className="flex items-center gap-1.5">
+              <Users size={13} />
+              Coletores Vinculados
+            </Label>
+            {selectedCollectorIds.length > 0 && (
+              <div className="flex flex-wrap gap-1">
+                {selectedCollectorIds.map((id) => {
+                  const c = availableCollectors.find((a) => a.id === id);
+                  return (
+                    <Badge
+                      key={id}
+                      variant="secondary"
+                      className="gap-1 pr-1 text-xs"
+                    >
+                      {c?.label ?? id}
+                      <button
+                        type="button"
+                        onClick={() => onToggleCollector(id)}
+                        className="rounded-sm opacity-70 hover:opacity-100"
+                      >
+                        <X size={10} />
+                      </button>
+                    </Badge>
+                  );
+                })}
+              </div>
+            )}
+            <div className="space-y-1.5">
+              <div className="relative">
+                <Search
+                  size={12}
+                  className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+                />
+                <Input
+                  className="pl-7 h-7 text-xs"
+                  placeholder="Buscar coletores..."
+                  value={collectorSearch}
+                  onChange={(e) => setCollectorSearch(e.target.value)}
+                />
+              </div>
+              {availableCollectors.length === 0 ? (
+                <p className="text-xs text-muted-foreground italic text-center py-2">
+                  Nenhum usuário com cargo de coletor disponível.
+                </p>
+              ) : (
+                <div className="max-h-32 overflow-y-auto space-y-1 rounded-md border p-1">
+                  {filteredCollectors.map((collector) => {
+                    const checked = selectedCollectorIds.includes(collector.id);
+                    return (
+                      <div
+                        key={collector.id}
+                        className={cn(
+                          "flex items-center gap-2 rounded px-2 py-1.5 cursor-pointer transition-colors hover:bg-muted/40",
+                          checked && "bg-primary/5",
+                        )}
+                        onClick={() => onToggleCollector(collector.id)}
+                      >
+                        <Checkbox
+                          checked={checked}
+                          onCheckedChange={() =>
+                            onToggleCollector(collector.id)
+                          }
+                          onClick={(e) => e.stopPropagation()}
+                          className="shrink-0"
+                        />
+                        <span className="text-xs">{collector.label}</span>
+                      </div>
+                    );
+                  })}
+                  {filteredCollectors.length === 0 && (
+                    <p className="text-xs text-muted-foreground italic text-center py-2">
+                      Nenhum coletor encontrado.
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {(availableForms.length > 0 || routeProjectId) && (
             <div className="space-y-2">
               <Label>Formulários Associados</Label>
               <p className="text-xs text-muted-foreground">
-                O formulário só poderá ser respondido nesta rota.
+                Formulários que os coletores deverão preencher nesta rota.
               </p>
-              <div className="space-y-1.5">
-                {availableForms.map((form) => (
-                  <div
-                    key={form.id}
-                    className="flex items-center gap-2.5 rounded-md border px-3 py-2 cursor-pointer transition-colors hover:bg-muted/40"
-                    onClick={() => onToggleForm(form.id)}
-                  >
-                    <Checkbox
-                      checked={selectedFormIds.includes(form.id)}
-                      onCheckedChange={() => onToggleForm(form.id)}
-                      onClick={(e) => e.stopPropagation()}
+              {availableForms.length > 0 ? (
+                <>
+                  <div className="relative">
+                    <Search
+                      size={12}
+                      className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground"
                     />
-                    <div className="min-w-0">
-                      <p className="text-xs font-medium truncate">
-                        {form.title}
-                      </p>
-                      <p className="text-[10px] text-muted-foreground">
-                        {form.questionsCount} questão(ões)
-                      </p>
-                    </div>
+                    <Input
+                      className="pl-7 h-7 text-xs"
+                      placeholder="Buscar formulários..."
+                      value={formSearch}
+                      onChange={(e) => setFormSearch(e.target.value)}
+                    />
                   </div>
-                ))}
-              </div>
+                  <div className="max-h-40 overflow-y-auto space-y-1.5 rounded-md border p-1">
+                    {filteredForms.map((form) => (
+                      <div
+                        key={form.id}
+                        className="flex items-center gap-2.5 rounded-md px-2 py-1.5 cursor-pointer transition-colors hover:bg-muted/40"
+                        onClick={() => onToggleForm(form.id)}
+                      >
+                        <Checkbox
+                          checked={selectedFormIds.includes(form.id)}
+                          onCheckedChange={() => onToggleForm(form.id)}
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                        <div className="min-w-0">
+                          <p className="text-xs font-medium truncate">
+                            {form.title}
+                          </p>
+                          <p className="text-[10px] text-muted-foreground">
+                            {form.questionsCount} questão(ões)
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                    {filteredForms.length === 0 && (
+                      <p className="text-xs text-muted-foreground italic text-center py-2">
+                        Nenhum formulário encontrado.
+                      </p>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <p className="text-xs text-muted-foreground italic">
+                  Nenhum formulário vinculado ao projeto selecionado.
+                </p>
+              )}
             </div>
-          )}
-
-          {routeProjectId && availableForms.length === 0 && (
-            <p className="text-xs text-muted-foreground italic">
-              Nenhum formulário vinculado ao projeto selecionado.
-            </p>
           )}
         </div>
       </ScrollArea>
@@ -290,7 +479,9 @@ export function RouteCreatePanel({
       <Button
         className="w-full gap-2 shrink-0"
         onClick={onSave}
-        disabled={!routeName.trim() || waypoints.length < 2 || !routeProjectId}
+        disabled={
+          !routeName.trim() || selectedPassiveIds.length < 2 || !routeProjectId
+        }
       >
         <Save size={15} />
         {editingRouteId ? "Salvar Alterações" : "Salvar Rota"}
