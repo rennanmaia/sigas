@@ -42,7 +42,9 @@ export default function ViewFormLog({ logId }: { logId?: string }) {
       <Main className="flex items-center justify-center h-full">
         <div className="text-center">
           <h2 className="text-lg font-semibold">Log não encontrado!</h2>
-          <p className="text-muted-foreground">O registro solicitado pode ter sido excluído.</p>
+          <p className="text-muted-foreground">
+            O registro solicitado pode ter sido excluído.
+          </p>
         </div>
       </Main>
     );
@@ -71,9 +73,13 @@ export default function ViewFormLog({ logId }: { logId?: string }) {
               </Badge>
             </div>
             <p className="text-muted-foreground">
-              {format(new Date(log.timestamp), "dd 'de' MMMM 'de' yyyy 'às' HH:mm:ss", {
-                locale: ptBR,
-              })}
+              {format(
+                new Date(log.timestamp),
+                "dd 'de' MMMM 'de' yyyy 'às' HH:mm:ss",
+                {
+                  locale: ptBR,
+                },
+              )}
             </p>
           </div>
         </div>
@@ -91,29 +97,52 @@ export default function ViewFormLog({ logId }: { logId?: string }) {
               {affectedForm ? (
                 <>
                   <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground font-medium">Título do Formulário</p>
-                    <p className="text-base font-semibold">{affectedForm.title}</p>
+                    <p className="text-sm text-muted-foreground font-medium">
+                      Título do Formulário
+                    </p>
+                    <p className="text-base font-semibold">
+                      {affectedForm.title}
+                    </p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground font-medium">ID do Formulário</p>
+                    <p className="text-sm text-muted-foreground font-medium">
+                      ID do Formulário
+                    </p>
                     <p className="text-sm font-mono">{affectedForm.id}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground font-medium">Status</p>
+                    <p className="text-sm text-muted-foreground font-medium">
+                      Status
+                    </p>
                     <Badge variant="secondary">{affectedForm.status}</Badge>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground font-medium">Descrição</p>
-                    <p className="text-sm">{affectedForm.description || "Não informada"}</p>
+                    <p className="text-sm text-muted-foreground font-medium">
+                      Descrição
+                    </p>
+                    <p className="text-sm">
+                      {affectedForm.description || "Não informada"}
+                    </p>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1">
-                      <p className="text-sm text-muted-foreground font-medium">Quantidade de Perguntas</p>
-                      <p className="text-lg font-bold">{affectedForm.questions?.length || 0}</p>
+                      <p className="text-sm text-muted-foreground font-medium">
+                        Quantidade de Perguntas
+                      </p>
+                      <p className="text-lg font-bold">
+                        {affectedForm.sections?.reduce(
+                          (acc, s) => acc + s.questions.length,
+                          0,
+                        ) || 0}
+                      </p>
                     </div>
                     <div className="space-y-1">
-                      <p className="text-sm text-muted-foreground font-medium">Respostas Recebidas</p>
-                      <p className="text-lg font-bold">{affectedForm.responses || 0}</p>
+                      <p className="text-sm text-muted-foreground font-medium">
+                        Respostas Recebidas
+                      </p>
+                      <p className="text-lg font-bold">
+                        {affectedForm.responses || 0}
+                      </p>
                     </div>
                   </div>
                 </>
@@ -134,22 +163,30 @@ export default function ViewFormLog({ logId }: { logId?: string }) {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-1">
-                <p className="text-sm text-muted-foreground font-medium">Tipo de Ação</p>
+                <p className="text-sm text-muted-foreground font-medium">
+                  Tipo de Ação
+                </p>
                 <Badge className={`gap-1.5 ${actionColors[log.action]}`}>
                   {actionIcons[log.action]}
                   {log.action}
                 </Badge>
               </div>
               <div className="flex items-center justify-between py-2 border-b border-dashed">
-                <span className="text-sm text-muted-foreground">Executado por:</span>
+                <span className="text-sm text-muted-foreground">
+                  Executado por:
+                </span>
                 <span className="text-sm font-medium">{log.userName}</span>
               </div>
               <div className="flex items-center justify-between py-2 border-b border-dashed">
-                <span className="text-sm text-muted-foreground">ID do Executor:</span>
+                <span className="text-sm text-muted-foreground">
+                  ID do Executor:
+                </span>
                 <span className="text-xs font-mono">{log.userId}</span>
               </div>
               <div className="flex items-center justify-between py-2">
-                <span className="text-sm text-muted-foreground">Data/Hora:</span>
+                <span className="text-sm text-muted-foreground">
+                  Data/Hora:
+                </span>
                 <span className="text-sm font-medium">
                   {format(new Date(log.timestamp), "dd/MM/yyyy HH:mm", {
                     locale: ptBR,
