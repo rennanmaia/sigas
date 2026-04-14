@@ -10,7 +10,10 @@ import { FormsProvider, useForms } from "../components/forms-provider";
 import { useFormsStore } from "@/stores/forms-store";
 import { FormBuilder } from "../components/form-builder";
 import { MobilePreviewDialog } from "../components/mobile-preview-dialog";
-import type { Question } from "../components/form-builder/types/question";
+import type {
+  Section,
+  Question,
+} from "../components/form-builder/types/question";
 import { projects as projectsMock } from "@/features/projects/data/projects-mock";
 
 interface FormCreateProps {
@@ -21,7 +24,8 @@ interface FormBuilderRef {
   getFormData: () => {
     title: string;
     description: string;
-    questions: Question[];
+    sections: Section[];
+    collectors?: string[];
   };
 }
 
@@ -35,34 +39,42 @@ function CreateFormContent({ initialId }: FormCreateProps) {
   const [formData, setFormData] = useState<{
     title: string;
     description: string;
-    questions: Question[];
+    sections: Section[];
   }>({
     title: "Formulário sem título",
     description: "",
-    questions: [],
+    sections: [],
   });
   const formBuilderRef = useRef<FormBuilderRef>(null);
 
   const handleSave = (data: any) => {
     if (initialId) {
       // Para edição, comparar perguntas antigas e novas
-      const existingForm = forms.find(f => f.id === initialId);
-      const oldQuestions = existingForm?.questions || [];
-      const newQuestions = data.questions || [];
+      const existingForm = forms.find((f) => f.id === initialId);
+      const oldQuestions: Question[] =
+        existingForm?.sections?.flatMap((s) => s.questions) || [];
+      const newQuestions: Question[] =
+        data.sections?.flatMap((s: Section) => s.questions) || [];
 
-      const addedQuestions = newQuestions.filter((q: Question) =>
-        !oldQuestions.some((oldQ: Question) => oldQ.id === q.id)
+      const addedQuestions = newQuestions.filter(
+        (q) => !oldQuestions.some((oldQ) => oldQ.id === q.id),
       );
-      const removedQuestions = oldQuestions.filter((oldQ: Question) =>
-        !newQuestions.some((q: Question) => q.id === oldQ.id)
+      const removedQuestions = oldQuestions.filter(
+        (oldQ) => !newQuestions.some((q) => q.id === oldQ.id),
       );
 
-      const detailsLines: string[] = [`Formulário "${data.title || ""}" foi atualizado.`];
+      const detailsLines: string[] = [
+        `Formulário "${data.title || ""}" foi atualizado.`,
+      ];
       if (addedQuestions.length) {
-        detailsLines.push(`Perguntas adicionadas: ${addedQuestions.map((q: Question) => `"${q.label}"`).join(", ")}`);
+        detailsLines.push(
+          `Perguntas adicionadas: ${addedQuestions.map((q) => `"${q.label}"`).join(", ")}`,
+        );
       }
       if (removedQuestions.length) {
-        detailsLines.push(`Perguntas removidas: ${removedQuestions.map((q: Question) => `"${q.label}"`).join(", ")}`);
+        detailsLines.push(
+          `Perguntas removidas: ${removedQuestions.map((q) => `"${q.label}"`).join(", ")}`,
+        );
       }
 
       updateForm(initialId, data);
@@ -72,8 +84,11 @@ function CreateFormContent({ initialId }: FormCreateProps) {
     } else {
       // Para criação
       const newFormId = addForm(data);
-      const questionTitles = data.questions?.map((q: Question) => `"${q.label}"`).join(", ") || "";
-      const details = `Formulário criado com ${data.questions?.length || 0} pergunta(s): ${questionTitles}`;
+      const allNewQuestions: Question[] =
+        data.sections?.flatMap((s: Section) => s.questions) || [];
+      const questionTitles =
+        allNewQuestions.map((q) => `"${q.label}"`).join(", ") || "";
+      const details = `Formulário criado com ${allNewQuestions.length} pergunta(s) em ${data.sections?.length || 0} seção(es): ${questionTitles}`;
       addLog("criação", newFormId, data.title || "", details);
       toast.success("Formulário criado com sucesso!");
 
@@ -178,7 +193,7 @@ function CreateFormContent({ initialId }: FormCreateProps) {
         onOpenChange={setPreviewOpen}
         title={formData.title}
         description={formData.description}
-        questions={formData.questions}
+        sections={formData.sections}
       />
     </div>
   );
