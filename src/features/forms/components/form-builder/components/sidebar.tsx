@@ -14,11 +14,13 @@ import {
   X,
   Check,
   Users,
+  Layers,
 } from "lucide-react";
 import type { QuestionType } from "../types/question";
 
 interface SidebarProps {
   onAdd: (type: QuestionType) => void;
+  onAddSection?: () => void;
   onViewResponses?: () => void;
   responsesCount?: number;
   formId?: string;
@@ -48,6 +50,7 @@ const MENU_ITEMS = [
 
 export function Sidebar({
   onAdd,
+  onAddSection,
   onViewResponses,
   responsesCount = 0,
   formId,
@@ -113,6 +116,20 @@ export function Sidebar({
 
           {!showingResponses && (
             <>
+              {onAddSection && (
+                <div className="mb-4">
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start h-10 px-3 text-sm gap-2 border-violet-300 hover:border-violet-400"
+                    onClick={onAddSection}
+                  >
+                    <Layers size={16} />
+                    <span className="font-semibold">Nova Seção</span>
+                  </Button>
+                  <Separator className="mt-4" />
+                </div>
+              )}
+
               <div className="mb-6">
                 <h3 className="font-semibold text-[10px] uppercase tracking-wider text-muted-foreground mb-4 hidden md:block">
                   Tipos de Questão
