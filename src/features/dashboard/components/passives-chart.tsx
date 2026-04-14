@@ -34,7 +34,7 @@ export function PassivesChart() {
 
     for (const l of liabilities) {
       const month = new Date(l.dataIdentificacao).getMonth();
-      if (l.tipo === "Ambiental") {
+      if (l.status === "Ativo") {
         ambiental[month]++;
       } else {
         social[month]++;
