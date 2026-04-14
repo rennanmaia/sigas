@@ -35,3 +35,24 @@ export interface Question {
   logic?: LogicRule;
   validations?: QuestionValidations;
 }
+
+export interface SectionNavigationRule {
+  id: string;
+  dependsOnQuestionId: string;
+  condition: "is" | "is_not";
+  value: string;
+  goToSectionId: string;
+}
+
+export interface SectionNavigation {
+  defaultNext: "next" | "end" | string;
+  rules?: SectionNavigationRule[];
+}
+
+export interface Section {
+  id: string;
+  title: string;
+  description?: string;
+  questions: Question[];
+  navigation?: SectionNavigation;
+}
