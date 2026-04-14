@@ -14,9 +14,12 @@ import {
 import { columns } from "./passive-columns";
 import { useState } from "react";
 import { useLiabilitiesStore } from "@/stores/passives-store";
-import { RISKS, STATUS_PLANS } from "../data/passives";
-import { DataTablePagination, DataTableToolbar } from "@/components/data-table";
-import { DataTableBulkActions } from "@/components/data-table-bulk-actions";
+import { PASSIVE_STATUSES } from "../data/passives";
+import {
+  DataTablePagination,
+  DataTableToolbar,
+  DataTableBulkActions,
+} from "@/components/data-table";
 import {
   Table,
   TableBody,
@@ -27,12 +30,22 @@ import {
 } from "@/components/ui/table";
 import { LiabilitiesMultiDeleteDialog } from "./passives-multi-delete-dialog";
 import { LiabilityDialogs } from "./passives-dialog";
+import { AssignToRouteDialog } from "./assign-to-route-dialog";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Trash2, Route as RouteIcon } from "lucide-react";
+import type { Liability } from "../data/schema";
 
 export function PassivesTable() {
   const { liabilities } = useLiabilitiesStore();
   const [rowSelection, setRowSelection] = useState({});
   const [showMultiDelete, setShowMultiDelete] = useState(false);
+  const [showAssignRoute, setShowAssignRoute] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
@@ -69,14 +82,9 @@ export function PassivesTable() {
         searchKey="nome"
         filters={[
           {
-            columnId: "risco",
-            options: RISKS.map((r) => ({ label: r, value: r })),
-            title: "Risco",
-          },
-          {
-            columnId: "statusPlano",
-            options: STATUS_PLANS.map((s) => ({ label: s, value: s })),
-            title: "Status do Plano",
+            columnId: "status",
+            options: PASSIVE_STATUSES.map((s) => ({ label: s, value: s })),
+            title: "Status",
           },
           {
             columnId: "diasAbertoCategoria",
@@ -147,18 +155,51 @@ export function PassivesTable() {
         </Table>
       </div>
       <DataTablePagination table={table} className="mt-auto" />
-      <DataTableBulkActions
-        table={table}
-        entityName="passivo"
-        content="Deletar passivos selecionados"
-        message="Deletar passivos selecionados"
-        title="Deletar passivos selecionados"
-        setShowDeleteConfirm={setShowMultiDelete}
-      />
+      <DataTableBulkActions table={table} entityName="passivo">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="outline"
+              size="icon"
+              className="size-8"
+              onClick={() => setShowAssignRoute(true)}
+              aria-label="Adicionar à rota"
+            >
+              <RouteIcon size={15} />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Adicionar à Rota</p>
+          </TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="destructive"
+              size="icon"
+              onClick={() => setShowMultiDelete(true)}
+              className="size-8"
+              aria-label="Deletar selecionados"
+            >
+              <Trash2 size={15} />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Deletar passivos selecionados</p>
+          </TooltipContent>
+        </Tooltip>
+      </DataTableBulkActions>
       <LiabilitiesMultiDeleteDialog
         open={showMultiDelete}
         onOpenChange={setShowMultiDelete}
         table={table}
+      />
+      <AssignToRouteDialog
+        open={showAssignRoute}
+        onOpenChange={setShowAssignRoute}
+        selectedPassives={
+          table.getSelectedRowModel().rows.map((r) => r.original) as Liability[]
+        }
       />
       <LiabilityDialogs />
     </div>
