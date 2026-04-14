@@ -27,6 +27,10 @@ const projectAdminsForMock = activeProjectAdmins.slice(0, 5);
 
 const teamMembersForMock = activeTeamMembers.slice(0, 15);
 
+const activeCollectorsForMock = users
+  .filter((u) => u.status === "active" && u.roles.includes("collector"))
+  .slice(0, 10);
+
 export const projectTeam = [
   ...projectAdminsForMock.map((u) => ({
     id: u.id,
@@ -103,6 +107,9 @@ export let projects: Project[] = [
       teamMembersForMock[0]?.id,
       teamMembersForMock[1]?.id,
       teamMembersForMock[2]?.id,
+      activeCollectorsForMock[0]?.id,
+      activeCollectorsForMock[1]?.id,
+      activeCollectorsForMock[2]?.id,
     ].filter(Boolean) as string[],
   },
   {
@@ -132,6 +139,8 @@ export let projects: Project[] = [
       teamMembersForMock[3]?.id,
       teamMembersForMock[4]?.id,
       teamMembersForMock[5]?.id,
+      activeCollectorsForMock[3]?.id,
+      activeCollectorsForMock[4]?.id,
     ].filter(Boolean) as string[],
   },
   {
@@ -159,6 +168,8 @@ export let projects: Project[] = [
     members: [
       projectAdminsForMock[2]?.id,
       teamMembersForMock[6]?.id,
+      activeCollectorsForMock[5]?.id,
+      activeCollectorsForMock[6]?.id,
       teamMembersForMock[7]?.id,
     ].filter(Boolean) as string[],
   },
@@ -187,6 +198,8 @@ export let projects: Project[] = [
     members: [
       projectAdminsForMock[3]?.id,
       teamMembersForMock[8]?.id,
+      activeCollectorsForMock[7]?.id,
+      activeCollectorsForMock[8]?.id,
       teamMembersForMock[9]?.id,
     ].filter(Boolean) as string[],
   },
@@ -215,6 +228,7 @@ export let projects: Project[] = [
     members: [
       projectAdminsForMock[4]?.id,
       teamMembersForMock[10]?.id,
+      activeCollectorsForMock[9]?.id,
       teamMembersForMock[11]?.id,
     ].filter(Boolean) as string[],
   },
