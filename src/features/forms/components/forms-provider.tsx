@@ -49,7 +49,11 @@ export function FormsProvider({ children }: { children: ReactNode }) {
       ...newFormData,
       id: newFormId,
       responses: 0,
-      questionsCount: newFormData.questions.length,
+      questionsCount:
+        newFormData.sections?.reduce(
+          (acc: number, s: any) => acc + s.questions.length,
+          0,
+        ) ?? 0,
       lastUpdated: new Date().toISOString().split("T")[0],
       createdAt: new Date().toISOString().split("T")[0],
     };
@@ -71,7 +75,12 @@ export function FormsProvider({ children }: { children: ReactNode }) {
           ? {
               ...f,
               ...updatedData,
-              questionsCount: updatedData.questions?.length ?? f.questionsCount,
+              questionsCount: updatedData.sections
+                ? updatedData.sections.reduce(
+                    (acc: number, s: any) => acc + s.questions.length,
+                    0,
+                  )
+                : f.questionsCount,
               lastUpdated: new Date().toISOString().split("T")[0],
             }
           : f,
@@ -145,10 +154,12 @@ export function FormsProvider({ children }: { children: ReactNode }) {
       owner: "Carlos Silva", // should be the logged user who has permissions todo it
       projectId: "",
       responses: 0,
-      questionsCount: formToDuplicate.questions.length,
+      questionsCount: formToDuplicate.sections.reduce(
+        (acc, s) => acc + s.questions.length,
+        0,
+      ),
       createdAt: new Date().toISOString().split("T")[0],
       lastUpdated: new Date().toISOString().split("T")[0],
-      questions: formToDuplicate.questions,
     };
 
     const updated = [duplicatedForm, ...forms];
