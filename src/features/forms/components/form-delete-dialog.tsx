@@ -1,5 +1,8 @@
 import { toast } from "sonner";
-import { DeleteDialog, type DeleteDialogConfig } from "@/components/delete-dialog";
+import {
+  DeleteDialog,
+  type DeleteDialogConfig,
+} from "@/components/delete-dialog";
 import { useForms } from "./forms-provider";
 import { useFormsStore } from "@/stores/forms-store";
 import type { FormItem } from "../data/forms-mock";
@@ -27,18 +30,21 @@ export function FormDeleteDialog({
     namespace: "forms",
     confirmStrategy: "typed",
     onDelete: (id) => {
-      const questionCount = currentRow.questions?.length || 0;
+      const questionCount =
+        currentRow.sections?.reduce((acc, s) => acc + s.questions.length, 0) ||
+        0;
       deleteForms([id as string]);
-      addLog("exclusão", id as string, currentRow.title, `Formulário "${currentRow.title}" foi excluído (contendo ${questionCount} pergunta(s)).`);
+      addLog(
+        "exclusão",
+        id as string,
+        currentRow.title,
+        `Formulário "${currentRow.title}" foi excluído (contendo ${questionCount} pergunta(s)).`,
+      );
       toast.success(`Formulário "${currentRow.title}" deletado com sucesso`);
     },
   };
 
   return (
-    <DeleteDialog
-      open={open}
-      onOpenChange={onOpenChange}
-      config={config}
-    />
+    <DeleteDialog open={open} onOpenChange={onOpenChange} config={config} />
   );
 }
