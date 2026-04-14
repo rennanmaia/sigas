@@ -93,8 +93,13 @@ export function RouteListPanel({
                   <div className="min-w-0">
                     <p className="text-sm font-medium truncate">{route.name}</p>
                     <p className="text-xs text-muted-foreground">
-                      {route.waypoints.length} ponto
-                      {route.waypoints.length !== 1 ? "s" : ""}
+                      {route.passiveIds?.length ?? route.waypoints?.length ?? 0}{" "}
+                      ponto
+                      {(route.passiveIds?.length ??
+                        route.waypoints?.length ??
+                        0) !== 1
+                        ? "s"
+                        : ""}
                     </p>
                   </div>
                 </div>
