@@ -46,8 +46,8 @@ export function Dashboard() {
     (f) => f.status === "Rascunho" || f.status === "Ativo",
   ).length;
   const totalPassives = liabilities.length;
-  const criticalPassives = liabilities.filter(
-    (l) => l.risco === "Crítico",
+  const indisponiveisPassives = liabilities.filter(
+    (l) => l.status === "Indisponível",
   ).length;
   const totalUsers = users.length;
   const activeUsers = users.filter((u) => u.status === "active").length;
@@ -154,7 +154,7 @@ export function Dashboard() {
                   <div className="text-2xl font-bold">{totalPassives}</div>
                   <p className="text-muted-foreground flex items-center gap-1 text-xs">
                     <AlertTriangle className="h-3 w-3 text-yellow-500" />
-                    {criticalPassives} passivo(s) com risco crítico
+                    {indisponiveisPassives} passivo(s) indisponíveis
                   </p>
                 </CardContent>
               </Card>
