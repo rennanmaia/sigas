@@ -13,14 +13,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Camera, MapPin, Mic, UploadCloud, Plus, X } from "lucide-react";
-import type { Question } from "./form-builder/types/question";
+import type { Question, Section } from "./form-builder/types/question";
 
 interface MobilePreviewDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: string;
   description: string;
-  questions: Question[];
+  sections: Section[];
 }
 
 export function MobilePreviewDialog({
@@ -28,8 +28,9 @@ export function MobilePreviewDialog({
   onOpenChange,
   title,
   description,
-  questions,
+  sections,
 }: MobilePreviewDialogProps) {
+  const allQuestions = sections.flatMap((s) => s.questions);
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[440px] h-[90vh] p-0 gap-0 overflow-hidden flex flex-col">
@@ -50,15 +51,39 @@ export function MobilePreviewDialog({
                     </h1>
                     {description && <p className="text-sm ">{description}</p>}
                   </div>
-
-                  {questions.length > 0 ? (
-                    <div className="space-y-6">
-                      {questions.map((question, index) => (
-                        <QuestionPreviewMobile
-                          key={question.id}
-                          question={question}
-                          index={index}
-                        />
+                  {allQuestions.length > 0 ? (
+                    <div className="space-y-4">
+                      {sections.map((section, sectionIndex) => (
+                        <div key={section.id} className="space-y-4">
+                          {sections.length > 1 && (
+                            <div className="flex items-center gap-2 pt-2">
+                              <span className="text-[10px] font-bold text-muted-foreground border border-border/50 rounded px-1.5 py-0.5 bg-muted">
+                                {sectionIndex + 1}
+                              </span>
+                              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                                {section.title}
+                              </p>
+                            </div>
+                          )}
+                          <div className="space-y-6">
+                            {section.questions.map((question, qIndex) => {
+                              const globalIndex =
+                                sections
+                                  .slice(0, sectionIndex)
+                                  .reduce(
+                                    (acc, s) => acc + s.questions.length,
+                                    0,
+                                  ) + qIndex;
+                              return (
+                                <QuestionPreviewMobile
+                                  key={question.id}
+                                  question={question}
+                                  index={globalIndex}
+                                />
+                              );
+                            })}
+                          </div>
+                        </div>
                       ))}
 
                       <Button className="w-full" size="lg">
