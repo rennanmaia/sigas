@@ -6,12 +6,12 @@ import {
 } from "@/components/delete-dialog";
 import { useForms } from "./forms-provider";
 import { useFormsStore } from "@/stores/forms-store";
-import type { Question } from "./form-builder/types/question";
+import type { Section } from "./form-builder/types/question";
 
 type DeletedFormData = {
   id: string;
   title: string;
-  questions: Question[];
+  sections: Section[];
 };
 
 type FormsMultiDeleteDialogProps<TData> = {
@@ -44,7 +44,10 @@ export function FormsMultiDeleteDialog<TData>({
         );
         const title = row ? (row.original as DeletedFormData).title : "";
         const questionCount = row
-          ? (row.original as DeletedFormData).questions.length
+          ? (row.original as DeletedFormData).sections.reduce(
+              (acc, s) => acc + s.questions.length,
+              0,
+            )
           : 0;
         addLog(
           "exclusão",
