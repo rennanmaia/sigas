@@ -63,7 +63,11 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
               onClick={() => {
                 const newId = duplicateForm(row.original.id);
                 if (newId !== undefined) {
-                  const questionCount = row.original.questions?.length || 0;
+                  const questionCount =
+                    row.original.sections?.reduce(
+                      (acc: number, s: any) => acc + s.questions.length,
+                      0,
+                    ) || 0;
                   addLog(
                     "criação",
                     newId,
@@ -101,7 +105,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
         onOpenChange={setShowPreview}
         title={row.original.title}
         description={row.original.description || ""}
-        questions={row.original.questions || []}
+        sections={row.original.sections || []}
       />
     </>
   );
