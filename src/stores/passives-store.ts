@@ -1,6 +1,10 @@
-import { create } from 'zustand';
-import type { Liability, RecentEvent, LiabilityStats } from '@/features/passives/data/schema';
-import { liabilities } from '@/features/passives/data/passives';
+import { create } from "zustand";
+import type {
+  Liability,
+  RecentEvent,
+  LiabilityStats,
+} from "@/features/passives/data/schema";
+import { liabilities } from "@/features/passives/data/passives";
 
 interface LiabilitiesStore {
   liabilities: Liability[];
@@ -26,10 +30,10 @@ export const useLiabilitiesStore = create<LiabilitiesStore>((set, get) => ({
         eventos: [
           {
             id: `evento-${Date.now()}`,
-            tipo: 'status' as const,
+            tipo: "status" as const,
             descricao: `Novo passivo criado: ${liability.nome}`,
             data: new Date().toISOString(),
-            usuario: 'Sistema',
+            usuario: "Sistema",
           },
           ...state.eventos,
         ],
@@ -39,7 +43,7 @@ export const useLiabilitiesStore = create<LiabilitiesStore>((set, get) => ({
   updateLiability: (id, updates) =>
     set((state) => ({
       liabilities: state.liabilities.map((p) =>
-        p.id === id ? { ...p, ...updates } : p
+        p.id === id ? { ...p, ...updates } : p,
       ),
     })),
 
@@ -56,39 +60,25 @@ export const useLiabilitiesStore = create<LiabilitiesStore>((set, get) => ({
   getStats: () => {
     const { liabilities } = get();
     const total = liabilities.length;
-    const criticos = liabilities.filter(p => p.risco === 'Crítico').length;
-    const semPlano = liabilities.filter(p => p.statusPlano === 'Não Definido').length;
-    const comPlano = liabilities.filter(p => p.statusPlano !== 'Não Definido').length;
-    const atrasados = liabilities.filter(p => p.statusPlano === 'Atrasado').length;
-    const ambiental = liabilities.filter(p => p.tipo === 'Ambiental').length;
-    const comResponsavel = liabilities.filter(p => p.responsavel && p.responsavel.trim() !== '').length;
-    const comEvidencias = liabilities.filter(p => p.documentos.length > 0).length;
+    const ativos = liabilities.filter((p) => p.status === "Ativo").length;
+    const inativos = liabilities.filter((p) => p.status === "Inativo").length;
+    const indisponiveis = liabilities.filter(
+      (p) => p.status === "Indisponível",
+    ).length;
+    const comResponsavel = liabilities.filter(
+      (p) => p.responsavel && p.responsavel.trim() !== "",
+    ).length;
+    const comEvidencias = liabilities.filter(
+      (p) => p.documentos.length > 0,
+    ).length;
 
-    const altos = liabilities.filter(p => p.risco === 'Alto').length;
-    const medios = liabilities.filter(p => p.risco === 'Médio').length;
-    const baixos = liabilities.filter(p => p.risco === 'Baixo').length;
-
-    const pctCritico = (criticos / total) * 100;
-    const pctAlto = (altos / total) * 100;
-    const pctMedio = (medios / total) * 100;
-    const pctBaixo = (baixos / total) * 100;
-  
-    return { 
-      total, 
-      criticos, 
-      semPlano, 
-      atrasados, 
-      ambiental, 
-      social: total - ambiental, 
-      comPlano,
+    return {
+      total,
+      ativos,
+      inativos,
+      indisponiveis,
       comEvidencias,
       comResponsavel,
-      distribuicao: {
-        critico: pctCritico,
-        alto: pctAlto,
-        medio: pctMedio,
-        baixo: pctBaixo
-      }
-    }
-  }
+    };
+  },
 }));
