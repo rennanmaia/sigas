@@ -26,6 +26,7 @@ export type I18nResource = {
               profile: string;
               account: string;
               notifications: string;
+              security: string;
             };
           };
           help: {

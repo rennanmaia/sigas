@@ -28,6 +28,7 @@ export const ptBR: I18nResource = {
               account: "Conta",
               notifications: "Notificações",
               profile: "Perfil",
+              security: "Segurança",
             },
           },
           help: {

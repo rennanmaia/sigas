@@ -28,6 +28,7 @@ export const enUS: I18nResource = {
               account: "Account",
               notifications: "Notifications",
               profile: "Profile",
+              security: "Security",
             },
           },
           help: {
