@@ -3,6 +3,7 @@ import { RouteMapPanel } from "./routes/route-map-panel";
 import { RouteListPanel } from "./routes/route-list-panel";
 import { RouteCreatePanel } from "./routes/route-create-panel";
 import { RouteDetailPanel } from "./routes/route-detail-panel";
+import { RouteExecutionPanel } from "./routes/route-execution-panel";
 
 interface RoutesTabProps {
   projectId?: string;
@@ -35,27 +36,20 @@ export function RoutesTab({ projectId }: RoutesTabProps) {
             routeProjectId={state.routeProjectId}
             routeName={state.routeName}
             routeDescription={state.routeDescription}
-            waypoints={state.waypoints}
-            isAddingPoint={state.isAddingPoint}
+            availablePassives={state.availablePassives}
+            selectedPassiveIds={state.selectedPassiveIds}
+            availableCollectors={state.availableCollectors}
+            selectedCollectorIds={state.selectedCollectorIds}
             availableForms={state.availableForms}
             selectedFormIds={state.selectedFormIds}
-            editingWaypointIndex={state.editingWaypointIndex}
-            editingLabel={state.editingLabel}
             onProjectChange={state.setRouteProjectId}
             onNameChange={state.setRouteName}
             onDescriptionChange={state.setRouteDescription}
-            onToggleAddPoint={() => state.setIsAddingPoint((v) => !v)}
-            onRemoveWaypoint={state.handleRemoveWaypoint}
-            onStartEditWaypoint={(i) => {
-              state.setEditingWaypointIndex(i);
-              state.setEditingLabel(state.waypoints[i]?.label ?? "");
-            }}
-            onEditLabelChange={state.setEditingLabel}
-            onSaveLabel={state.handleSaveLabel}
-            onCancelEditWaypoint={() => {
-              state.setEditingWaypointIndex(null);
-              state.setEditingLabel("");
-            }}
+            onTogglePassive={state.togglePassive}
+            onMovePassiveUp={state.movePassiveUp}
+            onMovePassiveDown={state.movePassiveDown}
+            onRemovePassive={state.removePassiveFromRoute}
+            onToggleCollector={state.toggleCollector}
             onToggleForm={state.toggleForm}
             onSave={state.handleSaveRoute}
             onBack={state.goBackFromCreate}
@@ -67,11 +61,23 @@ export function RoutesTab({ projectId }: RoutesTabProps) {
             projectId={projectId}
             selectedRoute={state.selectedRoute}
             allProjects={state.allProjects}
+            availableCollectors={state.availableCollectors}
             onEdit={state.startEdit}
             onDelete={state.handleDeleteRoute}
             onBack={state.goToList}
+            onViewExecution={state.goToExecution}
           />
         )}
+
+        {state.viewMode === "execution" &&
+          state.selectedRoute &&
+          state.selectedExecution && (
+            <RouteExecutionPanel
+              selectedRoute={state.selectedRoute}
+              execution={state.selectedExecution}
+              onBack={state.goBackFromExecution}
+            />
+          )}
       </div>
 
       <RouteMapPanel
@@ -79,8 +85,6 @@ export function RoutesTab({ projectId }: RoutesTabProps) {
         visibleRoutes={state.visibleRoutes}
         mapWaypoints={state.mapWaypoints}
         mapCenter={state.mapCenter}
-        isAddingPoint={state.isAddingPoint}
-        onAddWaypoint={state.handleAddWaypoint}
       />
     </div>
   );
