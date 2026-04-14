@@ -97,8 +97,10 @@ export function UserAuthForm({
         });
         toast.error('Conta bloqueada. Entre em contato com o administrador.')
       } else if (res.reason === 'invalid_password') {
+        const wasBlockedBefore = loginAttempts.isAccountBlocked(data.email);
         loginAttempts.recordFailedAttempt(data.email);
         const warningMsg = loginAttempts.getWarningMessage(data.email);
+        const isBlockedNow = loginAttempts.isAccountBlocked(data.email);
 
         useAuditStore.getState().addEvent({
           userId: 'anonymous',
@@ -117,6 +119,18 @@ export function UserAuthForm({
 
         if (warningMsg) {
           toast.error(warningMsg);
+        }
+
+        if (!wasBlockedBefore && isBlockedNow) {
+          useAuditStore.getState().addEvent({
+            userId: 'anonymous',
+            userName: 'Sistema',
+            action: 'outros',
+            module: 'system',
+            entityId: data.email,
+            entityName: 'Bloqueio de conta',
+            details: `Bloqueio automático por excesso de tentativas para o e-mail ${data.email}.`,
+          });
         }
       }
       return;

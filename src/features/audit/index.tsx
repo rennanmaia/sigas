@@ -152,6 +152,9 @@ const getOtherActionKind = (log: AuditLog) => {
 
   if (raw.includes("logout")) return "logout";
   if (raw.includes("desbloque")) return "desbloqueio";
+  if (raw.includes("bloqueio") || raw.includes("conta bloqueada")) {
+    return "bloqueio";
+  }
   if (
     raw.includes("suspens") ||
     raw.includes("bloquead") ||
@@ -193,6 +196,12 @@ const getActionDisplay = (log: AuditLog) => {
         label: "Senha",
         icon: <KeyRound className="h-4 w-4" />,
         className: "border-orange-200 bg-orange-50 text-orange-700",
+      };
+    case "bloqueio":
+      return {
+        label: "Bloqueio",
+        icon: <UserX className="h-4 w-4" />,
+        className: "border-rose-200 bg-rose-50 text-rose-700",
       };
     case "suspensão":
       return {

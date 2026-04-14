@@ -1,8 +1,23 @@
 import { sleep } from '@/lib/utils'
 
+const MOCK_EMAILS = [
+  'admin@gmail.com',
+  'admin1@gmail.com',
+  'admin2@gmail.com',
+  'admin3@gmail.com',
+]
+const MOCK_PASSWORD = 'admin123'
+
 type MockUser = {
   email: string
   role: string[]
+}
+
+type AuthLocalUser = {
+  email: string
+  password: string
+  status?: string
+  role?: string[]
 }
 
 export type AuthenticateResult =
@@ -13,48 +28,42 @@ export async function authenticate(email: string, password: string): Promise<Aut
   await sleep(500)
 
   const normalizedEmail = String(email).trim().toLowerCase()
-  const storedUsersRaw = localStorage.getItem('local-users')
+  const storedUsersRaw = localStorage.getItem('auth-users')
 
   if (storedUsersRaw) {
     try {
-      const users = JSON.parse(storedUsersRaw) as Array<{
-        email?: string
-        status?: string
-        role?: string[]
-      }>
+      const users = JSON.parse(storedUsersRaw) as AuthLocalUser[]
       const matched = users.find(
         (user) => String(user.email ?? '').trim().toLowerCase() === normalizedEmail,
       )
 
-      if (!matched) {
-        return { status: 'error', reason: 'email_not_found' }
-      }
+      if (matched) {
+        if (['inactive', 'suspended'].includes(String(matched.status))) {
+          return { status: 'error', reason: 'account_blocked' }
+        }
 
-      if (['inactive', 'suspended'].includes(String(matched.status))) {
-        return { status: 'error', reason: 'account_blocked' }
-      }
+        if (matched.password !== password) {
+          return { status: 'error', reason: 'invalid_password' }
+        }
 
-      if (!password) {
-        return { status: 'error', reason: 'invalid_password' }
-      }
-
-      return {
-        status: 'ok',
-        user: {
-          email: matched.email ?? normalizedEmail,
-          role: matched.role ?? ['general_administrator'],
-        },
+        return {
+          status: 'ok',
+          user: {
+            email: matched.email ?? normalizedEmail,
+            role: matched.role ?? ['general_administrator'],
+          },
+        }
       }
     } catch {
       // Keep auth flow resilient if local users cache is malformed.
     }
   }
 
-  if (normalizedEmail !== 'user@sigas.com') {
+  if (!MOCK_EMAILS.includes(normalizedEmail)) {
     return { status: 'error', reason: 'email_not_found' }
   }
 
-  if (!password) return { status: 'error', reason: 'invalid_password' }
+  if (password !== MOCK_PASSWORD) return { status: 'error', reason: 'invalid_password' }
 
   return { 
     status: 'ok', 
