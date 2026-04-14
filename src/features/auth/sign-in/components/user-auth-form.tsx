@@ -70,22 +70,7 @@ export function UserAuthForm({
     const res = await authenticate(data.email, data.password);
     if (res.status === 'error') {
       setIsLoading(false);
-      if (res.reason === 'email_not_found') {
-        useAuditStore.getState().addEvent({
-          userId: 'anonymous',
-          userName: 'Sistema',
-          action: 'outros',
-          module: 'system',
-          entityId: data.email,
-          entityName: 'Tentativa de login com e-mail inexistente',
-          details: `Falha de login: e-mail ${data.email} não encontrado.`,
-        });
-        form.setError('email', { type: 'manual', message: 'E-mail não encontrado.' });
-        try {
-          form.setFocus('email')
-        } catch {}
-        toast.error('E-mail não encontrado.')
-      } else if (res.reason === 'account_blocked') {
+      if (res.reason === 'account_blocked') {
         useAuditStore.getState().addEvent({
           userId: 'anonymous',
           userName: 'Sistema',
@@ -96,7 +81,8 @@ export function UserAuthForm({
           details: `Tentativa de login bloqueada para e-mail ${data.email}`,
         });
         toast.error('Conta bloqueada. Entre em contato com o administrador.')
-      } else if (res.reason === 'invalid_password') {
+      } else {
+        const genericInvalidCredentialsMessage = 'Senha ou email incorreto'
         const wasBlockedBefore = loginAttempts.isAccountBlocked(data.email);
         loginAttempts.recordFailedAttempt(data.email);
         const warningMsg = loginAttempts.getWarningMessage(data.email);
@@ -108,14 +94,14 @@ export function UserAuthForm({
           action: 'outros',
           module: 'system',
           entityId: data.email,
-          entityName: 'Tentativa de login com senha inválida',
-          details: `Falha de login por senha inválida para e-mail ${data.email}.`,
+          entityName: 'Tentativa de login inválida',
+          details: `Falha de login para e-mail ${data.email}: ${res.reason}.`,
         });
-        form.setError('password', { type: 'manual', message: 'Senha incorreta.' });
+        form.setError('password', { type: 'manual', message: genericInvalidCredentialsMessage });
         try {
           form.setFocus('password')
         } catch {}
-        toast.error('Senha incorreta.')
+        toast.error(genericInvalidCredentialsMessage)
 
         if (warningMsg) {
           toast.error(warningMsg);

@@ -1,6 +1,6 @@
 import { Outlet } from "@tanstack/react-router";
 import { useTranslation } from "react-i18next";
-import { Bell, Wrench, UserCog } from "lucide-react";
+import { Bell, Shield, Wrench, UserCog } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { ConfigDrawer } from "@/components/config-drawer";
 import { Header } from "@/components/layout/header";
@@ -29,6 +29,11 @@ export function Settings() {
       title: t("navigation.notifications"),
       href: "/settings/notifications",
       icon: <Bell size={18} />,
+    },
+    {
+      title: t("navigation.security"),
+      href: "/settings/security",
+      icon: <Shield size={18} />,
     },
   ];
   return (

@@ -556,6 +556,7 @@ export const ptBR: I18nResource = {
       profile: "Perfil",
       account: "Conta",
       notifications: "Notificações",
+      security: "Segurança",
     },
     profile: {
       title: "Perfil",
@@ -689,6 +690,10 @@ export const ptBR: I18nResource = {
         },
         submit: "Atualizar notificações",
       },
+    },
+    security: {
+      title: "Segurança",
+      description: "Gerencie sua senha e as configurações de segurança da conta.",
     },
     changePassword: {
       title: "Alterar Senha",

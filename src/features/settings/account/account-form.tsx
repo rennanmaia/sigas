@@ -4,8 +4,6 @@ import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
 import { t as i18next } from "i18next";
-import { useNavigate } from "@tanstack/react-router";
-import { Lock } from "lucide-react";
 import { showSubmittedData } from "@/lib/show-submitted-data";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -65,7 +63,6 @@ const defaultValues: Partial<AccountFormValues> = {
 
 export function AccountForm() {
   const { t } = useTranslation("settings");
-  const navigate = useNavigate();
   const form = useForm<AccountFormValues>({
     resolver: zodResolver(accountFormSchema),
     defaultValues,
@@ -76,8 +73,7 @@ export function AccountForm() {
   }
 
   return (
-    <div className="space-y-8">
-      <Form {...form}>
+    <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
@@ -186,26 +182,5 @@ export function AccountForm() {
         <Button type="submit">{t("account.form.submit")}</Button>
       </form>
     </Form>
-
-    <div className="border-t pt-8">
-      <div className="space-y-4">
-        <div>
-          <h3 className="text-lg font-medium">{t("changePassword.section.title")}</h3>
-          <p className="text-sm text-muted-foreground">
-            {t("changePassword.section.description")}
-          </p>
-        </div>
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => navigate({ to: "/change-password" })}
-          className="gap-2"
-        >
-          <Lock className="h-4 w-4" />
-          {t("changePassword.section.button")}
-        </Button>
-      </div>
-    </div>
-    </div>
   );
 }

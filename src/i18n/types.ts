@@ -535,6 +535,7 @@ export type I18nResource = {
       profile: string;
       account: string;
       notifications: string;
+      security: string;
     };
     profile: {
       title: string;
@@ -661,6 +662,10 @@ export type I18nResource = {
         };
         submit: string;
       };
+    };
+    security: {
+      title: string;
+      description: string;
     };
     changePassword: {
       title: string;

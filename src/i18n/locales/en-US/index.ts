@@ -551,6 +551,7 @@ export const enUS: I18nResource = {
       profile: "Profile",
       account: "Account",
       notifications: "Notifications",
+      security: "Security",
     },
     profile: {
       title: "Profile",
@@ -684,6 +685,10 @@ export const enUS: I18nResource = {
         },
         submit: "Update notifications",
       },
+    },
+    security: {
+      title: "Security",
+      description: "Manage your password and account security settings.",
     },
     changePassword: {
       title: "Change Password",

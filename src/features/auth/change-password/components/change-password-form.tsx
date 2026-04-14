@@ -9,11 +9,11 @@ import { toast } from "sonner";
 import { changePassword } from "@/features/auth/services/auth";
 import { useAuthStore } from "@/stores/auth-store";
 import { useAuditStore } from "@/stores/audit-store";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -53,10 +53,14 @@ type ChangePasswordFormValues = z.infer<typeof changePasswordSchema>;
 interface ChangePasswordFormProps
   extends React.HTMLAttributes<HTMLFormElement> {
   onSuccess?: () => void;
+  showBackButton?: boolean;
+  backTo?: "/settings/account" | "/settings/security";
 }
 
 export function ChangePasswordForm({
   onSuccess,
+  showBackButton = true,
+  backTo = "/settings/account",
 }: ChangePasswordFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -103,7 +107,7 @@ export function ChangePasswordForm({
         toast.error("Senha atual incorreta");
       } else if (result.reason === "user_not_found") {
         toast.error("Usuário não encontrado");
-        navigate({ to: "/settings/account" });
+        navigate({ to: backTo });
       }
 
       useAuditStore.getState().addEvent({
@@ -133,7 +137,7 @@ export function ChangePasswordForm({
     });
 
     setTimeout(() => {
-      navigate({ to: "/settings/account" });
+      navigate({ to: backTo });
       if (onSuccess) {
         onSuccess();
       }
@@ -149,7 +153,7 @@ export function ChangePasswordForm({
             name="oldPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("changePassword.form.oldPassword.label")}</FormLabel>
+                <FormLabel>Senha atual:</FormLabel>
                 <FormControl>
                   <PasswordInput
                     placeholder={t("changePassword.form.oldPassword.placeholder")}
@@ -157,9 +161,6 @@ export function ChangePasswordForm({
                     {...field}
                   />
                 </FormControl>
-                <FormDescription>
-                  {t("changePassword.form.oldPassword.description")}
-                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -170,7 +171,7 @@ export function ChangePasswordForm({
             name="newPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("changePassword.form.newPassword.label")}</FormLabel>
+                <FormLabel>Nova senha:</FormLabel>
                 <FormControl>
                   <PasswordInput
                     placeholder={t("changePassword.form.newPassword.placeholder")}
@@ -178,9 +179,6 @@ export function ChangePasswordForm({
                     {...field}
                   />
                 </FormControl>
-                <FormDescription>
-                  {t("changePassword.form.newPassword.description")}
-                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -191,7 +189,7 @@ export function ChangePasswordForm({
             name="confirmPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("changePassword.form.confirmPassword.label")}</FormLabel>
+                <FormLabel>Confirmar senha:</FormLabel>
                 <FormControl>
                   <PasswordInput
                     placeholder={t("changePassword.form.confirmPassword.placeholder")}
@@ -199,25 +197,29 @@ export function ChangePasswordForm({
                     {...field}
                   />
                 </FormControl>
-                <FormDescription>
-                  {t("changePassword.form.confirmPassword.description")}
-                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          <div className="mt-6 flex w-full items-center justify-between gap-8">
-            <Button
-              type="button"
-              variant="secondary"
-              disabled={isLoading}
-              onClick={() => navigate({ to: "/settings/account" })}
-              className="gap-2 shrink-0"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Voltar
-            </Button>
+          <div
+            className={cn(
+              "mt-6 flex w-full items-center gap-8",
+              showBackButton ? "justify-between" : "justify-end"
+            )}
+          >
+            {showBackButton && (
+              <Button
+                type="button"
+                variant="secondary"
+                disabled={isLoading}
+                onClick={() => navigate({ to: backTo })}
+                className="gap-2 shrink-0"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Voltar
+              </Button>
+            )}
             <Button
               type="submit"
               disabled={isLoading}
