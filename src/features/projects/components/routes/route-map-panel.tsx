@@ -6,7 +6,6 @@ import {
   Marker,
   Polyline,
   Popup,
-  useMapEvents,
   useMap,
 } from "react-leaflet";
 import * as L from "leaflet";
@@ -14,7 +13,7 @@ import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import "leaflet/dist/leaflet.css";
-import { MapPin, Locate, Route as RouteIcon } from "lucide-react";
+import { Locate, Route as RouteIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { type RouteWaypoint } from "../../data/routes-mock";
 import { type ViewMode } from "./use-routes-state";
@@ -46,21 +45,6 @@ function makeNumberedIcon(index: number, isFirst: boolean, isLast: boolean) {
     iconAnchor: [14, 28],
     popupAnchor: [0, -30],
   });
-}
-
-function ClickToAddMarker({
-  onAdd,
-  isAdding,
-}: {
-  onAdd: (latlng: L.LatLng) => void;
-  isAdding: boolean;
-}) {
-  useMapEvents({
-    click(e) {
-      if (isAdding) onAdd(e.latlng);
-    },
-  });
-  return null;
 }
 
 function ResetViewButton({
@@ -146,8 +130,6 @@ interface RouteMapPanelProps {
   visibleRoutes: { id: string }[];
   mapWaypoints: RouteWaypoint[];
   mapCenter: [number, number];
-  isAddingPoint: boolean;
-  onAddWaypoint: (latlng: L.LatLng) => void;
 }
 
 export function RouteMapPanel({
@@ -155,8 +137,6 @@ export function RouteMapPanel({
   visibleRoutes,
   mapWaypoints,
   mapCenter,
-  isAddingPoint,
-  onAddWaypoint,
 }: RouteMapPanelProps) {
   return (
     <div className="lg:col-span-3 relative rounded-xl overflow-hidden border shadow-sm h-[300px] sm:h-[400px] lg:h-full">
@@ -169,24 +149,17 @@ export function RouteMapPanel({
         </div>
       )}
 
-      {viewMode === "create" && isAddingPoint && (
-        <div className="absolute top-3 left-1/2 -translate-x-1/2 z-1000 bg-primary text-primary-foreground text-xs font-medium px-3 py-1.5 rounded-full shadow-lg flex items-center gap-1.5">
-          <MapPin size={12} /> Clique para adicionar um ponto
-        </div>
-      )}
-
       <MapContainer
         center={mapCenter}
         zoom={DEFAULT_ZOOM}
         style={{ height: "100%", width: "100%" }}
-        className={cn("h-full w-full", isAddingPoint && "cursor-crosshair")}
+        className={cn("h-full w-full")}
       >
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         />
 
-        <ClickToAddMarker onAdd={onAddWaypoint} isAdding={isAddingPoint} />
         <ResetViewButton center={mapCenter} zoom={DEFAULT_ZOOM} />
         <FitBoundsToWaypoints waypoints={mapWaypoints} />
 
