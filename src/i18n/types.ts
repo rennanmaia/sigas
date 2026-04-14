@@ -662,6 +662,36 @@ export type I18nResource = {
         submit: string;
       };
     };
+    changePassword: {
+      title: string;
+      description: string;
+      section: {
+        title: string;
+        description: string;
+        button: string;
+      };
+      form: {
+        title: string;
+        description: string;
+        oldPassword: {
+          label: string;
+          placeholder: string;
+          description: string;
+        };
+        newPassword: {
+          label: string;
+          placeholder: string;
+          description: string;
+        };
+        confirmPassword: {
+          label: string;
+          placeholder: string;
+          description: string;
+        };
+        submit: string;
+        submitting: string;
+      };
+    };
   };
 };
 

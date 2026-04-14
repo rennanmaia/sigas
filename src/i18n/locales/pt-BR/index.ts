@@ -690,5 +690,36 @@ export const ptBR: I18nResource = {
         submit: "Atualizar notificações",
       },
     },
+    changePassword: {
+      title: "Alterar Senha",
+      description: "Altere sua senha para manter sua conta segura.",
+      section: {
+        title: "Segurança da Senha",
+        description: "Altere sua senha regularmente para manter sua conta segura.",
+        button: "Alterar Senha",
+      },
+      form: {
+        title: "Formulário de Alteração de Senha",
+        description: "Insira sua senha atual e a nova senha que deseja usar.",
+        oldPassword: {
+          label: "Senha Atual",
+          placeholder: "Digite sua senha atual",
+          description: "Informe sua senha atual para confirmar sua identidade.",
+        },
+        newPassword: {
+          label: "Nova Senha",
+          placeholder: "Digite sua nova senha",
+          description: "Sua nova senha deve ter pelo menos 8 caracteres e conter letras maiúsculas, minúsculas e números.",
+        },
+        confirmPassword: {
+          label: "Confirmar Nova Senha",
+          placeholder: "Confirme sua nova senha",
+          description: "Digite a mesma senha novamente para confirmar.",
+        },
+        submit: "Alterar Senha",
+        submitting: "Alterando...",
+      },
+    },
   },
 };
+

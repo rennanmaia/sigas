@@ -685,5 +685,36 @@ export const enUS: I18nResource = {
         submit: "Update notifications",
       },
     },
+    changePassword: {
+      title: "Change Password",
+      description: "Change your password to keep your account secure.",
+      section: {
+        title: "Password Security",
+        description: "Change your password regularly to keep your account secure.",
+        button: "Change Password",
+      },
+      form: {
+        title: "Change Password Form",
+        description: "Enter your current password and the new password you want to use.",
+        oldPassword: {
+          label: "Current Password",
+          placeholder: "Enter your current password",
+          description: "Provide your current password to confirm your identity.",
+        },
+        newPassword: {
+          label: "New Password",
+          placeholder: "Enter your new password",
+          description: "Your new password must be at least 8 characters long and contain uppercase letters, lowercase letters, and numbers.",
+        },
+        confirmPassword: {
+          label: "Confirm New Password",
+          placeholder: "Confirm your new password",
+          description: "Type the same password again to confirm.",
+        },
+        submit: "Change Password",
+        submitting: "Changing...",
+      },
+    },
   },
 };
+

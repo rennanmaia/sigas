@@ -24,6 +24,10 @@ export type AuthenticateResult =
   | { status: 'ok'; user: Omit<MockUser & { password: string }, 'password'> }
   | { status: 'error'; reason: 'email_not_found' | 'invalid_password' | 'account_blocked' }
 
+export type ChangePasswordResult =
+  | { status: 'ok' }
+  | { status: 'error'; reason: 'invalid_old_password' | 'user_not_found' | 'passwords_dont_match' }
+
 export async function authenticate(email: string, password: string): Promise<AuthenticateResult> {
   await sleep(500)
 
@@ -72,4 +76,45 @@ export async function authenticate(email: string, password: string): Promise<Aut
         role: ['general_administrator'],
     }
   }
+}
+
+export async function changePassword(
+  email: string,
+  oldPassword: string,
+  newPassword: string,
+): Promise<ChangePasswordResult> {
+  await sleep(500)
+
+  const normalizedEmail = String(email).trim().toLowerCase()
+  const storedUsersRaw = localStorage.getItem('auth-users')
+
+  if (storedUsersRaw) {
+    try {
+      const users = JSON.parse(storedUsersRaw) as AuthLocalUser[]
+      const userIndex = users.findIndex(
+        (user) => String(user.email ?? '').trim().toLowerCase() === normalizedEmail,
+      )
+
+      if (userIndex === -1) {
+        return { status: 'error', reason: 'user_not_found' }
+      }
+
+      const user = users[userIndex]
+
+      if (user.password !== oldPassword) {
+        return { status: 'error', reason: 'invalid_old_password' }
+      }
+
+      // Update password
+      users[userIndex].password = newPassword
+      localStorage.setItem('auth-users', JSON.stringify(users))
+
+      return { status: 'ok' }
+    } catch {
+      return { status: 'error', reason: 'user_not_found' }
+    }
+  }
+
+  // If no stored users, cannot change password for mock users
+  return { status: 'error', reason: 'user_not_found' }
 }
