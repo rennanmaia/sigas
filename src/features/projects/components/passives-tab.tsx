@@ -1,18 +1,10 @@
-import { useState, useCallback, useMemo } from "react";
-import {
-  AlertTriangle,
-  Calendar,
-  History,
-  Plus,
-  ShieldAlert,
-  UserCheck,
-} from "lucide-react";
+import { useState, useCallback } from "react";
+import { AlertTriangle, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { LiabilitiesProvider } from "@/features/passives/components/passives-provider";
 import { LiabilityDialogs } from "@/features/passives/components/passives-dialog";
-import { SummaryCard } from "@/features/passives/components/passives-summary-card";
 import { PassiveCard } from "@/features/passives/components/passives-card";
 import { PassivesTable } from "@/features/passives/components/passives-table-v2";
 import { PassiveWizard } from "@/features/passives/components/passive-wizard";
@@ -24,11 +16,9 @@ type PassiveView = "overview" | "critical" | "create";
 function PassivesTabContent() {
   const [view, setView] = useState<PassiveView>("overview");
   const [isLoading, setIsLoading] = useState(false);
-  const { getStats, liabilities, addLiability } = useLiabilitiesStore();
-  const stats = useMemo(() => getStats(), [getStats]);
-  const criticalItems = liabilities.filter((i) => i.risco === "Crítico");
+  const { liabilities, addLiability } = useLiabilitiesStore();
+  const criticalItems = liabilities.filter((i) => i.status === "Indisponível");
 
-  const goToCritical = useCallback(() => setView("critical"), []);
   const goToOverview = useCallback(() => setView("overview"), []);
   const goToCreate = useCallback(() => setView("create"), []);
 
@@ -39,8 +29,8 @@ function PassivesTabContent() {
         ...values,
         id: `passivo-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         ultimaAtualizacao: new Date().toISOString(),
-        acoes: values.acoes || [],
         documentos: values.documentos || [],
+        customFields: values.customFields || [],
       };
       addLiability(passive);
       toast.success("Passivo criado com sucesso!");
@@ -94,12 +84,11 @@ function PassivesTabContent() {
             ← Voltar para Visão Geral
           </Button>
           <h2 className="text-xl font-bold flex items-center gap-2">
-            <AlertTriangle className="text-red-500 h-5 w-5" />
-            Gestão de Riscos Críticos
+            <AlertTriangle className="text-yellow-500 h-5 w-5" />
+            Passivos Indisponíveis
           </h2>
           <p className="text-sm text-muted-foreground">
-            Existem {criticalItems.length} passivos que exigem mitigação
-            imediata.
+            Existem {criticalItems.length} passivos indisponíveis.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -125,41 +114,6 @@ function PassivesTabContent() {
         <Button className="gap-2" onClick={goToCreate}>
           <Plus size={15} /> Novo Passivo
         </Button>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        <SummaryCard
-          title="Total de Passivos"
-          value={stats.total}
-          sub="100% da carteira"
-          icon={<History className="h-4 w-4" />}
-        />
-        <SummaryCard
-          title="Riscos Críticos"
-          value={stats.criticos}
-          sub={`${((stats.criticos / stats.total) * 100).toFixed(0)}% do total`}
-          icon={<ShieldAlert className="h-4 w-4 text-red-500" />}
-          alert
-          onReview={goToCritical}
-        />
-        <SummaryCard
-          title="Sem Plano de Ação"
-          value={stats.semPlano}
-          sub="Requer atenção imediata"
-          icon={<AlertTriangle className="h-4 w-4 text-orange-500" />}
-        />
-        <SummaryCard
-          title="Planos em Atraso"
-          value={stats.atrasados}
-          sub="Gargalo operacional"
-          icon={<Calendar className="h-4 w-4 text-red-500" />}
-        />
-        <SummaryCard
-          title="Distribuição"
-          value={`${stats.ambiental}/${stats.social}`}
-          sub="Ambiental vs Social"
-          icon={<UserCheck className="h-4 w-4 text-blue-500" />}
-        />
       </div>
 
       <PassivesTable />
