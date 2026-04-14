@@ -1,20 +1,23 @@
-import { useState, useCallback } from "react";
-import * as L from "leaflet";
+import { useState, useCallback, useMemo } from "react";
 import { toast } from "sonner";
 import {
   type CollectionRoute,
+  type RouteExecution,
   type RouteWaypoint,
   collectionRoutes as routesMock,
 } from "../../data/routes-mock";
 import { forms } from "@/features/forms/data/forms-mock";
 import { projects as allProjectsMock } from "../../data/projects-mock";
+import { useLiabilitiesStore } from "@/stores/passives-store";
+import { users } from "@/features/users/data/users";
 
-export type ViewMode = "list" | "create" | "detail";
+export type ViewMode = "list" | "create" | "detail" | "execution";
 
-// can be other location to view or will based on user location
 const DEFAULT_CENTER: [number, number] = [-2.4491, -54.7432];
 
 export function useRoutesState(projectId?: string) {
+  const { liabilities } = useLiabilitiesStore();
+
   const [routes, setRoutes] = useState<CollectionRoute[]>(() =>
     projectId
       ? routesMock.filter((r) => r.projectId === projectId)
@@ -27,20 +30,22 @@ export function useRoutesState(projectId?: string) {
   const [selectedRoute, setSelectedRoute] = useState<CollectionRoute | null>(
     null,
   );
+  const [selectedExecution, setSelectedExecution] =
+    useState<RouteExecution | null>(null);
 
+  // create/edit form state
   const [routeName, setRouteName] = useState("");
   const [routeDescription, setRouteDescription] = useState("");
   const [routeProjectId, setRouteProjectId] = useState(projectId ?? "");
-  const [waypoints, setWaypoints] = useState<RouteWaypoint[]>([]);
-  const [isAddingPoint, setIsAddingPoint] = useState(false);
+  const [selectedPassiveIds, setSelectedPassiveIds] = useState<string[]>([]);
+  const [selectedCollectorIds, setSelectedCollectorIds] = useState<string[]>(
+    [],
+  );
   const [selectedFormIds, setSelectedFormIds] = useState<string[]>([]);
-  const [editingWaypointIndex, setEditingWaypointIndex] = useState<
-    number | null
-  >(null);
-  const [editingLabel, setEditingLabel] = useState("");
   const [editingRouteId, setEditingRouteId] = useState<string | null>(null);
 
-  // derived values
+  // ─── derived values ────────────────────────────────────────────────────────
+
   const syncRoutes = () =>
     setRoutes(
       projectId
@@ -57,11 +62,46 @@ export function useRoutesState(projectId?: string) {
     ? forms.filter((f) => f.projectId === routeProjectId)
     : [];
 
-  const mapWaypoints =
+  const availableCollectors = useMemo(() => {
+    const pid =
+      viewMode === "create"
+        ? routeProjectId
+        : (selectedRoute?.projectId ?? projectId);
+    if (!pid) return [];
+    const project = allProjectsMock.find((p) => p.id === pid);
+    if (!project) return [];
+    return users
+      .filter((u) => {
+        const projectRole = project.memberRoles?.[u.id];
+        const displayRole = projectRole ?? u.roles[0];
+        return project.members.includes(u.id) && displayRole === "collector";
+      })
+      .map((u) => ({ id: u.id, label: `${u.firstName} ${u.lastName}` }));
+  }, [viewMode, routeProjectId, selectedRoute, projectId]);
+
+  const availablePassives = liabilities.filter(
+    (l) => l.lat != null && l.lng != null,
+  );
+
+  const resolveWaypoints = useCallback(
+    (ids: string[]): RouteWaypoint[] =>
+      ids
+        .map((id) => {
+          const p = liabilities.find((l) => l.id === id);
+          if (!p || p.lat == null || p.lng == null) return null;
+          return { lat: p.lat, lng: p.lng, label: p.nome } as RouteWaypoint;
+        })
+        .filter(Boolean) as RouteWaypoint[],
+    [liabilities],
+  );
+
+  const mapWaypoints: RouteWaypoint[] =
     viewMode === "create"
-      ? waypoints
-      : viewMode === "detail" && selectedRoute
-        ? selectedRoute.waypoints
+      ? resolveWaypoints(selectedPassiveIds)
+      : (viewMode === "detail" || viewMode === "execution") && selectedRoute
+        ? selectedRoute.passiveIds.length > 0
+          ? resolveWaypoints(selectedRoute.passiveIds)
+          : (selectedRoute.waypoints ?? [])
         : [];
 
   const mapCenter: [number, number] =
@@ -69,13 +109,14 @@ export function useRoutesState(projectId?: string) {
       ? [mapWaypoints[0].lat, mapWaypoints[0].lng]
       : DEFAULT_CENTER;
 
-  // navigation helpers
+  // ─── navigation ────────────────────────────────────────────────────────────
+
   const startCreate = () => {
     setRouteName("");
     setRouteDescription("");
     setRouteProjectId(projectId ?? "");
-    setWaypoints([]);
-    setIsAddingPoint(false);
+    setSelectedPassiveIds([]);
+    setSelectedCollectorIds([]);
     setSelectedFormIds([]);
     setEditingRouteId(null);
     setViewMode("create");
@@ -85,18 +126,21 @@ export function useRoutesState(projectId?: string) {
     setRouteName(route.name);
     setRouteDescription(route.description ?? "");
     setRouteProjectId(route.projectId);
-    setWaypoints([...route.waypoints]);
-    setIsAddingPoint(false);
+    setSelectedPassiveIds([...(route.passiveIds ?? [])]);
+    setSelectedCollectorIds([...(route.collectorIds ?? [])]);
     setSelectedFormIds([...route.formIds]);
     setEditingRouteId(route.id);
-    setEditingWaypointIndex(null);
-    setEditingLabel("");
     setViewMode("create");
   };
 
   const goToDetail = (route: CollectionRoute) => {
     setSelectedRoute(route);
     setViewMode("detail");
+  };
+
+  const goToExecution = (execution: RouteExecution) => {
+    setSelectedExecution(execution);
+    setViewMode("execution");
   };
 
   const goToList = () => {
@@ -110,25 +154,55 @@ export function useRoutesState(projectId?: string) {
     setViewMode(wasEditing ? "detail" : "list");
   };
 
-  // waypoint(wp) handlers
-  const handleAddWaypoint = useCallback((latlng: L.LatLng) => {
-    setWaypoints((prev) => [...prev, { lat: latlng.lat, lng: latlng.lng }]);
-    setIsAddingPoint(false);
-  }, []);
-
-  const handleRemoveWaypoint = (index: number) => {
-    setWaypoints((prev) => prev.filter((_, i) => i !== index));
+  const goBackFromExecution = () => {
+    setSelectedExecution(null);
+    setViewMode("detail");
   };
 
-  const handleSaveLabel = (index: number) => {
-    setWaypoints((prev) =>
-      prev.map((w, i) => (i === index ? { ...w, label: editingLabel } : w)),
+  // ─── passive handlers ──────────────────────────────────────────────────────
+
+  const togglePassive = (passiveId: string) => {
+    setSelectedPassiveIds((prev) =>
+      prev.includes(passiveId)
+        ? prev.filter((id) => id !== passiveId)
+        : [...prev, passiveId],
     );
-    setEditingWaypointIndex(null);
-    setEditingLabel("");
   };
 
-  // route crud
+  const movePassiveUp = (index: number) => {
+    if (index === 0) return;
+    setSelectedPassiveIds((prev) => {
+      const next = [...prev];
+      [next[index - 1], next[index]] = [next[index], next[index - 1]];
+      return next;
+    });
+  };
+
+  const movePassiveDown = (index: number) => {
+    setSelectedPassiveIds((prev) => {
+      if (index >= prev.length - 1) return prev;
+      const next = [...prev];
+      [next[index], next[index + 1]] = [next[index + 1], next[index]];
+      return next;
+    });
+  };
+
+  const removePassiveFromRoute = (passiveId: string) => {
+    setSelectedPassiveIds((prev) => prev.filter((id) => id !== passiveId));
+  };
+
+  // ─── collector handlers ────────────────────────────────────────────────────
+
+  const toggleCollector = (collectorId: string) => {
+    setSelectedCollectorIds((prev) =>
+      prev.includes(collectorId)
+        ? prev.filter((id) => id !== collectorId)
+        : [...prev, collectorId],
+    );
+  };
+
+  // ─── form handlers ─────────────────────────────────────────────────────────
+
   const toggleForm = (formId: string) => {
     setSelectedFormIds((prev) =>
       prev.includes(formId)
@@ -136,6 +210,8 @@ export function useRoutesState(projectId?: string) {
         : [...prev, formId],
     );
   };
+
+  // ─── route CRUD ────────────────────────────────────────────────────────────
 
   const handleSaveRoute = () => {
     if (!routeName.trim()) {
@@ -146,8 +222,8 @@ export function useRoutesState(projectId?: string) {
       toast.error("Selecione um projeto para a rota.");
       return;
     }
-    if (waypoints.length < 2) {
-      toast.error("Adicione pelo menos 2 pontos na rota.");
+    if (selectedPassiveIds.length < 2) {
+      toast.error("Selecione pelo menos 2 passivos para a rota.");
       return;
     }
 
@@ -159,7 +235,8 @@ export function useRoutesState(projectId?: string) {
           name: routeName.trim(),
           description: routeDescription.trim() || undefined,
           projectId: routeProjectId,
-          waypoints,
+          passiveIds: selectedPassiveIds,
+          collectorIds: selectedCollectorIds,
           formIds: selectedFormIds,
         };
       }
@@ -177,9 +254,11 @@ export function useRoutesState(projectId?: string) {
       name: routeName.trim(),
       description: routeDescription.trim() || undefined,
       projectId: routeProjectId,
-      waypoints,
+      passiveIds: selectedPassiveIds,
+      collectorIds: selectedCollectorIds,
       formIds: selectedFormIds,
       createdAt: new Date().toISOString().split("T")[0],
+      executions: [],
     };
     routesMock.push(newRoute);
     syncRoutes();
@@ -199,44 +278,41 @@ export function useRoutesState(projectId?: string) {
   };
 
   return {
-    // general data
     allProjects: allProjectsMock,
     availableForms,
+    availablePassives,
+    availableCollectors,
     visibleRoutes,
     mapWaypoints,
     mapCenter,
-    // view states
+    resolveWaypoints,
     viewMode,
     selectedRoute,
+    selectedExecution,
     projectFilter,
-    // form states
     routeName,
     routeDescription,
     routeProjectId,
-    waypoints,
-    isAddingPoint,
+    selectedPassiveIds,
+    selectedCollectorIds,
     selectedFormIds,
-    editingWaypointIndex,
-    editingLabel,
     editingRouteId,
-    // setters
     setProjectFilter,
     setRouteName,
     setRouteDescription,
     setRouteProjectId,
-    setIsAddingPoint,
-    setEditingWaypointIndex,
-    setEditingLabel,
-    // navigation
     startCreate,
     startEdit,
     goToDetail,
     goToList,
     goBackFromCreate,
-    // handlers
-    handleAddWaypoint,
-    handleRemoveWaypoint,
-    handleSaveLabel,
+    goToExecution,
+    goBackFromExecution,
+    togglePassive,
+    movePassiveUp,
+    movePassiveDown,
+    removePassiveFromRoute,
+    toggleCollector,
     toggleForm,
     handleSaveRoute,
     handleDeleteRoute,
