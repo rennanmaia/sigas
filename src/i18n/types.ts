@@ -183,6 +183,15 @@ export type I18nResource = {
               };
             };
           };
+          sections: {
+            title: {
+              required: string;
+            };
+            questions: {
+              minLength: string;
+            };
+            minLength: string;
+          };
         };
         dialog: {
           confirm: {

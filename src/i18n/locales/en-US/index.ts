@@ -188,6 +188,15 @@ export const enUS: I18nResource = {
               },
             },
           },
+          sections: {
+            title: {
+              required: "Section title is required",
+            },
+            questions: {
+              minLength: "Each section must have at least one question",
+            },
+            minLength: "The form must have at least one section",
+          },
         },
         dialog: {
           confirm: {

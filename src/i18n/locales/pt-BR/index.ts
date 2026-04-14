@@ -191,6 +191,15 @@ export const ptBR: I18nResource = {
               },
             },
           },
+          sections: {
+            title: {
+              required: "O título da seção é obrigatório",
+            },
+            questions: {
+              minLength: "Cada seção deve ter pelo menos uma pergunta",
+            },
+            minLength: "O formulário deve ter pelo menos uma seção",
+          },
         },
         dialog: {
           confirm: {
