@@ -5,12 +5,12 @@ import {
   type DropResult,
 } from "@hello-pangea/dnd";
 import { Sidebar } from "./components/sidebar";
-import { QuestionCard } from "./components/question-card";
+import { SectionCard } from "./components/section-card";
 import { useFormBuilder } from "./hooks/use-form-builder";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Plus, ArrowUp, AlertCircle } from "lucide-react";
+import { ArrowUp, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createFormSchema } from "../../data/schema";
 import {
@@ -25,6 +25,7 @@ import { useForms } from "../forms-provider";
 import { ResponsesView } from "../responses-view";
 import { formResponses } from "../../data/responses-mock";
 import { projects } from "@/features/projects/data/projects-mock";
+import { collectionRoutes } from "@/features/projects/data/routes-mock";
 import {
   Select,
   SelectContent,
@@ -33,7 +34,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import type { Question } from "./types/question";
+import type { Section } from "./types/question";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ConfirmDialog } from "@/components/confirm-dialog";
@@ -52,7 +53,7 @@ export interface FormBuilderRef {
   getFormData: () => {
     title: string;
     description: string;
-    questions: Question[];
+    sections: Section[];
     collectors?: string[];
   };
 }
@@ -70,8 +71,8 @@ export const FormBuilder = forwardRef<
     setTitle,
     description,
     setDescription,
-    questions,
-    setQuestions,
+    sections,
+    setSections,
     loadForm,
     ...methods
   } = useFormBuilder();
@@ -98,23 +99,21 @@ export const FormBuilder = forwardRef<
       status: "Rascunho" as const,
       owner: "Carlos Silva",
       projectId: "",
-      questions: [],
+      sections: [],
       collectors: [],
     },
   });
+
   const availableCollectors = useMemo(() => {
     if (!projectId || projectId === "__empty__") return [];
-
     const project = projects.find((p) => p.id === projectId);
     if (!project || !project.members) return [];
-
     return users
       .filter((u) => {
         const projectSpecificRole = project.memberRoles?.[u.id];
         const displayRole = projectSpecificRole
           ? projectSpecificRole
           : u.roles[0];
-
         return project.members?.includes(u.id) && displayRole === "collector";
       })
       .map((u) => ({
@@ -123,17 +122,43 @@ export const FormBuilder = forwardRef<
       }));
   }, [projectId]);
 
+  const availableRoutes = useMemo(() => {
+    if (!initialId) return [];
+    return collectionRoutes
+      .filter((r) => r.formIds.includes(initialId))
+      .map((r) => ({ id: r.id, name: r.name }));
+  }, [initialId]);
+
+  const formCollectors = useMemo(() => {
+    if (!initialId) return [];
+    const collectorIds = [
+      ...new Set(
+        collectionRoutes
+          .filter((r) => r.formIds.includes(initialId))
+          .flatMap((r) => r.collectorIds),
+      ),
+    ];
+    return collectorIds
+      .map((id) => {
+        const user = users.find((u) => u.id === id);
+        return user
+          ? { id: user.id, name: `${user.firstName} ${user.lastName}` }
+          : null;
+      })
+      .filter((c): c is { id: string; name: string } => c !== null);
+  }, [initialId]);
+
   useImperativeHandle(
     ref,
     () => ({
       getFormData: () => ({
         title,
         description,
-        questions,
+        sections,
         collectors: form.getValues("collectors"),
       }),
     }),
-    [title, description, questions, form],
+    [title, description, sections, form],
   );
 
   const currentForm = forms.find((f) => f.id === initialId);
@@ -159,7 +184,7 @@ export const FormBuilder = forwardRef<
           status: (existingForm.status as any) || "Rascunho",
           owner: existingForm.owner,
           projectId: existingForm.projectId || "",
-          questions: existingForm.questions,
+          sections: existingForm.sections,
           collectors: existingForm.collectors || [],
         });
         setIsLoaded(true);
@@ -175,9 +200,7 @@ export const FormBuilder = forwardRef<
     form.setValue(
       "description",
       description || t("create.form_builder.form.defaultValues.description"),
-      {
-        shouldValidate: true,
-      },
+      { shouldValidate: true },
     );
   }, [description, form]);
 
@@ -190,12 +213,11 @@ export const FormBuilder = forwardRef<
   }, [projectId, form]);
 
   useEffect(() => {
-    form.setValue("questions", questions, { shouldValidate: true });
-  }, [questions, form]);
+    form.setValue("sections", sections, { shouldValidate: true });
+  }, [sections, form]);
 
   const handleDeleteResponse = (responseId: string) => {
     setFilteredResponses((prev) => prev.filter((r) => r.id !== responseId));
-    // TODO: make an API call to delete the response and update the forms list to decrement the response count
   };
 
   const handleUpdateResponse = (
@@ -208,21 +230,14 @@ export const FormBuilder = forwardRef<
         if (r.id === responseId) {
           return {
             ...r,
-            answers: {
-              ...r.answers,
-              [questionId]: newValue,
-            },
-            editedAnswers: {
-              ...r.editedAnswers,
-              [questionId]: true,
-            },
+            answers: { ...r.answers, [questionId]: newValue },
+            editedAnswers: { ...r.editedAnswers, [questionId]: true },
             updatedAt: new Date().toISOString(),
           };
         }
         return r;
       }),
     );
-    // TODO: make an API call to update the response
   };
 
   const scrollToTop = () => {
@@ -239,16 +254,11 @@ export const FormBuilder = forwardRef<
       "[data-radix-scroll-area-viewport]",
     );
     const button = scrollButtonRef.current;
-
     if (!viewport || !button) return;
 
     let rafId: number;
-
     const handleScroll = () => {
-      if (rafId) {
-        cancelAnimationFrame(rafId);
-      }
-
+      if (rafId) cancelAnimationFrame(rafId);
       rafId = requestAnimationFrame(() => {
         const scrollTop = viewport.scrollTop;
         if (scrollTop > 400) {
@@ -262,34 +272,28 @@ export const FormBuilder = forwardRef<
         }
       });
     };
-
     viewport.addEventListener("scroll", handleScroll, { passive: true });
     return () => {
-      if (rafId) {
-        cancelAnimationFrame(rafId);
-      }
+      if (rafId) cancelAnimationFrame(rafId);
       viewport.removeEventListener("scroll", handleScroll);
     };
   }, [isLoaded, showingResponses]);
 
   if (!isLoaded) return null;
 
+  const allQuestions = sections.flatMap((s) => s.questions);
+
   const handleInternalSave = async () => {
     const status =
       projectId && projectId !== "__empty__" ? "Ativo" : "Rascunho";
     form.setValue("status", status as any);
     form.setValue("owner", "Carlos Silva");
-
     const isValid = await form.trigger();
-    if (!isValid) {
-      return;
-    }
-
+    if (!isValid) return;
     if (!projectId || projectId === "__empty__") {
       setShowConfirmDialog(true);
       return;
     }
-
     const formData = form.getValues();
     onSave(formData);
   };
@@ -299,28 +303,38 @@ export const FormBuilder = forwardRef<
     const formData = form.getValues();
     onSave(formData);
   };
+
   const handleDragEnd = (result: DropResult) => {
     const { destination, source, type } = result;
     if (!destination) return;
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    )
+      return;
 
-    if (type === "QUESTION") {
-      const items = Array.from(questions);
-      const [reorderedItem] = items.splice(source.index, 1);
-      items.splice(destination.index, 0, reorderedItem);
-      setQuestions(items);
+    if (type === "SECTION") {
+      methods.reorderSections(source.index, destination.index);
+    } else if (type === "QUESTION") {
+      const fromSectionId = source.droppableId.replace("questions-", "");
+      const toSectionId = destination.droppableId.replace("questions-", "");
+      if (fromSectionId === toSectionId) {
+        methods.reorderQuestionsInSection(
+          fromSectionId,
+          source.index,
+          destination.index,
+        );
+      } else {
+        methods.moveQuestionBetweenSections(
+          fromSectionId,
+          source.index,
+          toSectionId,
+          destination.index,
+        );
+      }
     } else if (type === "OPTION") {
       const qId = source.droppableId.replace("options-", "");
-      setQuestions((prev) =>
-        prev.map((q) => {
-          if (q.id === qId && q.options) {
-            const newOpts = Array.from(q.options);
-            const [moved] = newOpts.splice(source.index, 1);
-            newOpts.splice(destination.index, 0, moved);
-            return { ...q, options: newOpts };
-          }
-          return q;
-        }),
-      );
+      methods.reorderOptions(qId, source.index, destination.index);
     }
   };
 
@@ -330,7 +344,10 @@ export const FormBuilder = forwardRef<
         <DragDropContext onDragEnd={handleDragEnd}>
           <div className="flex flex-col md:flex-row h-full w-full overflow-hidden bg-background">
             <Sidebar
-              onAdd={methods.addQuestion}
+              onAdd={(type) =>
+                methods.addQuestion(type, sections[sections.length - 1].id)
+              }
+              onAddSection={methods.addSection}
               onViewResponses={
                 initialId
                   ? () => setShowingResponses(!showingResponses)
@@ -354,8 +371,10 @@ export const FormBuilder = forwardRef<
             {showingResponses && initialId ? (
               <ResponsesView
                 formTitle={title}
-                questions={questions}
+                questions={allQuestions}
                 responses={filteredResponses}
+                availableRoutes={availableRoutes}
+                availableCollectors={formCollectors}
                 onDeleteResponse={handleDeleteResponse}
                 onUpdateResponse={handleUpdateResponse}
               />
@@ -501,7 +520,7 @@ export const FormBuilder = forwardRef<
                         )}
                       />
 
-                      {questions.length === 0 && (
+                      {allQuestions.length === 0 && (
                         <Alert className="mt-4 border-amber-200 bg-amber-50">
                           <AlertCircle className="h-4 w-4 text-amber-600" />
                           <AlertDescription className="text-amber-800">
@@ -511,33 +530,29 @@ export const FormBuilder = forwardRef<
                       )}
                     </Card>
 
-                    <Droppable droppableId="form-questions" type="QUESTION">
+                    <Droppable droppableId="form-sections" type="SECTION">
                       {(provided) => (
                         <div
                           {...provided.droppableProps}
                           ref={provided.innerRef}
-                          className="space-y-4"
+                          className="space-y-6"
                         >
                           <AnimatePresence initial={false}>
-                            {questions.map((q, index) => (
+                            {sections.map((section, sectionIndex) => (
                               <Draggable
-                                key={q.id}
-                                draggableId={q.id}
-                                index={index}
+                                key={section.id}
+                                draggableId={`section-${section.id}`}
+                                index={sectionIndex}
                               >
                                 {(provided, snapshot) => (
                                   <motion.div
                                     ref={provided.innerRef}
                                     {...provided.draggableProps}
-                                    initial={{
-                                      opacity: 0,
-                                      y: -20,
-                                      scale: 0.95,
-                                    }}
-                                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                                    initial={{ opacity: 0, y: -20 }}
+                                    animate={{ opacity: 1, y: 0 }}
                                     exit={{
                                       opacity: 0,
-                                      scale: 0.95,
+                                      y: -10,
                                       transition: { duration: 0.2 },
                                     }}
                                     transition={{
@@ -545,56 +560,86 @@ export const FormBuilder = forwardRef<
                                       stiffness: 300,
                                       damping: 25,
                                     }}
-                                    style={{
-                                      ...provided.draggableProps.style,
-                                      transform: snapshot.isDragging
-                                        ? provided.draggableProps.style
-                                            ?.transform
-                                        : provided.draggableProps.style
-                                            ?.transform,
-                                    }}
+                                    style={provided.draggableProps.style}
                                   >
-                                    <QuestionCard
-                                      key={q.id}
-                                      question={q}
-                                      index={index}
-                                      allQuestions={questions}
-                                      onUpdateQuestion={methods.updateQuestion}
-                                      onUpdateLabel={
-                                        methods.updateQuestionLabel
-                                      }
-                                      onUpdateType={methods.updateQuestionType}
-                                      onRemove={methods.removeQuestion}
-                                      onToggleRequired={methods.toggleRequired}
-                                      onAddQuestion={(type) =>
-                                        methods.addQuestion(type, index)
-                                      }
-                                      onAddOption={methods.addOption}
-                                      onUpdateOption={methods.updateOption}
-                                      onRemoveOption={methods.removeOption}
-                                      onDuplicate={methods.duplicateQuestion}
-                                      labelError={
+                                    <SectionCard
+                                      section={section}
+                                      sectionIndex={sectionIndex}
+                                      totalSections={sections.length}
+                                      allSections={sections}
+                                      dragHandleProps={provided.dragHandleProps}
+                                      isDragging={snapshot.isDragging}
+                                      sectionErrors={
                                         (
-                                          form.formState.errors.questions as any
-                                        )?.[index]?.label?.message
+                                          form.formState.errors.sections as any
+                                        )?.[sectionIndex]
                                       }
-                                      optionsError={
-                                        (
-                                          form.formState.errors.questions as any
-                                        )?.[index]?.options?.message
-                                      }
-                                      optionsErrors={
-                                        Array.isArray(
-                                          (
-                                            form.formState.errors
-                                              .questions as any
-                                          )?.[index]?.options,
+                                      onUpdateSection={(updates) =>
+                                        methods.updateSection(
+                                          section.id,
+                                          updates,
                                         )
-                                          ? (
-                                              form.formState.errors
-                                                .questions as any
-                                            )?.[index]?.options
-                                          : undefined
+                                      }
+                                      onRemoveSection={() =>
+                                        methods.removeSection(section.id)
+                                      }
+                                      onAddQuestion={(type, atIndex) =>
+                                        methods.addQuestion(
+                                          type,
+                                          section.id,
+                                          atIndex,
+                                        )
+                                      }
+                                      onUpdateQuestion={(id, updates) =>
+                                        methods.updateQuestion(
+                                          id,
+                                          section.id,
+                                          updates,
+                                        )
+                                      }
+                                      onUpdateLabel={(id, val) =>
+                                        methods.updateQuestionLabel(
+                                          id,
+                                          section.id,
+                                          val,
+                                        )
+                                      }
+                                      onUpdateType={(id, type) =>
+                                        methods.updateQuestionType(
+                                          id,
+                                          section.id,
+                                          type,
+                                        )
+                                      }
+                                      onRemove={(id) =>
+                                        methods.removeQuestion(id, section.id)
+                                      }
+                                      onToggleRequired={(id) =>
+                                        methods.toggleRequired(id, section.id)
+                                      }
+                                      onDuplicate={(id) =>
+                                        methods.duplicateQuestion(
+                                          id,
+                                          section.id,
+                                        )
+                                      }
+                                      onAddOption={(id) =>
+                                        methods.addOption(id, section.id)
+                                      }
+                                      onUpdateOption={(id, idx, val) =>
+                                        methods.updateOption(
+                                          id,
+                                          section.id,
+                                          idx,
+                                          val,
+                                        )
+                                      }
+                                      onRemoveOption={(id, idx) =>
+                                        methods.removeOption(
+                                          id,
+                                          section.id,
+                                          idx,
+                                        )
                                       }
                                     />
                                   </motion.div>
@@ -606,20 +651,6 @@ export const FormBuilder = forwardRef<
                         </div>
                       )}
                     </Droppable>
-
-                    {questions.length === 0 && (
-                      <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed rounded-xl text-muted-foreground bg-muted/5 px-6 text-center">
-                        <Plus className="mb-4 opacity-20" size={48} />
-                        <p className="text-base font-medium">
-                          {t("create.form_builder.form.questions.empty.title")}
-                        </p>
-                        <p className="text-sm">
-                          {t(
-                            "create.form_builder.form.questions.empty.description",
-                          )}
-                        </p>
-                      </div>
-                    )}
                   </div>
                 </ScrollArea>
 
