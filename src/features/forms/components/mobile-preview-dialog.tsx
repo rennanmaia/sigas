@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   Dialog,
   DialogContent,
@@ -190,22 +191,36 @@ export function MobilePreviewDialog({
                           )}
 
                           <div className="space-y-6">
-                            {currentSection.questions.map((question, qIndex) =>
-                              isQuestionVisible(question, answers) ? (
-                                <QuestionPreviewMobile
-                                  key={question.id}
-                                  question={question}
-                                  index={questionOffset + qIndex}
-                                  answer={answers[question.id]}
-                                  onAnswer={(val) =>
-                                    setAnswers((prev) => ({
-                                      ...prev,
-                                      [question.id]: val,
-                                    }))
-                                  }
-                                />
-                              ) : null,
-                            )}
+                            <AnimatePresence initial={false}>
+                              {currentSection.questions.map(
+                                (question, qIndex) =>
+                                  isQuestionVisible(question, answers) ? (
+                                    <motion.div
+                                      key={question.id}
+                                      initial={{ opacity: 0, height: 0 }}
+                                      animate={{ opacity: 1, height: "auto" }}
+                                      exit={{ opacity: 0, height: 0 }}
+                                      transition={{
+                                        duration: 0.25,
+                                        ease: "easeInOut",
+                                      }}
+                                      className="overflow-hidden"
+                                    >
+                                      <QuestionPreviewMobile
+                                        question={question}
+                                        index={questionOffset + qIndex}
+                                        answer={answers[question.id]}
+                                        onAnswer={(val) =>
+                                          setAnswers((prev) => ({
+                                            ...prev,
+                                            [question.id]: val,
+                                          }))
+                                        }
+                                      />
+                                    </motion.div>
+                                  ) : null,
+                              )}
+                            </AnimatePresence>
                           </div>
                         </div>
                       )}
