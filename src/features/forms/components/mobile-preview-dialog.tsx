@@ -42,11 +42,13 @@ export function MobilePreviewDialog({
 }: MobilePreviewDialogProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
+  const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
 
   const handleOpenChange = (v: boolean) => {
     if (!v) {
       setCurrentStep(0);
       setSubmitted(false);
+      setAnswers({});
     }
     onOpenChange(v);
   };
@@ -54,7 +56,6 @@ export function MobilePreviewDialog({
   const totalSections = sections.length;
   const allQuestions = sections.flatMap((s) => s.questions);
   const isFirst = currentStep === 0;
-  const isLast = currentStep === totalSections - 1;
   const currentSection = sections[currentStep];
   const progress =
     totalSections > 1 ? (currentStep / (totalSections - 1)) * 100 : 0;
@@ -62,6 +63,50 @@ export function MobilePreviewDialog({
   const questionOffset = sections
     .slice(0, currentStep)
     .reduce((acc, s) => acc + s.questions.length, 0);
+
+  // Resolve where to go after the current section, respecting navigation rules.
+  // Returns an index number or "end".
+  function resolveNextStep(): number | "end" {
+    const nav = currentSection?.navigation;
+    const isLinearLast = currentStep === totalSections - 1;
+
+    if (!nav) return isLinearLast ? "end" : currentStep + 1;
+    if (nav.defaultNext === "end") return "end";
+
+    // Evaluate conditional rules first
+    for (const rule of nav.rules ?? []) {
+      const answer = answers[rule.dependsOnQuestionId];
+      const ids = Array.isArray(answer) ? answer : answer ? [answer] : [];
+      const matches =
+        rule.condition === "is"
+          ? ids.includes(rule.value)
+          : !ids.includes(rule.value);
+      if (matches) {
+        if (rule.goToSectionId === "end") return "end";
+        if (rule.goToSectionId === "next") break; // fall through to defaultNext
+        const idx = sections.findIndex((s) => s.id === rule.goToSectionId);
+        return idx >= 0 ? idx : "end";
+      }
+    }
+
+    // defaultNext
+    if (nav.defaultNext === "next") {
+      return isLinearLast ? "end" : currentStep + 1;
+    }
+    const idx = sections.findIndex((s) => s.id === nav.defaultNext);
+    return idx >= 0 ? idx : isLinearLast ? "end" : currentStep + 1;
+  }
+
+  const nextStep = resolveNextStep();
+  const isLast = nextStep === "end";
+
+  function handleNext() {
+    if (nextStep === "end") {
+      setSubmitted(true);
+    } else {
+      setCurrentStep(nextStep);
+    }
+  }
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -104,6 +149,7 @@ export function MobilePreviewDialog({
                     onClick={() => {
                       setCurrentStep(0);
                       setSubmitted(false);
+                      setAnswers({});
                     }}
                   >
                     Preencher novamente
@@ -150,6 +196,13 @@ export function MobilePreviewDialog({
                                   key={question.id}
                                   question={question}
                                   index={questionOffset + qIndex}
+                                  answer={answers[question.id]}
+                                  onAnswer={(val) =>
+                                    setAnswers((prev) => ({
+                                      ...prev,
+                                      [question.id]: val,
+                                    }))
+                                  }
                                 />
                               ),
                             )}
@@ -173,20 +226,20 @@ export function MobilePreviewDialog({
                         </Button>
                       )}
                       <div className="flex-1" />
-                      {isLast ? (
-                        <Button size="sm" onClick={() => setSubmitted(true)}>
-                          Enviar
-                        </Button>
-                      ) : (
-                        <Button
-                          size="sm"
-                          className="gap-1"
-                          onClick={() => setCurrentStep((s) => s + 1)}
-                        >
-                          Próxima
-                          <ChevronRight size={14} />
-                        </Button>
-                      )}
+                      <Button
+                        size="sm"
+                        className={isLast ? undefined : "gap-1"}
+                        onClick={handleNext}
+                      >
+                        {isLast ? (
+                          "Enviar"
+                        ) : (
+                          <>
+                            Próxima
+                            <ChevronRight size={14} />
+                          </>
+                        )}
+                      </Button>
                     </div>
                   )}
                 </>
@@ -202,12 +255,25 @@ export function MobilePreviewDialog({
 function QuestionPreviewMobile({
   question,
   index,
+  answer,
+  onAnswer,
 }: {
   question: Question;
   index: number;
+  answer?: string | string[];
+  onAnswer?: (val: string | string[]) => void;
 }) {
-  const [selectedValue, setSelectedValue] = useState("");
-  const [checkedValues, setCheckedValues] = useState<string[]>([]);
+  const [localSelected, setLocalSelected] = useState("");
+  const [localChecked, setLocalChecked] = useState<string[]>([]);
+
+  const selectedValue =
+    answer !== undefined
+      ? typeof answer === "string"
+        ? answer
+        : ""
+      : localSelected;
+  const checkedValues =
+    answer !== undefined ? (Array.isArray(answer) ? answer : []) : localChecked;
   const [uploadedFiles, setUploadedFiles] = useState<
     Array<{ id: string; name: string; size: string }>
   >([]);
@@ -293,7 +359,13 @@ function QuestionPreviewMobile({
 
       case "select":
         return (
-          <RadioGroup value={selectedValue} onValueChange={setSelectedValue}>
+          <RadioGroup
+            value={selectedValue}
+            onValueChange={(val) => {
+              if (onAnswer) onAnswer(val);
+              else setLocalSelected(val);
+            }}
+          >
             <div className="space-y-3">
               {question.options?.map((option) => (
                 <div key={option.id} className="flex items-center space-x-2">
@@ -322,13 +394,11 @@ function QuestionPreviewMobile({
                   id={`${question.id}-${option.id}`}
                   checked={checkedValues.includes(option.id)}
                   onCheckedChange={(checked) => {
-                    if (checked) {
-                      setCheckedValues([...checkedValues, option.id]);
-                    } else {
-                      setCheckedValues(
-                        checkedValues.filter((v) => v !== option.id),
-                      );
-                    }
+                    const next = checked
+                      ? [...checkedValues, option.id]
+                      : checkedValues.filter((v) => v !== option.id);
+                    if (onAnswer) onAnswer(next);
+                    else setLocalChecked(next);
                   }}
                 />
                 <Label
