@@ -191,6 +191,62 @@ export function useRoutesState(projectId?: string) {
     setSelectedPassiveIds((prev) => prev.filter((id) => id !== passiveId));
   };
 
+  const reorderPassives = useCallback(() => {
+    setSelectedPassiveIds((prev) => {
+      if (prev.length < 2) return prev;
+
+      const points = prev
+        .map((id) => {
+          const passive = liabilities.find((l) => l.id === id);
+          if (!passive || passive.lat == null || passive.lng == null)
+            return null;
+          return { id, lat: passive.lat, lng: passive.lng };
+        })
+        .filter(Boolean) as { id: string; lat: number; lng: number }[];
+
+      if (points.length < 2) return prev;
+
+      const haversine = (
+        a: { lat: number; lng: number },
+        b: { lat: number; lng: number },
+      ) => {
+        const R = 6371;
+        const dLat = ((b.lat - a.lat) * Math.PI) / 180;
+        const dLng = ((b.lng - a.lng) * Math.PI) / 180;
+        const s =
+          Math.sin(dLat / 2) ** 2 +
+          Math.cos((a.lat * Math.PI) / 180) *
+            Math.cos((b.lat * Math.PI) / 180) *
+            Math.sin(dLng / 2) ** 2;
+        return R * 2 * Math.atan2(Math.sqrt(s), Math.sqrt(1 - s));
+      };
+
+      const unvisited = [...points];
+      const visited: string[] = [];
+      let current = unvisited.splice(0, 1)[0];
+      visited.push(current.id);
+
+      while (unvisited.length > 0) {
+        let nearestIdx = 0;
+        let nearestDist = haversine(current, unvisited[0]);
+        for (let i = 1; i < unvisited.length; i++) {
+          const d = haversine(current, unvisited[i]);
+          if (d < nearestDist) {
+            nearestDist = d;
+            nearestIdx = i;
+          }
+        }
+        current = unvisited.splice(nearestIdx, 1)[0];
+        visited.push(current.id);
+      }
+
+      const withoutCoords = prev.filter(
+        (id) => !points.some((p) => p.id === id),
+      );
+      return [...visited, ...withoutCoords];
+    });
+  }, [liabilities]);
+
   // ─── collector handlers ────────────────────────────────────────────────────
 
   const toggleCollector = (collectorId: string) => {
@@ -312,6 +368,7 @@ export function useRoutesState(projectId?: string) {
     movePassiveUp,
     movePassiveDown,
     removePassiveFromRoute,
+    reorderPassives,
     toggleCollector,
     toggleForm,
     handleSaveRoute,
