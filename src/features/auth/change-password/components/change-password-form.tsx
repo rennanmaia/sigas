@@ -35,11 +35,20 @@ const changePasswordSchema = z
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
         "A senha deve conter letras maiúsculas, minúsculas e números"
       ),
-    confirmPassword: z
-      .string()
-      .min(1, "Por favor, confirme a nova senha"),
+    confirmPassword: z.string().optional(),
   })
-  .refine((data) => data.newPassword === data.confirmPassword, {
+  .refine(
+    (data) => {
+      const oldPasswordFilled = data.oldPassword.trim().length > 0;
+      if (!oldPasswordFilled) return true;
+      return (data.confirmPassword ?? "").trim().length > 0;
+    },
+    {
+      message: "Por favor, confirme a nova senha",
+      path: ["confirmPassword"],
+    }
+  )
+  .refine((data) => data.newPassword === (data.confirmPassword ?? ""), {
     message: "As senhas não coincidem",
     path: ["confirmPassword"],
   })
@@ -75,6 +84,9 @@ export function ChangePasswordForm({
       confirmPassword: "",
     },
   });
+
+  const oldPasswordValue = String(form.watch("oldPassword") ?? "");
+  const shouldShowConfirmPassword = oldPasswordValue.trim().length > 0;
 
   async function onSubmit(data: ChangePasswordFormValues) {
     form.clearErrors();
@@ -184,23 +196,25 @@ export function ChangePasswordForm({
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="confirmPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Confirmar senha:</FormLabel>
-                <FormControl>
-                  <PasswordInput
-                    placeholder={t("changePassword.form.confirmPassword.placeholder")}
-                    disabled={isLoading}
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {shouldShowConfirmPassword && (
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirmar senha:</FormLabel>
+                  <FormControl>
+                    <PasswordInput
+                      placeholder={t("changePassword.form.confirmPassword.placeholder")}
+                      disabled={isLoading}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          )}
 
           <div
             className={cn(
