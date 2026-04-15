@@ -2,14 +2,19 @@ import { useState } from "react";
 import {
   ArrowLeft,
   MapPin,
-  ChevronUp,
-  ChevronDown,
+  GripVertical,
   X,
   Save,
   Search,
   Users,
   RefreshCcw,
 } from "lucide-react";
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  type DropResult,
+} from "@hello-pangea/dnd";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -52,8 +57,7 @@ interface RouteCreatePanelProps {
   onNameChange: (value: string) => void;
   onDescriptionChange: (value: string) => void;
   onTogglePassive: (id: string) => void;
-  onMovePassiveUp: (index: number) => void;
-  onMovePassiveDown: (index: number) => void;
+  onMovePassive: (fromIndex: number, toIndex: number) => void;
   onRemovePassive: (id: string) => void;
   onToggleCollector: (id: string) => void;
   onToggleForm: (formId: string) => void;
@@ -79,8 +83,7 @@ export function RouteCreatePanel({
   onNameChange,
   onDescriptionChange,
   onTogglePassive,
-  onMovePassiveUp,
-  onMovePassiveDown,
+  onMovePassive,
   onRemovePassive,
   onToggleCollector,
   onToggleForm,
@@ -205,64 +208,74 @@ export function RouteCreatePanel({
             </Button>
 
             {selectedPassiveIds.length > 0 && (
-              <div className="space-y-1 rounded-md border p-2 bg-muted/20">
-                <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">
-                  Ordem da rota
-                </p>
-                {selectedPassiveIds.map((id, i) => {
-                  const p = availablePassives.find((a) => a.id === id);
-                  return (
+              <DragDropContext
+                onDragEnd={(result: DropResult) => {
+                  if (!result.destination) return;
+                  onMovePassive(result.source.index, result.destination.index);
+                }}
+              >
+                <Droppable droppableId="passives-order">
+                  {(provided) => (
                     <div
-                      key={id}
-                      className="flex items-center gap-1.5 rounded border bg-background px-2 py-1"
+                      className="space-y-1 rounded-md border p-2 bg-muted/20"
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
                     >
-                      <div
-                        className={cn(
-                          "flex size-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white",
-                          i === 0
-                            ? "bg-green-500"
-                            : i === selectedPassiveIds.length - 1
-                              ? "bg-red-500"
-                              : "bg-blue-500",
-                        )}
-                      >
-                        {i + 1}
-                      </div>
-                      <span className="flex-1 text-xs truncate">
-                        {p?.nome ?? id}
-                      </span>
-                      <div className="flex gap-0.5 shrink-0">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-5 w-5"
-                          disabled={i === 0}
-                          onClick={() => onMovePassiveUp(i)}
-                        >
-                          <ChevronUp size={11} />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-5 w-5"
-                          disabled={i === selectedPassiveIds.length - 1}
-                          onClick={() => onMovePassiveDown(i)}
-                        >
-                          <ChevronDown size={11} />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-5 w-5 text-destructive hover:text-destructive hover:bg-destructive/10"
-                          onClick={() => onRemovePassive(id)}
-                        >
-                          <X size={11} />
-                        </Button>
-                      </div>
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">
+                        Ordem da rota
+                      </p>
+                      {selectedPassiveIds.map((id, i) => {
+                        const p = availablePassives.find((a) => a.id === id);
+                        return (
+                          <Draggable key={id} draggableId={id} index={i}>
+                            {(drag, snapshot) => (
+                              <div
+                                ref={drag.innerRef}
+                                {...drag.draggableProps}
+                                className={cn(
+                                  "flex items-center gap-1.5 rounded border bg-background px-2 py-1",
+                                  snapshot.isDragging && "shadow-lg opacity-90",
+                                )}
+                              >
+                                <div
+                                  {...drag.dragHandleProps}
+                                  className="shrink-0 cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground"
+                                >
+                                  <GripVertical size={13} />
+                                </div>
+                                <div
+                                  className={cn(
+                                    "flex size-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white",
+                                    i === 0
+                                      ? "bg-green-500"
+                                      : i === selectedPassiveIds.length - 1
+                                        ? "bg-red-500"
+                                        : "bg-blue-500",
+                                  )}
+                                >
+                                  {i + 1}
+                                </div>
+                                <span className="flex-1 text-xs truncate">
+                                  {p?.nome ?? id}
+                                </span>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-5 w-5 shrink-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                                  onClick={() => onRemovePassive(id)}
+                                >
+                                  <X size={11} />
+                                </Button>
+                              </div>
+                            )}
+                          </Draggable>
+                        );
+                      })}
+                      {provided.placeholder}
                     </div>
-                  );
-                })}
-              </div>
+                  )}
+                </Droppable>
+              </DragDropContext>
             )}
 
             <div className="space-y-1.5">
