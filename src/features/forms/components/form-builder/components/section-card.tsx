@@ -66,8 +66,8 @@ export const SectionCard = memo(function SectionCard({
   const [localTitle, setLocalTitle] = useState(section.title);
 
   return (
-    <div className="border-2 rounded-xl transition-shadow border-border/50 bg-muted/10">
-      <div className="flex items-center gap-2 p-3 md:p-4 border-b border-border/30 bg-background/60 rounded-t-xl">
+    <div className="rounded-xl shadow-sm overflow-hidden border-t-10 border-primary/50 bg-card">
+      <div className="flex items-center gap-2 px-3 py-2.5 md:px-4 md:py-3 border-b border-border bg-muted">
         <div className="flex flex-col gap-0.5 shrink-0">
           <TooltipProvider>
             <Tooltip>
@@ -75,7 +75,7 @@ export const SectionCard = memo(function SectionCard({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-5 w-5 text-muted-foreground hover:text-primary"
+                  className="h-5 w-5 text-muted-foreground hover:text-foreground hover:bg-accent"
                   disabled={!onMoveUp}
                   onClick={onMoveUp}
                 >
@@ -93,7 +93,7 @@ export const SectionCard = memo(function SectionCard({
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-5 w-5 text-muted-foreground hover:text-primary"
+                  className="h-5 w-5 text-muted-foreground hover:text-foreground hover:bg-accent"
                   disabled={!onMoveDown}
                   onClick={onMoveDown}
                 >
@@ -107,17 +107,13 @@ export const SectionCard = memo(function SectionCard({
           </TooltipProvider>
         </div>
 
-        <span className="text-xs font-bold text-muted-foreground border border-border/50 rounded px-1.5 py-0.5 shrink-0 bg-background">
-          {sectionIndex + 1}
-        </span>
-
         <Input
           value={localTitle}
           onChange={(e) => {
             setLocalTitle(e.target.value);
             onUpdateSection({ title: e.target.value });
           }}
-          className="font-semibold border-none shadow-none focus-visible:ring-0 h-8 bg-transparent flex-1 text-sm"
+          className="font-semibold border-none shadow-none focus-visible:ring-0 h-8 bg-transparent flex-1 text-sm text-foreground placeholder:text-muted-foreground"
           placeholder="Título da seção..."
         />
 
@@ -130,8 +126,8 @@ export const SectionCard = memo(function SectionCard({
                   size="icon"
                   className={`h-8 w-8 transition-colors ${
                     showNavEditor
-                      ? "text-violet-600 bg-violet-50 hover:bg-violet-100"
-                      : "text-muted-foreground hover:text-violet-600 hover:bg-violet-50"
+                      ? "text-violet-600 bg-violet-100 hover:bg-violet-200 dark:bg-violet-900/30 dark:text-violet-400"
+                      : "text-muted-foreground hover:text-violet-600 hover:bg-violet-100 dark:hover:bg-violet-900/30"
                   }`}
                   onClick={() => setShowNavEditor(!showNavEditor)}
                 >
@@ -184,7 +180,7 @@ export const SectionCard = memo(function SectionCard({
         )}
       </AnimatePresence>
 
-      <div className="p-3 md:p-4">
+      <div className="p-3 md:p-4 bg-card">
         <Droppable droppableId={`questions-${section.id}`} type="QUESTION">
           {(provided) => (
             <div
