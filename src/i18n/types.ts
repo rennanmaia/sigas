@@ -667,6 +667,30 @@ export type I18nResource = {
     security: {
       title: string;
       description: string;
+      twoFactor: {
+        title: string;
+        description: string;
+        codePlaceholder: string;
+        confirmCode: string;
+        invalidCode: string;
+        email: {
+          title: string;
+          description: string;
+          codeSent: string;
+          verificationHint: string;
+          enableSuccess: string;
+          disableSuccess: string;
+        };
+        app: {
+          title: string;
+          description: string;
+          setupHint: string;
+          secretLabel: string;
+          verificationHint: string;
+          enableSuccess: string;
+          disableSuccess: string;
+        };
+      };
     };
     changePassword: {
       title: string;

@@ -695,6 +695,30 @@ export const ptBR: I18nResource = {
     security: {
       title: "Segurança",
       description: "Gerencie sua senha e as configurações de segurança da conta.",
+      twoFactor: {
+        title: "Autenticação de dois fatores (2FA)",
+        description: "Ative uma camada extra de segurança na sua conta.",
+        codePlaceholder: "Digite o código de 6 dígitos",
+        confirmCode: "Confirmar código",
+        invalidCode: "Código inválido. Digite 6 números.",
+        email: {
+          title: "Código por e-mail",
+          description: "Receba um código por e-mail em cada login.",
+          codeSent: "Código enviado para seu e-mail.",
+          verificationHint: "Digite abaixo o código recebido por e-mail para ativar.",
+          enableSuccess: "2FA por e-mail ativado com sucesso.",
+          disableSuccess: "2FA por e-mail desativado.",
+        },
+        app: {
+          title: "Google Authenticator",
+          description: "Use o app autenticador para gerar códigos temporários.",
+          setupHint: "Configure seu Google Authenticator e confirme o código.",
+          secretLabel: "Chave para configurar no app autenticador",
+          verificationHint: "Depois de configurar o app, digite o código gerado.",
+          enableSuccess: "2FA com Google Authenticator ativado com sucesso.",
+          disableSuccess: "2FA com Google Authenticator desativado.",
+        },
+      },
     },
     changePassword: {
       title: "Alterar Senha",

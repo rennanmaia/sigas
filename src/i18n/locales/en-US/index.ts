@@ -690,6 +690,30 @@ export const enUS: I18nResource = {
     security: {
       title: "Security",
       description: "Manage your password and account security settings.",
+      twoFactor: {
+        title: "Two-factor authentication (2FA)",
+        description: "Enable an extra security layer for your account.",
+        codePlaceholder: "Enter the 6-digit code",
+        confirmCode: "Confirm code",
+        invalidCode: "Invalid code. Enter 6 digits.",
+        email: {
+          title: "Code by email",
+          description: "Receive a code by email at each login.",
+          codeSent: "Code sent to your email.",
+          verificationHint: "Enter the email code below to enable this method.",
+          enableSuccess: "Email 2FA enabled successfully.",
+          disableSuccess: "Email 2FA disabled.",
+        },
+        app: {
+          title: "Google Authenticator",
+          description: "Use the authenticator app to generate temporary codes.",
+          setupHint: "Set up Google Authenticator and confirm the code.",
+          secretLabel: "Key to configure in your authenticator app",
+          verificationHint: "After setting up the app, enter the generated code.",
+          enableSuccess: "Google Authenticator 2FA enabled successfully.",
+          disableSuccess: "Google Authenticator 2FA disabled.",
+        },
+      },
     },
     changePassword: {
       title: "Change Password",
