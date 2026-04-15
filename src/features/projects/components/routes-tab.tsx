@@ -46,8 +46,7 @@ export function RoutesTab({ projectId }: RoutesTabProps) {
             onNameChange={state.setRouteName}
             onDescriptionChange={state.setRouteDescription}
             onTogglePassive={state.togglePassive}
-            onMovePassiveUp={state.movePassiveUp}
-            onMovePassiveDown={state.movePassiveDown}
+            onMovePassive={state.reorderPassivesDnD}
             onRemovePassive={state.removePassiveFromRoute}
             onToggleCollector={state.toggleCollector}
             onToggleForm={state.toggleForm}
