@@ -190,8 +190,8 @@ export function MobilePreviewDialog({
                           )}
 
                           <div className="space-y-6">
-                            {currentSection.questions.map(
-                              (question, qIndex) => (
+                            {currentSection.questions.map((question, qIndex) =>
+                              isQuestionVisible(question, answers) ? (
                                 <QuestionPreviewMobile
                                   key={question.id}
                                   question={question}
@@ -204,7 +204,7 @@ export function MobilePreviewDialog({
                                     }))
                                   }
                                 />
-                              ),
+                              ) : null,
                             )}
                           </div>
                         </div>
@@ -250,6 +250,19 @@ export function MobilePreviewDialog({
       </DialogContent>
     </Dialog>
   );
+}
+
+function isQuestionVisible(
+  question: Question,
+  answers: Record<string, string | string[]>,
+): boolean {
+  if (!question.logic) return true;
+  const { dependsOnQuestionId, condition, value } = question.logic;
+  const answer = answers[dependsOnQuestionId];
+  const answerValues = Array.isArray(answer) ? answer : answer ? [answer] : [];
+  return condition === "is"
+    ? answerValues.includes(value)
+    : !answerValues.includes(value);
 }
 
 function QuestionPreviewMobile({
