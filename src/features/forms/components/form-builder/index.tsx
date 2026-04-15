@@ -1,9 +1,4 @@
-import {
-  DragDropContext,
-  Draggable,
-  Droppable,
-  type DropResult,
-} from "@hello-pangea/dnd";
+import { DragDropContext, type DropResult } from "@hello-pangea/dnd";
 import { Sidebar } from "./components/sidebar";
 import { SectionCard } from "./components/section-card";
 import { useFormBuilder } from "./hooks/use-form-builder";
@@ -11,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { ArrowUp, AlertCircle } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { createFormSchema } from "../../data/schema";
 import {
   useEffect,
@@ -313,9 +308,7 @@ export const FormBuilder = forwardRef<
     )
       return;
 
-    if (type === "SECTION") {
-      methods.reorderSections(source.index, destination.index);
-    } else if (type === "QUESTION") {
+    if (type === "QUESTION") {
       const fromSectionId = source.droppableId.replace("questions-", "");
       const toSectionId = destination.droppableId.replace("questions-", "");
       if (fromSectionId === toSectionId) {
@@ -530,127 +523,86 @@ export const FormBuilder = forwardRef<
                       )}
                     </Card>
 
-                    <Droppable droppableId="form-sections" type="SECTION">
-                      {(provided) => (
-                        <div
-                          {...provided.droppableProps}
-                          ref={provided.innerRef}
-                          className="space-y-6"
+                    <div className="space-y-6">
+                      {sections.map((section, sectionIndex) => (
+                        <motion.div
+                          key={section.id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{
+                            type: "spring",
+                            stiffness: 300,
+                            damping: 25,
+                          }}
                         >
-                          <AnimatePresence initial={false}>
-                            {sections.map((section, sectionIndex) => (
-                              <Draggable
-                                key={section.id}
-                                draggableId={`section-${section.id}`}
-                                index={sectionIndex}
-                              >
-                                {(provided, snapshot) => (
-                                  <motion.div
-                                    ref={provided.innerRef}
-                                    {...provided.draggableProps}
-                                    initial={{ opacity: 0, y: -20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{
-                                      opacity: 0,
-                                      y: -10,
-                                      transition: { duration: 0.2 },
-                                    }}
-                                    transition={{
-                                      type: "spring",
-                                      stiffness: 300,
-                                      damping: 25,
-                                    }}
-                                    style={provided.draggableProps.style}
-                                  >
-                                    <SectionCard
-                                      section={section}
-                                      sectionIndex={sectionIndex}
-                                      totalSections={sections.length}
-                                      allSections={sections}
-                                      dragHandleProps={provided.dragHandleProps}
-                                      isDragging={snapshot.isDragging}
-                                      sectionErrors={
-                                        (
-                                          form.formState.errors.sections as any
-                                        )?.[sectionIndex]
-                                      }
-                                      onUpdateSection={(updates) =>
-                                        methods.updateSection(
-                                          section.id,
-                                          updates,
-                                        )
-                                      }
-                                      onRemoveSection={() =>
-                                        methods.removeSection(section.id)
-                                      }
-                                      onAddQuestion={(type, atIndex) =>
-                                        methods.addQuestion(
-                                          type,
-                                          section.id,
-                                          atIndex,
-                                        )
-                                      }
-                                      onUpdateQuestion={(id, updates) =>
-                                        methods.updateQuestion(
-                                          id,
-                                          section.id,
-                                          updates,
-                                        )
-                                      }
-                                      onUpdateLabel={(id, val) =>
-                                        methods.updateQuestionLabel(
-                                          id,
-                                          section.id,
-                                          val,
-                                        )
-                                      }
-                                      onUpdateType={(id, type) =>
-                                        methods.updateQuestionType(
-                                          id,
-                                          section.id,
-                                          type,
-                                        )
-                                      }
-                                      onRemove={(id) =>
-                                        methods.removeQuestion(id, section.id)
-                                      }
-                                      onToggleRequired={(id) =>
-                                        methods.toggleRequired(id, section.id)
-                                      }
-                                      onDuplicate={(id) =>
-                                        methods.duplicateQuestion(
-                                          id,
-                                          section.id,
-                                        )
-                                      }
-                                      onAddOption={(id) =>
-                                        methods.addOption(id, section.id)
-                                      }
-                                      onUpdateOption={(id, idx, val) =>
-                                        methods.updateOption(
-                                          id,
-                                          section.id,
-                                          idx,
-                                          val,
-                                        )
-                                      }
-                                      onRemoveOption={(id, idx) =>
-                                        methods.removeOption(
-                                          id,
-                                          section.id,
-                                          idx,
-                                        )
-                                      }
-                                    />
-                                  </motion.div>
-                                )}
-                              </Draggable>
-                            ))}
-                          </AnimatePresence>
-                          {provided.placeholder}
-                        </div>
-                      )}
-                    </Droppable>
+                          <SectionCard
+                            section={section}
+                            sectionIndex={sectionIndex}
+                            totalSections={sections.length}
+                            allSections={sections}
+                            onMoveUp={
+                              sectionIndex > 0
+                                ? () =>
+                                    methods.reorderSections(
+                                      sectionIndex,
+                                      sectionIndex - 1,
+                                    )
+                                : undefined
+                            }
+                            onMoveDown={
+                              sectionIndex < sections.length - 1
+                                ? () =>
+                                    methods.reorderSections(
+                                      sectionIndex,
+                                      sectionIndex + 1,
+                                    )
+                                : undefined
+                            }
+                            sectionErrors={
+                              (form.formState.errors.sections as any)?.[
+                                sectionIndex
+                              ]
+                            }
+                            onUpdateSection={(updates) =>
+                              methods.updateSection(section.id, updates)
+                            }
+                            onRemoveSection={() =>
+                              methods.removeSection(section.id)
+                            }
+                            onAddQuestion={(type, atIndex) =>
+                              methods.addQuestion(type, section.id, atIndex)
+                            }
+                            onUpdateQuestion={(id, updates) =>
+                              methods.updateQuestion(id, section.id, updates)
+                            }
+                            onUpdateLabel={(id, val) =>
+                              methods.updateQuestionLabel(id, section.id, val)
+                            }
+                            onUpdateType={(id, type) =>
+                              methods.updateQuestionType(id, section.id, type)
+                            }
+                            onRemove={(id) =>
+                              methods.removeQuestion(id, section.id)
+                            }
+                            onToggleRequired={(id) =>
+                              methods.toggleRequired(id, section.id)
+                            }
+                            onDuplicate={(id) =>
+                              methods.duplicateQuestion(id, section.id)
+                            }
+                            onAddOption={(id) =>
+                              methods.addOption(id, section.id)
+                            }
+                            onUpdateOption={(id, idx, val) =>
+                              methods.updateOption(id, section.id, idx, val)
+                            }
+                            onRemoveOption={(id, idx) =>
+                              methods.removeOption(id, section.id, idx)
+                            }
+                          />
+                        </motion.div>
+                      ))}
+                    </div>
                   </div>
                 </ScrollArea>
 
