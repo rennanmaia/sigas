@@ -10,7 +10,7 @@ import type {
   QuestionType,
   SectionNavigation,
 } from "../types/question";
-import { GripVertical, Trash2, GitBranch, Plus } from "lucide-react";
+import { ChevronUp, ChevronDown, Trash2, GitBranch, Plus } from "lucide-react";
 import { useState, memo } from "react";
 import {
   Tooltip,
@@ -24,8 +24,8 @@ interface SectionCardProps {
   sectionIndex: number;
   totalSections: number;
   allSections: Section[];
-  dragHandleProps?: any;
-  isDragging?: boolean;
+  onMoveUp?: () => void;
+  onMoveDown?: () => void;
   sectionErrors?: any;
   onUpdateSection: (updates: Partial<Section>) => void;
   onRemoveSection: () => void;
@@ -46,8 +46,8 @@ export const SectionCard = memo(function SectionCard({
   sectionIndex,
   totalSections,
   allSections,
-  dragHandleProps,
-  isDragging,
+  onMoveUp,
+  onMoveDown,
   sectionErrors,
   onUpdateSection,
   onRemoveSection,
@@ -66,29 +66,46 @@ export const SectionCard = memo(function SectionCard({
   const [localTitle, setLocalTitle] = useState(section.title);
 
   return (
-    <div
-      className={`border-2 rounded-xl transition-shadow ${
-        isDragging
-          ? "shadow-2xl border-primary/30 bg-white"
-          : "border-border/50 bg-muted/10"
-      }`}
-    >
+    <div className="border-2 rounded-xl transition-shadow border-border/50 bg-muted/10">
       <div className="flex items-center gap-2 p-3 md:p-4 border-b border-border/30 bg-background/60 rounded-t-xl">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div
-                {...dragHandleProps}
-                className="p-1 text-muted-foreground cursor-grab active:cursor-grabbing hover:text-primary rounded-md transition-colors shrink-0"
-              >
-                <GripVertical size={18} />
-              </div>
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              Arrastar para reordenar seção
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <div className="flex flex-col gap-0.5 shrink-0">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-5 w-5 text-muted-foreground hover:text-primary"
+                  disabled={!onMoveUp}
+                  onClick={onMoveUp}
+                >
+                  <ChevronUp size={14} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                Mover seção para cima
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-5 w-5 text-muted-foreground hover:text-primary"
+                  disabled={!onMoveDown}
+                  onClick={onMoveDown}
+                >
+                  <ChevronDown size={14} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                Mover seção para baixo
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
 
         <span className="text-xs font-bold text-muted-foreground border border-border/50 rounded px-1.5 py-0.5 shrink-0 bg-background">
           {sectionIndex + 1}
