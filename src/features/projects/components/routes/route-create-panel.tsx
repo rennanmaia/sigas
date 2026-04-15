@@ -57,6 +57,7 @@ interface RouteCreatePanelProps {
   onRemovePassive: (id: string) => void;
   onToggleCollector: (id: string) => void;
   onToggleForm: (formId: string) => void;
+  onReorderPassives: () => void;
   onSave: () => void;
   onBack: () => void;
 }
@@ -83,10 +84,10 @@ export function RouteCreatePanel({
   onRemovePassive,
   onToggleCollector,
   onToggleForm,
+  onReorderPassives,
   onSave,
   onBack,
 }: RouteCreatePanelProps) {
-  const MAX_PASSIVES = 20;
   const [passiveSearch, setPassiveSearch] = useState("");
   const [collectorSearch, setCollectorSearch] = useState("");
   const [formSearch, setFormSearch] = useState("");
@@ -109,7 +110,10 @@ export function RouteCreatePanel({
       !formSearch || f.title.toLowerCase().includes(formSearch.toLowerCase()),
   );
 
-  function organizeMapPoints() {}
+  function organizeMapPoints() {
+    if (selectedPassiveIds.length < 2) return;
+    onReorderPassives();
+  }
 
   return (
     <div className="flex flex-col flex-1 min-h-0 gap-3">
@@ -184,19 +188,12 @@ export function RouteCreatePanel({
                 <MapPin size={13} />
                 Pontos da Rota (Passivos){" "}
                 <span className="text-muted-foreground font-normal text-xs">
-                  (mín. 2, máx. {MAX_PASSIVES})
+                  (mín. 2)
                 </span>
               </Label>
               {selectedPassiveIds.length > 0 && (
-                <Badge
-                  variant={
-                    selectedPassiveIds.length >= MAX_PASSIVES
-                      ? "destructive"
-                      : "secondary"
-                  }
-                  className="text-xs"
-                >
-                  {selectedPassiveIds.length}/{MAX_PASSIVES}
+                <Badge variant="secondary" className="text-xs">
+                  {selectedPassiveIds.length}
                 </Badge>
               )}
             </div>
@@ -289,26 +286,18 @@ export function RouteCreatePanel({
                 <div className="max-h-36 overflow-y-auto space-y-1 rounded-md border p-1">
                   {filteredPassives.map((passive) => {
                     const checked = selectedPassiveIds.includes(passive.id!);
-                    const atLimit =
-                      !checked && selectedPassiveIds.length >= MAX_PASSIVES;
                     return (
                       <div
                         key={passive.id}
                         className={cn(
-                          "flex items-center gap-2 rounded px-2 py-1.5 transition-colors",
-                          atLimit
-                            ? "opacity-40 cursor-not-allowed"
-                            : "cursor-pointer hover:bg-muted/40",
+                          "flex items-center gap-2 rounded px-2 py-1.5 transition-colors cursor-pointer hover:bg-muted/40",
                           checked && "bg-primary/5",
                         )}
-                        onClick={() => !atLimit && onTogglePassive(passive.id!)}
+                        onClick={() => onTogglePassive(passive.id!)}
                       >
                         <Checkbox
                           checked={checked}
-                          disabled={atLimit}
-                          onCheckedChange={() =>
-                            !atLimit && onTogglePassive(passive.id!)
-                          }
+                          onCheckedChange={() => onTogglePassive(passive.id!)}
                           onClick={(e) => e.stopPropagation()}
                           className="shrink-0"
                         />

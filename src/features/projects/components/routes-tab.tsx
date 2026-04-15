@@ -51,6 +51,7 @@ export function RoutesTab({ projectId }: RoutesTabProps) {
             onRemovePassive={state.removePassiveFromRoute}
             onToggleCollector={state.toggleCollector}
             onToggleForm={state.toggleForm}
+            onReorderPassives={state.reorderPassives}
             onSave={state.handleSaveRoute}
             onBack={state.goBackFromCreate}
           />
