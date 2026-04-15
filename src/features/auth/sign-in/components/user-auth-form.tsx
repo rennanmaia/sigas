@@ -1,6 +1,6 @@
 import { authenticate } from '@/features/auth/services/auth';
 import { useLoginAttempts } from '@/hooks/use-login-attempts';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,8 +19,21 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Checkbox } from "@/components/ui/checkbox";
 import { PasswordInput } from "@/components/password-input";
 import { Input } from "@/components/ui/input";
+
+const REMEMBER_ME_STORAGE_KEY = "auth-remember-me";
+const REMEMBER_ME_TTL_MS = 1000 * 60 * 60 * 24 * 30; // 30 days
+
+type RememberedSession = {
+  accountNo: string;
+  name: string;
+  email: string;
+  role: string[];
+  exp: number;
+  rememberUntil: number;
+};
 
 const formSchema = z.object({
   email: z
@@ -31,6 +44,7 @@ const formSchema = z.object({
     .string()
     .min(1, 'Por favor insira sua senha')
     .min(8, 'A senha deve conter pelo menos 8 caracteres'),
+  rememberMe: z.boolean(),
 });
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLFormElement> {
@@ -52,8 +66,55 @@ export function UserAuthForm({
     defaultValues: {
       email: "",
       password: "",
+      rememberMe: false,
     },
   });
+
+  useEffect(() => {
+    if (auth.accessToken) return;
+
+    const rawRemembered = localStorage.getItem(REMEMBER_ME_STORAGE_KEY);
+    if (!rawRemembered) return;
+
+    try {
+      const remembered = JSON.parse(rawRemembered) as RememberedSession;
+
+      if (!remembered?.email || !remembered?.rememberUntil) {
+        localStorage.removeItem(REMEMBER_ME_STORAGE_KEY);
+        return;
+      }
+
+      if (remembered.rememberUntil < Date.now()) {
+        localStorage.removeItem(REMEMBER_ME_STORAGE_KEY);
+        return;
+      }
+
+      auth.setUser({
+        accountNo: remembered.accountNo,
+        name: remembered.name,
+        email: remembered.email,
+        role: remembered.role,
+        exp: remembered.exp,
+      });
+      auth.setAccessToken('mock-access-token', true);
+
+      useAuditStore.getState().addEvent({
+        userId: remembered.accountNo,
+        userName: remembered.name,
+        action: 'outros',
+        module: 'system',
+        entityId: remembered.email,
+        entityName: remembered.email,
+        details: `Login automático via Lembre-se de mim para ${remembered.email}`,
+      });
+
+      const targetPath = redirectTo || '/';
+      navigate({ to: targetPath, replace: true });
+      toast.success(`Bem-vindo(a) de volta, ${remembered.email}!`);
+    } catch {
+      localStorage.removeItem(REMEMBER_ME_STORAGE_KEY);
+    }
+  }, [auth, navigate, redirectTo]);
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     form.clearErrors()
@@ -161,7 +222,18 @@ export function UserAuthForm({
     };
 
     auth.setUser(mockUser);
-    auth.setAccessToken('mock-access-token');
+
+    if (data.rememberMe) {
+      const rememberedSession: RememberedSession = {
+        ...mockUser,
+        rememberUntil: Date.now() + REMEMBER_ME_TTL_MS,
+      };
+      localStorage.setItem(REMEMBER_ME_STORAGE_KEY, JSON.stringify(rememberedSession));
+    } else {
+      localStorage.removeItem(REMEMBER_ME_STORAGE_KEY);
+    }
+
+    auth.setAccessToken('mock-access-token', data.rememberMe === true);
 
     loginAttempts.resetFailedAttempts(data.email);
 
@@ -221,6 +293,21 @@ export function UserAuthForm({
               >
                 Esqueceu sua senha?
               </Link>
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="rememberMe"
+          render={({ field }) => (
+            <FormItem className="flex flex-row items-center space-x-2 space-y-0">
+              <FormControl>
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={(checked) => field.onChange(checked === true)}
+                />
+              </FormControl>
+              <FormLabel className="font-normal">Lembre-se de mim</FormLabel>
             </FormItem>
           )}
         />
