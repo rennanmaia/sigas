@@ -187,6 +187,16 @@ export function useRoutesState(projectId?: string) {
     });
   };
 
+  const reorderPassivesDnD = (fromIndex: number, toIndex: number) => {
+    setSelectedPassiveIds((prev) => {
+      if (fromIndex === toIndex) return prev;
+      const next = [...prev];
+      const [moved] = next.splice(fromIndex, 1);
+      next.splice(toIndex, 0, moved);
+      return next;
+    });
+  };
+
   const removePassiveFromRoute = (passiveId: string) => {
     setSelectedPassiveIds((prev) => prev.filter((id) => id !== passiveId));
   };
@@ -367,6 +377,7 @@ export function useRoutesState(projectId?: string) {
     togglePassive,
     movePassiveUp,
     movePassiveDown,
+    reorderPassivesDnD,
     removePassiveFromRoute,
     reorderPassives,
     toggleCollector,
