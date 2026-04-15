@@ -61,12 +61,16 @@ export function MobilePreviewDialog({
   const progress =
     totalSections > 1 ? (currentStep / (totalSections - 1)) * 100 : 0;
 
-  const questionOffset = sections
-    .slice(0, currentStep)
-    .reduce((acc, s) => acc + s.questions.length, 0);
+  const visibleIndexMap: Record<string, number> = {};
+  let visibleCounter = 0;
+  sections.forEach((section) => {
+    section.questions.forEach((q) => {
+      if (isQuestionVisible(q, answers)) {
+        visibleIndexMap[q.id] = visibleCounter++;
+      }
+    });
+  });
 
-  // Resolve where to go after the current section, respecting navigation rules.
-  // Returns an index number or "end".
   function resolveNextStep(): number | "end" {
     const nav = currentSection?.navigation;
     const isLinearLast = currentStep === totalSections - 1;
@@ -74,7 +78,6 @@ export function MobilePreviewDialog({
     if (!nav) return isLinearLast ? "end" : currentStep + 1;
     if (nav.defaultNext === "end") return "end";
 
-    // Evaluate conditional rules first
     for (const rule of nav.rules ?? []) {
       const answer = answers[rule.dependsOnQuestionId];
       const ids = Array.isArray(answer) ? answer : answer ? [answer] : [];
@@ -84,13 +87,11 @@ export function MobilePreviewDialog({
           : !ids.includes(rule.value);
       if (matches) {
         if (rule.goToSectionId === "end") return "end";
-        if (rule.goToSectionId === "next") break; // fall through to defaultNext
         const idx = sections.findIndex((s) => s.id === rule.goToSectionId);
         return idx >= 0 ? idx : "end";
       }
     }
 
-    // defaultNext
     if (nav.defaultNext === "next") {
       return isLinearLast ? "end" : currentStep + 1;
     }
@@ -208,7 +209,9 @@ export function MobilePreviewDialog({
                                     >
                                       <QuestionPreviewMobile
                                         question={question}
-                                        index={questionOffset + qIndex}
+                                        index={
+                                          visibleIndexMap[question.id] ?? qIndex
+                                        }
                                         answer={answers[question.id]}
                                         onAnswer={(val) =>
                                           setAnswers((prev) => ({
