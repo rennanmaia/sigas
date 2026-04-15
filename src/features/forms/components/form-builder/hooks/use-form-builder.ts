@@ -54,7 +54,12 @@ export function useFormBuilder() {
   const addSection = useCallback((atIndex?: number) => {
     setSections((prev) => {
       const newSection = createDefaultSection(prev.length + 1);
-      if (atIndex === undefined) return [...prev, newSection];
+      if (
+        atIndex === undefined ||
+        typeof atIndex !== "number" ||
+        !Number.isFinite(atIndex)
+      )
+        return [...prev, newSection];
       const next = [...prev];
       next.splice(atIndex + 1, 0, newSection);
       return next;
