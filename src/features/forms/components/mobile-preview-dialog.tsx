@@ -12,7 +12,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Camera, MapPin, Mic, UploadCloud, Plus, X } from "lucide-react";
+import {
+  Camera,
+  MapPin,
+  Mic,
+  UploadCloud,
+  Plus,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  CheckCircle2,
+} from "lucide-react";
 import type { Question, Section } from "./form-builder/types/question";
 
 interface MobilePreviewDialogProps {
@@ -30,9 +40,31 @@ export function MobilePreviewDialog({
   description,
   sections,
 }: MobilePreviewDialogProps) {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleOpenChange = (v: boolean) => {
+    if (!v) {
+      setCurrentStep(0);
+      setSubmitted(false);
+    }
+    onOpenChange(v);
+  };
+
+  const totalSections = sections.length;
   const allQuestions = sections.flatMap((s) => s.questions);
+  const isFirst = currentStep === 0;
+  const isLast = currentStep === totalSections - 1;
+  const currentSection = sections[currentStep];
+  const progress =
+    totalSections > 1 ? (currentStep / (totalSections - 1)) * 100 : 0;
+
+  const questionOffset = sections
+    .slice(0, currentStep)
+    .reduce((acc, s) => acc + s.questions.length, 0);
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-[440px] h-[90vh] p-0 gap-0 overflow-hidden flex flex-col">
         <DialogHeader className="px-4 pt-4 pb-3 border-b bg-muted/30">
           <DialogTitle className="text-sm font-medium text-muted-foreground">
@@ -42,61 +74,123 @@ export function MobilePreviewDialog({
 
         <div className="flex-1 flex items-center justify-center p-4 bg-muted">
           <div className="relative w-full max-w-[375px] h-full bg-background">
-            <div className="light absolute inset-2 rounded-3xl text-foreground overflow-hidden">
-              <ScrollArea className="h-full">
-                <div className="p-4 space-y-4">
-                  <div className="space-y-2 pb-4 border-b-4 border-b-primary/20">
-                    <h1 className="text-xl font-bold">
-                      {title || "Título do Formulário"}
-                    </h1>
-                    {description && <p className="text-sm ">{description}</p>}
+            <div className="light absolute inset-2 rounded-3xl text-foreground overflow-hidden flex flex-col">
+              {totalSections > 1 && !submitted && (
+                <div className="shrink-0 px-4 pt-3 pb-1">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[10px] text-muted-foreground font-medium">
+                      Seção {currentStep + 1} de {totalSections}
+                    </span>
+                    <span className="text-[10px] text-muted-foreground">
+                      {Math.round(progress)}%
+                    </span>
                   </div>
-                  {allQuestions.length > 0 ? (
-                    <div className="space-y-4">
-                      {sections.map((section, sectionIndex) => (
-                        <div key={section.id} className="space-y-4">
-                          {sections.length > 1 && (
-                            <div className="flex items-center gap-2 pt-2">
-                              <span className="text-[10px] font-bold text-muted-foreground border border-border/50 rounded px-1.5 py-0.5 bg-muted">
-                                {sectionIndex + 1}
-                              </span>
-                              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                                {section.title}
+                  <div className="h-1 w-full rounded-full bg-muted">
+                    <div
+                      className="h-1 rounded-full bg-primary transition-all duration-300"
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {submitted ? (
+                <div className="flex-1 flex flex-col items-center justify-center gap-4 p-6 text-center">
+                  <CheckCircle2 size={48} className="text-primary" />
+                  <h2 className="text-lg font-bold">Resposta registrada!</h2>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setCurrentStep(0);
+                      setSubmitted(false);
+                    }}
+                  >
+                    Preencher novamente
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <ScrollArea className="flex-1 min-h-0">
+                    <div className="p-4 space-y-4">
+                      {currentStep === 0 && (
+                        <div className="space-y-1 pb-4 border-b-4 border-b-primary/20">
+                          <h1 className="text-xl font-bold">
+                            {title || "Título do Formulário"}
+                          </h1>
+                          {description && (
+                            <p className="text-sm text-muted-foreground">
+                              {description}
+                            </p>
+                          )}
+                        </div>
+                      )}
+
+                      {allQuestions.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center py-12 text-center">
+                          <p className="text-sm text-muted-foreground">
+                            Nenhuma questão adicionada
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="space-y-4">
+                          {totalSections > 1 && (
+                            <div className="rounded-lg border-l-4 border-primary bg-primary/5 px-3 py-2">
+                              <p className="text-xs font-bold text-primary uppercase tracking-wide">
+                                {currentSection.title ||
+                                  `Seção ${currentStep + 1}`}
                               </p>
                             </div>
                           )}
+
                           <div className="space-y-6">
-                            {section.questions.map((question, qIndex) => {
-                              const globalIndex =
-                                sections
-                                  .slice(0, sectionIndex)
-                                  .reduce(
-                                    (acc, s) => acc + s.questions.length,
-                                    0,
-                                  ) + qIndex;
-                              return (
+                            {currentSection.questions.map(
+                              (question, qIndex) => (
                                 <QuestionPreviewMobile
                                   key={question.id}
                                   question={question}
-                                  index={globalIndex}
+                                  index={questionOffset + qIndex}
                                 />
-                              );
-                            })}
+                              ),
+                            )}
                           </div>
                         </div>
-                      ))}
-
-                      <Button className="w-full" size="lg">
-                        Enviar
-                      </Button>
+                      )}
                     </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center py-12 text-center">
-                      <p className="text-sm ">Nenhuma questão adicionada</p>
+                  </ScrollArea>
+
+                  {allQuestions.length > 0 && (
+                    <div className="shrink-0 border-t bg-background/80 backdrop-blur-sm px-4 py-3 flex items-center gap-2">
+                      {!isFirst && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="gap-1"
+                          onClick={() => setCurrentStep((s) => s - 1)}
+                        >
+                          <ChevronLeft size={14} />
+                          Anterior
+                        </Button>
+                      )}
+                      <div className="flex-1" />
+                      {isLast ? (
+                        <Button size="sm" onClick={() => setSubmitted(true)}>
+                          Enviar
+                        </Button>
+                      ) : (
+                        <Button
+                          size="sm"
+                          className="gap-1"
+                          onClick={() => setCurrentStep((s) => s + 1)}
+                        >
+                          Próxima
+                          <ChevronRight size={14} />
+                        </Button>
+                      )}
                     </div>
                   )}
-                </div>
-              </ScrollArea>
+                </>
+              )}
             </div>
           </div>
         </div>
