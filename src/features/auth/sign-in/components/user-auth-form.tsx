@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Loader2, LogIn, AlertCircle } from "lucide-react";
-import { toast } from "sonner";
 import { useAuthStore } from "@/stores/auth-store";
 import { useAuditStore } from "@/stores/audit-store";
 import { cn } from "@/lib/utils";
@@ -62,8 +61,6 @@ export function UserAuthForm({
 
     if (loginAttempts.isAccountBlocked(data.email)) {
       setIsLoading(false);
-      const warning = loginAttempts.getWarningMessage(data.email);
-      toast.error(warning || 'Sua conta foi desativada. Entre em contato com o administrador.');
       return;
     }
 
@@ -84,7 +81,6 @@ export function UserAuthForm({
         try {
           form.setFocus('email')
         } catch {}
-        toast.error('E-mail não encontrado.')
       } else if (res.reason === 'account_blocked') {
         useAuditStore.getState().addEvent({
           userId: 'anonymous',
@@ -95,7 +91,6 @@ export function UserAuthForm({
           entityName: 'Conta bloqueada',
           details: `Tentativa de login bloqueada para e-mail ${data.email}`,
         });
-        toast.error('Conta bloqueada. Entre em contato com o administrador.')
       } else if (res.reason === 'invalid_password') {
         const wasBlockedBefore = loginAttempts.isAccountBlocked(data.email);
         loginAttempts.recordFailedAttempt(data.email);
@@ -115,11 +110,6 @@ export function UserAuthForm({
         try {
           form.setFocus('password')
         } catch {}
-        toast.error('Senha incorreta.')
-
-        if (warningMsg) {
-          toast.error(warningMsg);
-        }
 
         if (!wasBlockedBefore && isBlockedNow) {
           useAuditStore.getState().addEvent({
@@ -192,7 +182,6 @@ export function UserAuthForm({
     setIsLoading(false);
     const targetPath = redirectTo || '/';
     navigate({ to: targetPath, replace: true });
-    toast.success(`Bem-vindo(a) de volta, ${user.email}!`);
   }
 
   const currentEmail = String(form.watch('email') || '');
