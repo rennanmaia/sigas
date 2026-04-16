@@ -70,9 +70,80 @@ export function useLoginAttempts() {
         } catch {
           // Ignore errors updating local-users
         }
+
+        try {
+          const storedAuthUsers = localStorage.getItem('auth-users');
+          if (storedAuthUsers) {
+            const authUsers = JSON.parse(storedAuthUsers) as Array<{ email?: string; status?: string }>;
+            const authUserIndex = authUsers.findIndex(
+              (u) => String(u.email ?? '').toLowerCase() === identifier.toLowerCase(),
+            );
+            if (authUserIndex >= 0) {
+              authUsers[authUserIndex].status = 'suspended';
+              localStorage.setItem('auth-users', JSON.stringify(authUsers));
+            }
+          }
+        } catch {
+          // Ignore errors updating auth-users
+        }
       }
     } catch (error) {
       console.error('Erro ao bloquear conta:', error);
+    }
+  }, [getBlockedAccounts]);
+
+  const unblockAccount = useCallback((identifier: string): void => {
+    try {
+      const blocked = getBlockedAccounts().filter((b) => b.identifier !== identifier);
+      if (blocked.length === 0) {
+        localStorage.removeItem(BLOCKED_ACCOUNTS_KEY);
+      } else {
+        localStorage.setItem(BLOCKED_ACCOUNTS_KEY, JSON.stringify(blocked));
+      }
+
+      const storedAttempts = localStorage.getItem(FAILED_ATTEMPTS_KEY);
+      if (storedAttempts) {
+        const attempts = (JSON.parse(storedAttempts) as FailedAttempt[]).filter(
+          (a) => a.identifier !== identifier,
+        );
+        if (attempts.length === 0) {
+          localStorage.removeItem(FAILED_ATTEMPTS_KEY);
+        } else {
+          localStorage.setItem(FAILED_ATTEMPTS_KEY, JSON.stringify(attempts));
+        }
+      }
+
+      try {
+        const storedUsers = localStorage.getItem('local-users');
+        if (storedUsers) {
+          const users = JSON.parse(storedUsers) as Array<{ email?: string; status?: string }>;
+          const updatedUsers = users.map((u) =>
+            String(u.email ?? '').toLowerCase() === identifier.toLowerCase()
+              ? { ...u, status: 'active' }
+              : u,
+          );
+          localStorage.setItem('local-users', JSON.stringify(updatedUsers));
+        }
+      } catch {
+        // Ignore errors updating local-users
+      }
+
+      try {
+        const storedAuthUsers = localStorage.getItem('auth-users');
+        if (storedAuthUsers) {
+          const authUsers = JSON.parse(storedAuthUsers) as Array<{ email?: string; status?: string }>;
+          const updatedAuthUsers = authUsers.map((u) =>
+            String(u.email ?? '').toLowerCase() === identifier.toLowerCase()
+              ? { ...u, status: 'active' }
+              : u,
+          );
+          localStorage.setItem('auth-users', JSON.stringify(updatedAuthUsers));
+        }
+      } catch {
+        // Ignore errors updating auth-users
+      }
+    } catch (error) {
+      console.error('Erro ao desbloquear conta:', error);
     }
   }, [getBlockedAccounts]);
 
@@ -136,7 +207,7 @@ export function useLoginAttempts() {
     if (attempt.count < WARNING_THRESHOLD) return null;
     
     if (attempt.count === MAX_ATTEMPTS) {
-      return 'Sua conta foi desativada. Entre em contato com o administrador.';
+      return 'Sua conta foi desativada. Faça uma redefinição de senha para reativá-la.';
     }
 
     const remaining = MAX_ATTEMPTS - attempt.count;
@@ -158,6 +229,7 @@ export function useLoginAttempts() {
     isAccountBlocked,
     recordFailedAttempt,
     blockAccount,
+    unblockAccount,
     resetFailedAttempts,
     getWarningMessage,
     isWarningVisible,

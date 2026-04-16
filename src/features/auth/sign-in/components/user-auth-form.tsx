@@ -124,7 +124,7 @@ export function UserAuthForm({
     if (loginAttempts.isAccountBlocked(data.email)) {
       setIsLoading(false);
       const warning = loginAttempts.getWarningMessage(data.email);
-      toast.error(warning || 'Sua conta foi desativada. Entre em contato com o administrador.');
+      toast.error(warning || 'Sua conta foi desativada. Faça uma redefinição de senha para reativá-la.');
       return;
     }
 
@@ -141,7 +141,7 @@ export function UserAuthForm({
           entityName: 'Conta bloqueada',
           details: `Tentativa de login bloqueada para e-mail ${data.email}`,
         });
-        toast.error('Conta bloqueada. Entre em contato com o administrador.')
+        toast.error('Conta bloqueada. Faça uma redefinição de senha para reativá-la.')
       } else {
         const genericInvalidCredentialsMessage = 'Senha ou email incorreto'
         const wasBlockedBefore = loginAttempts.isAccountBlocked(data.email);
