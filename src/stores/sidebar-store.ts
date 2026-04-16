@@ -10,7 +10,6 @@ import {
   MessagesSquare,
   BriefcaseBusiness,
   ClipboardList,
-  Banknote,
   Shield,
   FileText,
 } from "lucide-react";
@@ -50,11 +49,7 @@ export const useSidebarStore = create<SidebarsStore>((set, get) => ({
             url: "/forms",
             icon: ClipboardList,
           },
-          {
-            title: "sidebar.groups.items.liabilities",
-            url: "/passives",
-            icon: Banknote,
-          },
+
           {
             title: "sidebar.groups.items.chats",
             url: "/chats",
