@@ -79,6 +79,18 @@ export function ResetPasswordForm({
     localStorage.removeItem(RESET_PASSWORD_EMAIL_KEY);
     form.reset();
 
+    if (result.reactivated) {
+      useAuditStore.getState().addEvent({
+        userId: "anonymous",
+        userName: "Sistema",
+        action: "outros",
+        module: "users",
+        entityId: email,
+        entityName: "Conta reativada",
+        details: `Conta reativada automaticamente após redefinição de senha para ${email}.`,
+      });
+    }
+
     useAuditStore.getState().addEvent({
       userId: "anonymous",
       userName: "Sistema",

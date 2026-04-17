@@ -151,6 +151,7 @@ const getOtherActionKind = (log: AuditLog) => {
   const raw = normalizeText(`${log.entityName} ${log.details ?? ""}`);
 
   if (raw.includes("logout")) return "logout";
+  if (raw.includes("reativ")) return "reativação";
   if (raw.includes("desbloque")) return "desbloqueio";
   if (raw.includes("bloqueio") || raw.includes("conta bloqueada")) {
     return "bloqueio";
@@ -214,6 +215,12 @@ const getActionDisplay = (log: AuditLog) => {
         label: "Desbloqueio",
         icon: <UserCheck className="h-4 w-4" />,
         className: "border-sky-200 bg-sky-50 text-sky-700",
+      };
+    case "reativação":
+      return {
+        label: "Reativação",
+        icon: <UserCheck className="h-4 w-4" />,
+        className: "border-emerald-200 bg-emerald-50 text-emerald-700",
       };
     default:
       return {

@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuditStore } from "@/stores/audit-store";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Ban, LogIn, LogOut, Shield, ShieldCheck } from "lucide-react";
+import { Ban, LogIn, LogOut, Shield, UserCheck } from "lucide-react";
 
 const getActionMeta = (entityName: string, details?: string) => {
   const text = `${entityName} ${details || ""}`.toLowerCase();
@@ -34,11 +34,19 @@ const getActionMeta = (entityName: string, details?: string) => {
     };
   }
 
-  if (text.includes("desbloque") || text.includes("reativ")) {
+  if (text.includes("reativ")) {
     return {
-      label: "Conta Desbloqueada",
-      icon: <ShieldCheck className="h-5 w-5" />,
+      label: "Reativação",
+      icon: <UserCheck className="h-5 w-5" />,
       className: "border-emerald-200 bg-emerald-50 text-emerald-700",
+    };
+  }
+
+  if (text.includes("desbloque")) {
+    return {
+      label: "Desbloqueio",
+      icon: <UserCheck className="h-5 w-5" />,
+      className: "border-sky-200 bg-sky-50 text-sky-700",
     };
   }
 
