@@ -69,6 +69,14 @@ export const enUS: I18nResource = {
         title: "View",
         menuTitle: "Show Columns",
       },
+      auditColumns: {
+        timestamp: "Date/Time",
+        module: "Module",
+        action: "Action",
+        userName: "User Name",
+        entityName: "Entity",
+        details: "Details",
+      },
     },
     navigation: {
       profile: "Profile",

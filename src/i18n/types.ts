@@ -67,6 +67,14 @@ export type I18nResource = {
         title: string;
         menuTitle: string;
       };
+      auditColumns: {
+        timestamp: string;
+        module: string;
+        action: string;
+        userName: string;
+        entityName: string;
+        details: string;
+      };
     };
     navigation: {
       profile: string;

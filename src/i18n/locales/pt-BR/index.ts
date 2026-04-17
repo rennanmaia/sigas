@@ -69,6 +69,14 @@ export const ptBR: I18nResource = {
         title: "Visualização",
         menuTitle: "Mostrar Colunas",
       },
+      auditColumns: {
+        timestamp: "Data/Hora",
+        module: "Módulo",
+        action: "Ação",
+        userName: "Nome do Usuário",
+        entityName: "Entidade",
+        details: "Detalhes",
+      },
     },
     navigation: {
       profile: "Perfil",

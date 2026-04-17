@@ -61,6 +61,7 @@ import {
   type ColumnDef,
 } from "@tanstack/react-table";
 import { DataTablePagination, DataTableToolbar } from "@/components/data-table";
+import { useTranslation } from "react-i18next";
 
 const actionIcons = {
   criação: <FileText className="h-4 w-4" />,
@@ -234,6 +235,7 @@ const getActionDisplay = (log: AuditLog) => {
 const route = getRouteApi("/_authenticated/audit/");
 
 function AuditContent() {
+  const { t } = useTranslation("common");
   const search = route.useSearch();
   const { logs: projectLogs } = useProjects();
   const { logs: formLogs } = useFormsStore();
@@ -578,6 +580,14 @@ function AuditContent() {
           <DataTableToolbar
             table={table}
             searchPlaceholder="Filtrar por data, módulo, ação, usuário, entidade..."
+            columnLabels={{
+              timestamp: t("table.auditColumns.timestamp"),
+              module: t("table.auditColumns.module"),
+              action: t("table.auditColumns.action"),
+              userName: t("table.auditColumns.userName"),
+              entityName: t("table.auditColumns.entityName"),
+              details: t("table.auditColumns.details"),
+            }}
             extraFilters={
               <>
                 <div className="relative w-full sm:w-[170px]">
