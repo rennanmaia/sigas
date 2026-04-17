@@ -20,6 +20,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { PasswordInput } from "@/components/password-input";
+import { PasswordRequirements } from "@/components/password-requirements";
 
 const changePasswordSchema = z
   .object({
@@ -32,8 +33,8 @@ const changePasswordSchema = z
       .min(1, "Por favor, insira a nova senha")
       .min(8, "A nova senha deve conter pelo menos 8 caracteres")
       .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-        "A senha deve conter letras maiúsculas, minúsculas e números"
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/,
+        "A senha deve conter letras maiúsculas, minúsculas, números e símbolos"
       ),
     confirmPassword: z.string().optional(),
   })
@@ -86,6 +87,7 @@ export function ChangePasswordForm({
   });
 
   const oldPasswordValue = String(form.watch("oldPassword") ?? "");
+  const newPasswordValue = String(form.watch("newPassword") ?? "");
   const shouldShowConfirmPassword = oldPasswordValue.trim().length > 0;
 
   async function onSubmit(data: ChangePasswordFormValues) {
@@ -191,6 +193,7 @@ export function ChangePasswordForm({
                     {...field}
                   />
                 </FormControl>
+                <PasswordRequirements password={newPasswordValue} />
                 <FormMessage />
               </FormItem>
             )}

@@ -747,7 +747,7 @@ export const ptBR: I18nResource = {
         newPassword: {
           label: "Nova Senha",
           placeholder: "Digite sua nova senha",
-          description: "Sua nova senha deve ter pelo menos 8 caracteres e conter letras maiúsculas, minúsculas e números.",
+          description: "Sua nova senha deve ter pelo menos 8 caracteres e conter letras maiúsculas, minúsculas, números e símbolos.",
         },
         confirmPassword: {
           label: "Confirmar Nova Senha",

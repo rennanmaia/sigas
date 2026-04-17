@@ -742,7 +742,7 @@ export const enUS: I18nResource = {
         newPassword: {
           label: "New Password",
           placeholder: "Enter your new password",
-          description: "Your new password must be at least 8 characters long and contain uppercase letters, lowercase letters, and numbers.",
+          description: "Your new password must be at least 8 characters long and contain uppercase letters, lowercase letters, numbers, and symbols.",
         },
         confirmPassword: {
           label: "Confirm New Password",

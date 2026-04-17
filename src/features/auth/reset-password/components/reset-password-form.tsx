@@ -21,6 +21,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { PasswordInput } from "@/components/password-input";
+import { PasswordRequirements } from "@/components/password-requirements";
 
 const formSchema = z
   .object({
@@ -29,8 +30,8 @@ const formSchema = z
       .min(1, "Por favor, insira sua nova senha")
       .min(8, "A senha deve conter pelo menos 8 caracteres")
       .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-        "A senha deve conter letras maiúsculas, minúsculas e números",
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$/,
+        "A senha deve conter letras maiúsculas, minúsculas, números e símbolos",
       ),
     confirmPassword: z.string().min(1, "Por favor, confirme sua nova senha"),
   })
@@ -53,6 +54,8 @@ export function ResetPasswordForm({
       confirmPassword: "",
     },
   });
+
+  const passwordValue = String(form.watch("password") ?? "");
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true);
@@ -129,6 +132,7 @@ export function ResetPasswordForm({
               <FormControl>
                 <PasswordInput placeholder="********" {...field} />
               </FormControl>
+              <PasswordRequirements password={passwordValue} />
               <FormMessage />
             </FormItem>
           )}
