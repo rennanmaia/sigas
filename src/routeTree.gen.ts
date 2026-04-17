@@ -19,6 +19,7 @@ import { Route as errors401RouteImport } from './routes/(errors)/401'
 import { Route as authSignUpRouteImport } from './routes/(auth)/sign-up'
 import { Route as authSignIn2RouteImport } from './routes/(auth)/sign-in-2'
 import { Route as authSignInRouteImport } from './routes/(auth)/sign-in'
+import { Route as authResetPasswordRouteImport } from './routes/(auth)/reset-password'
 import { Route as authOtpRouteImport } from './routes/(auth)/otp'
 import { Route as authForgotPasswordRouteImport } from './routes/(auth)/forgot-password'
 import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authenticated/settings/route'
@@ -31,6 +32,7 @@ import { Route as AuthenticatedHelpCenterIndexRouteImport } from './routes/_auth
 import { Route as AuthenticatedFormsIndexRouteImport } from './routes/_authenticated/forms/index'
 import { Route as AuthenticatedChatsIndexRouteImport } from './routes/_authenticated/chats/index'
 import { Route as AuthenticatedAuditIndexRouteImport } from './routes/_authenticated/audit/index'
+import { Route as AuthenticatedSettingsSecurityRouteImport } from './routes/_authenticated/settings/security'
 import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes/_authenticated/settings/notifications'
 import { Route as AuthenticatedSettingsDisplayRouteImport } from './routes/_authenticated/settings/display'
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
@@ -56,6 +58,7 @@ import { Route as AuthenticatedProjectsLogsLogIdIndexRouteImport } from './route
 import { Route as AuthenticatedProfilesLogsLogIdIndexRouteImport } from './routes/_authenticated/profiles/logs/$logId/index'
 import { Route as AuthenticatedProfilesEditIdIndexRouteImport } from './routes/_authenticated/profiles/edit/$id/index'
 import { Route as AuthenticatedFormsLogsLogIdIndexRouteImport } from './routes/_authenticated/forms/logs/$logId/index'
+import { Route as AuthenticatedAuditLogsLogIdIndexRouteImport } from './routes/_authenticated/audit/logs/$logId/index'
 
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
@@ -104,6 +107,11 @@ const authSignIn2Route = authSignIn2RouteImport.update({
 const authSignInRoute = authSignInRouteImport.update({
   id: '/(auth)/sign-in',
   path: '/sign-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authResetPasswordRoute = authResetPasswordRouteImport.update({
+  id: '/(auth)/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const authOtpRoute = authOtpRouteImport.update({
@@ -172,6 +180,12 @@ const AuthenticatedAuditIndexRoute = AuthenticatedAuditIndexRouteImport.update({
   path: '/audit/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSettingsSecurityRoute =
+  AuthenticatedSettingsSecurityRouteImport.update({
+    id: '/security',
+    path: '/security',
+    getParentRoute: () => AuthenticatedSettingsRouteRoute,
+  } as any)
 const AuthenticatedSettingsNotificationsRoute =
   AuthenticatedSettingsNotificationsRouteImport.update({
     id: '/notifications',
@@ -322,11 +336,18 @@ const AuthenticatedFormsLogsLogIdIndexRoute =
     path: '/forms/logs/$logId/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAuditLogsLogIdIndexRoute =
+  AuthenticatedAuditLogsLogIdIndexRouteImport.update({
+    id: '/audit/logs/$logId/',
+    path: '/audit/logs/$logId/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
   '/forgot-password': typeof authForgotPasswordRoute
   '/otp': typeof authOtpRoute
+  '/reset-password': typeof authResetPasswordRoute
   '/sign-in': typeof authSignInRoute
   '/sign-in-2': typeof authSignIn2Route
   '/sign-up': typeof authSignUpRoute
@@ -342,6 +363,7 @@ export interface FileRoutesByFullPath {
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/settings/security': typeof AuthenticatedSettingsSecurityRoute
   '/audit': typeof AuthenticatedAuditIndexRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
   '/forms': typeof AuthenticatedFormsIndexRoute
@@ -365,6 +387,7 @@ export interface FileRoutesByFullPath {
   '/projects/logs': typeof AuthenticatedProjectsLogsIndexRoute
   '/users/$id': typeof AuthenticatedUsersIdIndexRoute
   '/users/logs': typeof AuthenticatedUsersLogsIndexRoute
+  '/audit/logs/$logId': typeof AuthenticatedAuditLogsLogIdIndexRoute
   '/forms/logs/$logId': typeof AuthenticatedFormsLogsLogIdIndexRoute
   '/profiles/edit/$id': typeof AuthenticatedProfilesEditIdIndexRoute
   '/profiles/logs/$logId': typeof AuthenticatedProfilesLogsLogIdIndexRoute
@@ -374,6 +397,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/forgot-password': typeof authForgotPasswordRoute
   '/otp': typeof authOtpRoute
+  '/reset-password': typeof authResetPasswordRoute
   '/sign-in': typeof authSignInRoute
   '/sign-in-2': typeof authSignIn2Route
   '/sign-up': typeof authSignUpRoute
@@ -389,6 +413,7 @@ export interface FileRoutesByTo {
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/settings/security': typeof AuthenticatedSettingsSecurityRoute
   '/audit': typeof AuthenticatedAuditIndexRoute
   '/chats': typeof AuthenticatedChatsIndexRoute
   '/forms': typeof AuthenticatedFormsIndexRoute
@@ -412,6 +437,7 @@ export interface FileRoutesByTo {
   '/projects/logs': typeof AuthenticatedProjectsLogsIndexRoute
   '/users/$id': typeof AuthenticatedUsersIdIndexRoute
   '/users/logs': typeof AuthenticatedUsersLogsIndexRoute
+  '/audit/logs/$logId': typeof AuthenticatedAuditLogsLogIdIndexRoute
   '/forms/logs/$logId': typeof AuthenticatedFormsLogsLogIdIndexRoute
   '/profiles/edit/$id': typeof AuthenticatedProfilesEditIdIndexRoute
   '/profiles/logs/$logId': typeof AuthenticatedProfilesLogsLogIdIndexRoute
@@ -424,6 +450,7 @@ export interface FileRoutesById {
   '/_authenticated/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
   '/(auth)/forgot-password': typeof authForgotPasswordRoute
   '/(auth)/otp': typeof authOtpRoute
+  '/(auth)/reset-password': typeof authResetPasswordRoute
   '/(auth)/sign-in': typeof authSignInRoute
   '/(auth)/sign-in-2': typeof authSignIn2Route
   '/(auth)/sign-up': typeof authSignUpRoute
@@ -439,6 +466,7 @@ export interface FileRoutesById {
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/_authenticated/settings/display': typeof AuthenticatedSettingsDisplayRoute
   '/_authenticated/settings/notifications': typeof AuthenticatedSettingsNotificationsRoute
+  '/_authenticated/settings/security': typeof AuthenticatedSettingsSecurityRoute
   '/_authenticated/audit/': typeof AuthenticatedAuditIndexRoute
   '/_authenticated/chats/': typeof AuthenticatedChatsIndexRoute
   '/_authenticated/forms/': typeof AuthenticatedFormsIndexRoute
@@ -462,6 +490,7 @@ export interface FileRoutesById {
   '/_authenticated/projects/logs/': typeof AuthenticatedProjectsLogsIndexRoute
   '/_authenticated/users/$id/': typeof AuthenticatedUsersIdIndexRoute
   '/_authenticated/users/logs/': typeof AuthenticatedUsersLogsIndexRoute
+  '/_authenticated/audit/logs/$logId/': typeof AuthenticatedAuditLogsLogIdIndexRoute
   '/_authenticated/forms/logs/$logId/': typeof AuthenticatedFormsLogsLogIdIndexRoute
   '/_authenticated/profiles/edit/$id/': typeof AuthenticatedProfilesEditIdIndexRoute
   '/_authenticated/profiles/logs/$logId/': typeof AuthenticatedProfilesLogsLogIdIndexRoute
@@ -474,6 +503,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/forgot-password'
     | '/otp'
+    | '/reset-password'
     | '/sign-in'
     | '/sign-in-2'
     | '/sign-up'
@@ -489,6 +519,7 @@ export interface FileRouteTypes {
     | '/settings/appearance'
     | '/settings/display'
     | '/settings/notifications'
+    | '/settings/security'
     | '/audit'
     | '/chats'
     | '/forms'
@@ -512,6 +543,7 @@ export interface FileRouteTypes {
     | '/projects/logs'
     | '/users/$id'
     | '/users/logs'
+    | '/audit/logs/$logId'
     | '/forms/logs/$logId'
     | '/profiles/edit/$id'
     | '/profiles/logs/$logId'
@@ -521,6 +553,7 @@ export interface FileRouteTypes {
   to:
     | '/forgot-password'
     | '/otp'
+    | '/reset-password'
     | '/sign-in'
     | '/sign-in-2'
     | '/sign-up'
@@ -536,6 +569,7 @@ export interface FileRouteTypes {
     | '/settings/appearance'
     | '/settings/display'
     | '/settings/notifications'
+    | '/settings/security'
     | '/audit'
     | '/chats'
     | '/forms'
@@ -559,6 +593,7 @@ export interface FileRouteTypes {
     | '/projects/logs'
     | '/users/$id'
     | '/users/logs'
+    | '/audit/logs/$logId'
     | '/forms/logs/$logId'
     | '/profiles/edit/$id'
     | '/profiles/logs/$logId'
@@ -570,6 +605,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings'
     | '/(auth)/forgot-password'
     | '/(auth)/otp'
+    | '/(auth)/reset-password'
     | '/(auth)/sign-in'
     | '/(auth)/sign-in-2'
     | '/(auth)/sign-up'
@@ -585,6 +621,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/display'
     | '/_authenticated/settings/notifications'
+    | '/_authenticated/settings/security'
     | '/_authenticated/audit/'
     | '/_authenticated/chats/'
     | '/_authenticated/forms/'
@@ -608,6 +645,7 @@ export interface FileRouteTypes {
     | '/_authenticated/projects/logs/'
     | '/_authenticated/users/$id/'
     | '/_authenticated/users/logs/'
+    | '/_authenticated/audit/logs/$logId/'
     | '/_authenticated/forms/logs/$logId/'
     | '/_authenticated/profiles/edit/$id/'
     | '/_authenticated/profiles/logs/$logId/'
@@ -619,6 +657,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   authForgotPasswordRoute: typeof authForgotPasswordRoute
   authOtpRoute: typeof authOtpRoute
+  authResetPasswordRoute: typeof authResetPasswordRoute
   authSignInRoute: typeof authSignInRoute
   authSignIn2Route: typeof authSignIn2Route
   authSignUpRoute: typeof authSignUpRoute
@@ -699,6 +738,13 @@ declare module '@tanstack/react-router' {
       path: '/sign-in'
       fullPath: '/sign-in'
       preLoaderRoute: typeof authSignInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)/reset-password': {
+      id: '/(auth)/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof authResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(auth)/otp': {
@@ -784,6 +830,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/audit'
       preLoaderRoute: typeof AuthenticatedAuditIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/settings/security': {
+      id: '/_authenticated/settings/security'
+      path: '/security'
+      fullPath: '/settings/security'
+      preLoaderRoute: typeof AuthenticatedSettingsSecurityRouteImport
+      parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
     '/_authenticated/settings/notifications': {
       id: '/_authenticated/settings/notifications'
@@ -960,6 +1013,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFormsLogsLogIdIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/audit/logs/$logId/': {
+      id: '/_authenticated/audit/logs/$logId/'
+      path: '/audit/logs/$logId'
+      fullPath: '/audit/logs/$logId'
+      preLoaderRoute: typeof AuthenticatedAuditLogsLogIdIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -968,6 +1028,7 @@ interface AuthenticatedSettingsRouteRouteChildren {
   AuthenticatedSettingsAppearanceRoute: typeof AuthenticatedSettingsAppearanceRoute
   AuthenticatedSettingsDisplayRoute: typeof AuthenticatedSettingsDisplayRoute
   AuthenticatedSettingsNotificationsRoute: typeof AuthenticatedSettingsNotificationsRoute
+  AuthenticatedSettingsSecurityRoute: typeof AuthenticatedSettingsSecurityRoute
   AuthenticatedSettingsIndexRoute: typeof AuthenticatedSettingsIndexRoute
 }
 
@@ -978,6 +1039,7 @@ const AuthenticatedSettingsRouteRouteChildren: AuthenticatedSettingsRouteRouteCh
     AuthenticatedSettingsDisplayRoute: AuthenticatedSettingsDisplayRoute,
     AuthenticatedSettingsNotificationsRoute:
       AuthenticatedSettingsNotificationsRoute,
+    AuthenticatedSettingsSecurityRoute: AuthenticatedSettingsSecurityRoute,
     AuthenticatedSettingsIndexRoute: AuthenticatedSettingsIndexRoute,
   }
 
@@ -1013,6 +1075,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProjectsLogsIndexRoute: typeof AuthenticatedProjectsLogsIndexRoute
   AuthenticatedUsersIdIndexRoute: typeof AuthenticatedUsersIdIndexRoute
   AuthenticatedUsersLogsIndexRoute: typeof AuthenticatedUsersLogsIndexRoute
+  AuthenticatedAuditLogsLogIdIndexRoute: typeof AuthenticatedAuditLogsLogIdIndexRoute
   AuthenticatedFormsLogsLogIdIndexRoute: typeof AuthenticatedFormsLogsLogIdIndexRoute
   AuthenticatedProfilesEditIdIndexRoute: typeof AuthenticatedProfilesEditIdIndexRoute
   AuthenticatedProfilesLogsLogIdIndexRoute: typeof AuthenticatedProfilesLogsLogIdIndexRoute
@@ -1052,6 +1115,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProjectsLogsIndexRoute: AuthenticatedProjectsLogsIndexRoute,
   AuthenticatedUsersIdIndexRoute: AuthenticatedUsersIdIndexRoute,
   AuthenticatedUsersLogsIndexRoute: AuthenticatedUsersLogsIndexRoute,
+  AuthenticatedAuditLogsLogIdIndexRoute: AuthenticatedAuditLogsLogIdIndexRoute,
   AuthenticatedFormsLogsLogIdIndexRoute: AuthenticatedFormsLogsLogIdIndexRoute,
   AuthenticatedProfilesEditIdIndexRoute: AuthenticatedProfilesEditIdIndexRoute,
   AuthenticatedProfilesLogsLogIdIndexRoute:
@@ -1068,6 +1132,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   authForgotPasswordRoute: authForgotPasswordRoute,
   authOtpRoute: authOtpRoute,
+  authResetPasswordRoute: authResetPasswordRoute,
   authSignInRoute: authSignInRoute,
   authSignIn2Route: authSignIn2Route,
   authSignUpRoute: authSignUpRoute,

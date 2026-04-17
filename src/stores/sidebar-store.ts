@@ -102,6 +102,11 @@ export const useSidebarStore = create<SidebarsStore>((set, get) => ({
                 url: "/settings/notifications",
                 icon: Bell,
               },
+              {
+                title: "sidebar.others.items.settings.items.security",
+                url: "/settings/security",
+                icon: Shield,
+              },
             ],
           },
           {

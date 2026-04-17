@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "@tanstack/react-router";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { RESET_PASSWORD_EMAIL_KEY } from "@/features/auth/services/auth";
 import { sleep, cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,8 +38,8 @@ export function ForgotPasswordForm({
 
   function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    // eslint-disable-next-line no-console
-    console.log(data);
+    const normalizedEmail = data.email.trim().toLowerCase();
+    localStorage.setItem(RESET_PASSWORD_EMAIL_KEY, normalizedEmail);
 
     toast.promise(sleep(2000), {
       loading: "Enviando email...",
@@ -46,7 +47,7 @@ export function ForgotPasswordForm({
         setIsLoading(false);
         form.reset();
         navigate({ to: "/otp" });
-        return `Email enviado para ${data.email}`;
+        return `Email enviado para ${normalizedEmail}`;
       },
       error: "Error",
     });

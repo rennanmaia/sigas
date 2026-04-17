@@ -28,6 +28,7 @@ export const ptBR: I18nResource = {
               account: "Conta",
               notifications: "Notificações",
               profile: "Perfil",
+              security: "Segurança",
             },
           },
           help: {
@@ -556,6 +557,7 @@ export const ptBR: I18nResource = {
       profile: "Perfil",
       account: "Conta",
       notifications: "Notificações",
+      security: "Segurança",
     },
     profile: {
       title: "Perfil",
@@ -690,5 +692,64 @@ export const ptBR: I18nResource = {
         submit: "Atualizar notificações",
       },
     },
+    security: {
+      title: "Segurança",
+      description: "Gerencie sua senha e as configurações de segurança da conta.",
+      twoFactor: {
+        title: "Autenticação de dois fatores (2FA)",
+        description: "Ative uma camada extra de segurança na sua conta.",
+        codePlaceholder: "Digite o código de 6 dígitos",
+        confirmCode: "Confirmar código",
+        invalidCode: "Código inválido. Digite 6 números.",
+        email: {
+          title: "Código por e-mail",
+          description: "Receba um código por e-mail em cada login.",
+          codeSent: "Código enviado para seu e-mail.",
+          verificationHint: "Digite abaixo o código recebido por e-mail para ativar.",
+          enableSuccess: "2FA por e-mail ativado com sucesso.",
+          disableSuccess: "2FA por e-mail desativado.",
+        },
+        app: {
+          title: "Google Authenticator",
+          description: "Use o app autenticador para gerar códigos temporários.",
+          setupHint: "Configure seu Google Authenticator e confirme o código.",
+          secretLabel: "Chave para configurar no app autenticador",
+          verificationHint: "Depois de configurar o app, digite o código gerado.",
+          enableSuccess: "2FA com Google Authenticator ativado com sucesso.",
+          disableSuccess: "2FA com Google Authenticator desativado.",
+        },
+      },
+    },
+    changePassword: {
+      title: "Alterar Senha",
+      description: "Altere sua senha para manter sua conta segura.",
+      section: {
+        title: "Segurança da Senha",
+        description: "Altere sua senha regularmente para manter sua conta segura.",
+        button: "Alterar Senha",
+      },
+      form: {
+        title: "Formulário de Alteração de Senha",
+        description: "Insira sua senha atual e a nova senha que deseja usar.",
+        oldPassword: {
+          label: "Senha Atual",
+          placeholder: "Digite sua senha atual",
+          description: "Informe sua senha atual para confirmar sua identidade.",
+        },
+        newPassword: {
+          label: "Nova Senha",
+          placeholder: "Digite sua nova senha",
+          description: "Sua nova senha deve ter pelo menos 8 caracteres e conter letras maiúsculas, minúsculas e números.",
+        },
+        confirmPassword: {
+          label: "Confirmar Nova Senha",
+          placeholder: "Confirme sua nova senha",
+          description: "Digite a mesma senha novamente para confirmar.",
+        },
+        submit: "Alterar Senha",
+        submitting: "Alterando...",
+      },
+    },
   },
 };
+
