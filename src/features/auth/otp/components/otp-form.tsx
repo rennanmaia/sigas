@@ -3,6 +3,8 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
+import { RESET_PASSWORD_EMAIL_KEY } from "@/features/auth/services/auth";
 import { showSubmittedData } from "@/lib/show-submitted-data";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -46,9 +48,16 @@ export function OtpForm({ className, ...props }: OtpFormProps) {
     setIsLoading(true);
     showSubmittedData(data);
 
+    if (!localStorage.getItem(RESET_PASSWORD_EMAIL_KEY)) {
+      setIsLoading(false);
+      toast.error("Sessão de recuperação expirada. Inicie novamente.");
+      navigate({ to: "/forgot-password" });
+      return;
+    }
+
     setTimeout(() => {
       setIsLoading(false);
-      navigate({ to: "/sign-in" });
+      navigate({ to: "/reset-password" });
     }, 1000);
   }
 

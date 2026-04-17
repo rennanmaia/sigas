@@ -28,6 +28,7 @@ export const enUS: I18nResource = {
               account: "Account",
               notifications: "Notifications",
               profile: "Profile",
+              security: "Security",
             },
           },
           help: {
@@ -67,6 +68,14 @@ export const enUS: I18nResource = {
       viewOptions: {
         title: "View",
         menuTitle: "Show Columns",
+      },
+      auditColumns: {
+        timestamp: "Date/Time",
+        module: "Module",
+        action: "Action",
+        userName: "User Name",
+        entityName: "Entity",
+        details: "Details",
       },
     },
     navigation: {
@@ -551,6 +560,7 @@ export const enUS: I18nResource = {
       profile: "Profile",
       account: "Account",
       notifications: "Notifications",
+      security: "Security",
     },
     profile: {
       title: "Profile",
@@ -685,5 +695,64 @@ export const enUS: I18nResource = {
         submit: "Update notifications",
       },
     },
+    security: {
+      title: "Security",
+      description: "Manage your password and account security settings.",
+      twoFactor: {
+        title: "Two-factor authentication (2FA)",
+        description: "Enable an extra security layer for your account.",
+        codePlaceholder: "Enter the 6-digit code",
+        confirmCode: "Confirm code",
+        invalidCode: "Invalid code. Enter 6 digits.",
+        email: {
+          title: "Code by email",
+          description: "Receive a code by email at each login.",
+          codeSent: "Code sent to your email.",
+          verificationHint: "Enter the email code below to enable this method.",
+          enableSuccess: "Email 2FA enabled successfully.",
+          disableSuccess: "Email 2FA disabled.",
+        },
+        app: {
+          title: "Google Authenticator",
+          description: "Use the authenticator app to generate temporary codes.",
+          setupHint: "Set up Google Authenticator and confirm the code.",
+          secretLabel: "Key to configure in your authenticator app",
+          verificationHint: "After setting up the app, enter the generated code.",
+          enableSuccess: "Google Authenticator 2FA enabled successfully.",
+          disableSuccess: "Google Authenticator 2FA disabled.",
+        },
+      },
+    },
+    changePassword: {
+      title: "Change Password",
+      description: "Change your password to keep your account secure.",
+      section: {
+        title: "Password Security",
+        description: "Change your password regularly to keep your account secure.",
+        button: "Change Password",
+      },
+      form: {
+        title: "Change Password Form",
+        description: "Enter your current password and the new password you want to use.",
+        oldPassword: {
+          label: "Current Password",
+          placeholder: "Enter your current password",
+          description: "Provide your current password to confirm your identity.",
+        },
+        newPassword: {
+          label: "New Password",
+          placeholder: "Enter your new password",
+          description: "Your new password must be at least 8 characters long and contain uppercase letters, lowercase letters, numbers, and symbols.",
+        },
+        confirmPassword: {
+          label: "Confirm New Password",
+          placeholder: "Confirm your new password",
+          description: "Type the same password again to confirm.",
+        },
+        submit: "Change Password",
+        submitting: "Changing...",
+      },
+    },
   },
 };
+

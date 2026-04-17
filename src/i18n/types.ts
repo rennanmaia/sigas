@@ -26,6 +26,7 @@ export type I18nResource = {
               profile: string;
               account: string;
               notifications: string;
+              security: string;
             };
           };
           help: {
@@ -65,6 +66,14 @@ export type I18nResource = {
       viewOptions: {
         title: string;
         menuTitle: string;
+      };
+      auditColumns: {
+        timestamp: string;
+        module: string;
+        action: string;
+        userName: string;
+        entityName: string;
+        details: string;
       };
     };
     navigation: {
@@ -535,6 +544,7 @@ export type I18nResource = {
       profile: string;
       account: string;
       notifications: string;
+      security: string;
     };
     profile: {
       title: string;
@@ -660,6 +670,64 @@ export type I18nResource = {
           link: string;
         };
         submit: string;
+      };
+    };
+    security: {
+      title: string;
+      description: string;
+      twoFactor: {
+        title: string;
+        description: string;
+        codePlaceholder: string;
+        confirmCode: string;
+        invalidCode: string;
+        email: {
+          title: string;
+          description: string;
+          codeSent: string;
+          verificationHint: string;
+          enableSuccess: string;
+          disableSuccess: string;
+        };
+        app: {
+          title: string;
+          description: string;
+          setupHint: string;
+          secretLabel: string;
+          verificationHint: string;
+          enableSuccess: string;
+          disableSuccess: string;
+        };
+      };
+    };
+    changePassword: {
+      title: string;
+      description: string;
+      section: {
+        title: string;
+        description: string;
+        button: string;
+      };
+      form: {
+        title: string;
+        description: string;
+        oldPassword: {
+          label: string;
+          placeholder: string;
+          description: string;
+        };
+        newPassword: {
+          label: string;
+          placeholder: string;
+          description: string;
+        };
+        confirmPassword: {
+          label: string;
+          placeholder: string;
+          description: string;
+        };
+        submit: string;
+        submitting: string;
       };
     };
   };

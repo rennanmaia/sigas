@@ -5,7 +5,7 @@ import z from "zod";
 const auditSearchSchema = z
   .object({
     filter: z
-      .enum(["projects", "forms", "users", "profiles"])
+      .enum(["projects", "forms", "users", "profiles", "system"])
       .optional()
       .catch(undefined),
     mode: z.enum(["none", "month-year", "range"]).optional().catch("none"),
@@ -25,6 +25,7 @@ const auditSearchSchema = z
       .regex(/^\d{4}-\d{2}-\d{2}$/)
       .optional()
       .catch(undefined),
+    eventId: z.string().optional().catch(undefined),
   })
   .superRefine((value, ctx) => {
     if (value.from && value.to && value.from > value.to) {

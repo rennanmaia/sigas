@@ -5,6 +5,7 @@ const ACCESS_TOKEN = "thisisjustarandomstring";
 
 interface AuthUser {
   accountNo: string;
+  name: string;
   email: string;
   role: string[];
   exp: number;
@@ -15,7 +16,7 @@ interface AuthState {
     user: AuthUser | null;
     setUser: (user: AuthUser | null) => void;
     accessToken: string;
-    setAccessToken: (accessToken: string) => void;
+    setAccessToken: (accessToken: string, persist?: boolean) => void;
     resetAccessToken: () => void;
     reset: () => void;
   };
@@ -28,6 +29,7 @@ export const useAuthStore = create<AuthState>()((set) => {
     auth: {
       user: {
         accountNo: "",
+        name: "Usuário Sistema",
         email: "sigas@gmail.com",
         role: ['general_administrator'],
         exp: 0,
@@ -35,9 +37,13 @@ export const useAuthStore = create<AuthState>()((set) => {
       setUser: (user) =>
         set((state) => ({ ...state, auth: { ...state.auth, user } })),
       accessToken: initToken,
-      setAccessToken: (accessToken) =>
+      setAccessToken: (accessToken, persist = true) =>
         set((state) => {
-          setCookie(ACCESS_TOKEN, JSON.stringify(accessToken));
+          if (persist) {
+            setCookie(ACCESS_TOKEN, JSON.stringify(accessToken));
+          } else {
+            removeCookie(ACCESS_TOKEN);
+          }
           return { ...state, auth: { ...state.auth, accessToken } };
         }),
       resetAccessToken: () =>
