@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Loader2, LogIn, AlertCircle } from "lucide-react";
-import { toast } from "sonner";
 import { useAuthStore } from "@/stores/auth-store";
 import { useAuditStore } from "@/stores/audit-store";
 import { cn } from "@/lib/utils";
@@ -250,7 +249,6 @@ export function UserAuthForm({
     setIsLoading(false);
     const targetPath = redirectTo || '/';
     navigate({ to: targetPath, replace: true });
-    toast.success(`Bem-vindo(a) de volta, ${user.email}!`);
   }
 
   const currentEmail = String(form.watch('email') || '');
