@@ -119,15 +119,25 @@ export function UserAuthForm({
     form.clearErrors()
     setIsLoading(true);
     console.log('Submitting form with data:', data);
+    const normalizedEmail = data.email.trim().toLowerCase();
 
-    if (loginAttempts.isAccountBlocked(data.email)) {
+    if (loginAttempts.isAccountBlocked(normalizedEmail)) {
+      useAuditStore.getState().addEvent({
+        userId: 'anonymous',
+        userName: 'Sistema',
+        action: 'outros',
+        module: 'users',
+        entityId: normalizedEmail,
+        entityName: 'Conta suspensa',
+        details: `Tentativa de login recusada para ${normalizedEmail}: conta suspensa por excesso de tentativas.`,
+      });
       setIsLoading(false);
-      const warning = loginAttempts.getWarningMessage(data.email);
+      const warning = loginAttempts.getWarningMessage(normalizedEmail);
       toast.error(warning || 'Sua conta foi desativada. Faça uma redefinição de senha para reativá-la.');
       return;
     }
 
-    const res = await authenticate(data.email, data.password);
+    const res = await authenticate(normalizedEmail, data.password);
     if (res.status === 'error') {
       setIsLoading(false);
       if (res.reason === 'account_blocked') {
@@ -135,27 +145,27 @@ export function UserAuthForm({
           userId: 'anonymous',
           userName: 'Sistema',
           action: 'outros',
-          module: 'system',
-          entityId: data.email,
-          entityName: 'Conta bloqueada',
-          details: `Tentativa de login bloqueada para e-mail ${data.email}`,
+          module: 'users',
+          entityId: normalizedEmail,
+          entityName: 'Conta suspensa',
+          details: `Tentativa de login recusada para ${normalizedEmail}: conta suspensa por excesso de tentativas.`,
         });
         toast.error('Conta bloqueada. Faça uma redefinição de senha para reativá-la.')
       } else {
-        const genericInvalidCredentialsMessage = 'Senha ou email incorreto'
-        const wasBlockedBefore = loginAttempts.isAccountBlocked(data.email);
-        loginAttempts.recordFailedAttempt(data.email);
-        const warningMsg = loginAttempts.getWarningMessage(data.email);
-        const isBlockedNow = loginAttempts.isAccountBlocked(data.email);
+        const genericInvalidCredentialsMessage = 'Senha ou email incorreto';
+        const wasBlockedBefore = loginAttempts.isAccountBlocked(normalizedEmail);
+        loginAttempts.recordFailedAttempt(normalizedEmail);
+        const warningMsg = loginAttempts.getWarningMessage(normalizedEmail);
+        const isBlockedNow = loginAttempts.isAccountBlocked(normalizedEmail);
 
         useAuditStore.getState().addEvent({
           userId: 'anonymous',
           userName: 'Sistema',
           action: 'outros',
           module: 'system',
-          entityId: data.email,
+          entityId: normalizedEmail,
           entityName: 'Tentativa de login inválida',
-          details: `Falha de login para e-mail ${data.email}: ${res.reason}.`,
+          details: `Falha de login para e-mail ${normalizedEmail}: ${res.reason}.`,
         });
         form.setError('password', { type: 'manual', message: genericInvalidCredentialsMessage });
         try {
@@ -172,10 +182,10 @@ export function UserAuthForm({
             userId: 'anonymous',
             userName: 'Sistema',
             action: 'outros',
-            module: 'system',
-            entityId: data.email,
-            entityName: 'Bloqueio de conta',
-            details: `Bloqueio automático por excesso de tentativas para o e-mail ${data.email}.`,
+            module: 'users',
+            entityId: normalizedEmail,
+            entityName: 'Conta suspensa',
+            details: `Conta suspensa automaticamente por excesso de tentativas de login para o e-mail ${normalizedEmail}.`,
           });
         }
       }
@@ -183,7 +193,6 @@ export function UserAuthForm({
     }
 
     const user = res.user;
-  const normalizedEmail = data.email.trim().toLowerCase();
     const storedUsersRaw = localStorage.getItem('local-users');
 
     let userId = 'ACC001';
@@ -234,7 +243,7 @@ export function UserAuthForm({
 
     auth.setAccessToken('mock-access-token', data.rememberMe === true);
 
-    loginAttempts.resetFailedAttempts(data.email);
+    loginAttempts.resetFailedAttempts(normalizedEmail);
 
     useAuditStore.getState().addEvent({
       userId: mockUser.accountNo,
